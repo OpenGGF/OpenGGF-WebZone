@@ -8,7 +8,7 @@ order: 99
 
 This is a one-page reference for reading Motorola 68000 assembly as it appears in the
 Sonic disassemblies. It covers just enough to follow object routines and understand the
-code shown in the [Mapping Exercises](mapping-exercises.md). It is not a complete 68000
+code shown in the [Mapping Exercises](/docs/guide/cross-referencing/mapping-exercises). It is not a complete 68000
 architecture guide.
 
 ## Registers
@@ -135,7 +135,7 @@ move.b  #$9B,collision_flags(a0) ; Set collision type to "hurts player"
 
 The field names (`routine`, `x_pos`, `collision_flags`, etc.) are defined in the
 disassembly's constants file and resolve to byte offsets. See the
-[Per-Game Notes](per-game-notes.md) for the field name differences between S1 and S2.
+[Per-Game Notes](/docs/guide/cross-referencing/per-game-notes) for the field name differences between S1 and S2.
 
 ## The Routine Dispatch Pattern
 
@@ -240,5 +240,5 @@ If the absolute distance is less than 64 pixels, set the detection flag."
 
 ## Next Steps
 
-- [Mapping Exercises](mapping-exercises.md) -- Apply this knowledge to trace real features
-- [Per-Game Notes](per-game-notes.md) -- S1/S2/S3K field name and format differences
+- [Mapping Exercises](/docs/guide/cross-referencing/mapping-exercises) -- Apply this knowledge to trace real features
+- [Per-Game Notes](/docs/guide/cross-referencing/per-game-notes) -- S1/S2/S3K field name and format differences

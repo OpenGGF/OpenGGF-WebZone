@@ -148,6 +148,6 @@ to the YM2612 and SN76489 emulation cores.
 
 ## Next Steps
 
-- [How the Engine Reads ROMs](how-the-engine-reads-roms.md) -- Data pipeline details
-- [Mapping Exercises](mapping-exercises.md) -- Practice tracing features
-- [Tooling](tooling.md) -- Built-in ROM exploration tools
+- [How the Engine Reads ROMs](/docs/guide/cross-referencing/how-the-engine-reads-roms) -- Data pipeline details
+- [Mapping Exercises](/docs/guide/cross-referencing/mapping-exercises) -- Practice tracing features
+- [Tooling](/docs/guide/cross-referencing/tooling) -- Built-in ROM exploration tools

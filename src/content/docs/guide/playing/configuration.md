@@ -10,7 +10,7 @@ The engine reads settings from `config.yaml` in the working directory (next to t
 If the file does not exist, the bundled default template is used. A legacy `config.json`
 is migrated automatically on first run. This page answers common setup
 questions. For the full reference of every key, see the
-[Configuration Reference](/CONFIGURATION).
+[Configuration Reference](/docs/reference/configuration).
 
 ---
 
@@ -145,7 +145,7 @@ input:
     jump: "A"
 ```
 
-See [Controls](controls.md) for the full list of bindable actions and
+See [Controls](/docs/guide/playing/controls) for the full list of bindable actions and
 `CONFIGURATION.md` for current YAML key names.
 
 ## How do I enable the editor overlay?

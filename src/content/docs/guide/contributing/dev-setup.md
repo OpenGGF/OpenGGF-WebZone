@@ -100,7 +100,7 @@ sonic-engine/
   tools/                     -- External reference tools
 ```
 
-For a deeper look at the source layout, see [Architecture](architecture.md).
+For a deeper look at the source layout, see [Architecture](/docs/guide/contributing/architecture).
 
 ## GraalVM Native Image (Optional)
 
@@ -118,6 +118,6 @@ Native image metadata is maintained in `src/main/resources/META-INF/native-image
 
 ## Next Steps
 
-- [Architecture](architecture.md) -- Understand the codebase design
-- [Tutorial: Implement an Object](tutorial-implement-object.md) -- Learn by doing
-- [Testing](testing.md) -- Writing and running tests
+- [Architecture](/docs/guide/contributing/architecture) -- Understand the codebase design
+- [Tutorial: Implement an Object](/docs/guide/contributing/tutorial-implement-object) -- Learn by doing
+- [Testing](/docs/guide/contributing/testing) -- Writing and running tests

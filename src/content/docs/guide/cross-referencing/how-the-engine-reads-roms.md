@@ -49,10 +49,10 @@ with different maintainers and different conventions. They do not share a common
 | Compression types | Nemesis, Kosinski | Nemesis, Kosinski, Enigma, Saxman | Kosinski, KosinskiM, Nemesis |
 | Constants file | `Constants.asm` | `s2.constants.asm` | Equates in main source |
 
-The examples on this page and in the [Mapping Exercises](mapping-exercises.md) use Sonic 2
+The examples on this page and in the [Mapping Exercises](/docs/guide/cross-referencing/mapping-exercises) use Sonic 2
 as the primary reference because it is the most complete engine module. The methods transfer
 to S1 and S3K, but you will need to adjust for the structural differences. See
-[Per-Game Notes](per-game-notes.md) for game-specific details.
+[Per-Game Notes](/docs/guide/cross-referencing/per-game-notes) for game-specific details.
 
 ## How Addresses Are Found
 
@@ -88,7 +88,7 @@ When you see a disassembly label like `ArtNem_Buzzer` and want to find the corre
 engine address, the path is:
 
 1. Check the game's constants file for a named constant.
-2. If not there, use the `RomOffsetFinder` tool (see [Tooling](tooling.md)) to search
+2. If not there, use the `RomOffsetFinder` tool (see [Tooling](/docs/guide/cross-referencing/tooling)) to search
    for the label and calculate its ROM offset.
 3. The engine reads from that offset using `Rom.readBytes()`, `Rom.read16BitAddr()`, or
    similar methods.
@@ -309,7 +309,7 @@ sensor positions.
 
 ## Next Steps
 
-- [Mapping Exercises](mapping-exercises.md) -- Practice tracing specific features
-- [68000 Primer](68000-primer.md) -- If you need help reading the assembly
-- [Architecture Overview](architecture-overview.md) -- Where things live in the source code
-- [Tooling](tooling.md) -- Built-in tools for ROM exploration
+- [Mapping Exercises](/docs/guide/cross-referencing/mapping-exercises) -- Practice tracing specific features
+- [68000 Primer](/docs/guide/cross-referencing/68000-primer) -- If you need help reading the assembly
+- [Architecture Overview](/docs/guide/cross-referencing/architecture-overview) -- Where things live in the source code
+- [Tooling](/docs/guide/cross-referencing/tooling) -- Built-in tools for ROM exploration

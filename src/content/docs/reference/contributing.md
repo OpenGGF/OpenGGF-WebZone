@@ -26,9 +26,9 @@ Good contributions include:
 Current project priority is Sonic 3 & Knuckles vertical-slice parity and release readiness. AIZ
 through HCZ remains the primary release slice, but CNZ, MGZ, ICZ, MHZ, and LBZ now have enough
 coverage that route blockers, complete-run trace frontiers, and release gates should drive task
-selection more than broad checklist work. Check [`ROADMAP.md`](ROADMAP.md), [`CHANGELOG.md`](CHANGELOG.md),
-[`OBJECT_CHECKLIST.md`](OBJECT_CHECKLIST.md), [`S1_OBJECT_CHECKLIST.md`](S1_OBJECT_CHECKLIST.md),
-and [`S3K_OBJECT_CHECKLIST.md`](S3K_OBJECT_CHECKLIST.md) before choosing a larger task.
+selection more than broad checklist work. Check [`ROADMAP.md`](/docs/reference/roadmap), [`CHANGELOG.md`](https://github.com/jamesj999/OpenGGF/blob/develop/CHANGELOG),
+[`OBJECT_CHECKLIST.md`](https://github.com/jamesj999/OpenGGF/blob/develop/OBJECT_CHECKLIST), [`S1_OBJECT_CHECKLIST.md`](https://github.com/jamesj999/OpenGGF/blob/develop/S1_OBJECT_CHECKLIST),
+and [`S3K_OBJECT_CHECKLIST.md`](https://github.com/jamesj999/OpenGGF/blob/develop/S3K_OBJECT_CHECKLIST) before choosing a larger task.
 
 ## Legal And Asset Rules
 
@@ -47,9 +47,9 @@ are offered under the same license unless the maintainers explicitly agree other
 
 Start with:
 
-- [Developer Setup](docs/guide/contributing/dev-setup.md)
-- [Architecture Deep Dive](docs/guide/contributing/architecture.md)
-- [Testing](docs/guide/contributing/testing.md)
+- [Developer Setup](/docs/guide/contributing/dev-setup)
+- [Architecture Deep Dive](/docs/guide/contributing/architecture)
+- [Testing](/docs/guide/contributing/testing)
 
 Minimum requirements:
 
@@ -94,7 +94,7 @@ single observed symptom.
   are top-left sprite bounds.
 - Object art, mappings, DPLCs, animation scripts, PLC data, and runtime bytes must be ROM-backed.
 
-For trace work, read [Trace Replay Testing](docs/guide/contributing/trace-replay.md) before making
+For trace work, read [Trace Replay Testing](/docs/guide/contributing/trace-replay) before making
 changes.
 
 ## Architecture Rules
@@ -117,12 +117,12 @@ Follow the existing provider and service architecture:
 
 See:
 
-- [Architecture Deep Dive](docs/guide/contributing/architecture.md)
-- [Tutorial: Implement an Object](docs/guide/contributing/tutorial-implement-object.md)
-- [Adding Bosses](docs/guide/contributing/adding-bosses.md)
-- [Adding Zones](docs/guide/contributing/adding-zones.md)
-- [Audio System](docs/guide/contributing/audio-system.md)
-- [Rewind System](docs/guide/contributing/rewind-system.md)
+- [Architecture Deep Dive](/docs/guide/contributing/architecture)
+- [Tutorial: Implement an Object](/docs/guide/contributing/tutorial-implement-object)
+- [Adding Bosses](/docs/guide/contributing/adding-bosses)
+- [Adding Zones](/docs/guide/contributing/adding-zones)
+- [Audio System](/docs/guide/contributing/audio-system)
+- [Rewind System](/docs/guide/contributing/rewind-system)
 
 ## Testing Expectations
 
@@ -139,7 +139,7 @@ Use the narrowest useful verification:
   route behavior.
 
 When a trace frontier moves, regresses, or a trace sweep is used to choose the next target, update
-[`docs/TRACE_FRONTIER_LOG.md`](docs/TRACE_FRONTIER_LOG.md) in the same change.
+[`docs/TRACE_FRONTIER_LOG.md`](https://github.com/jamesj999/OpenGGF/blob/develop/docs/TRACE_FRONTIER_LOG) in the same change.
 
 ## Branches, Commits, And Documentation
 
@@ -170,13 +170,13 @@ Skills: updated|n/a
 ```
 
 A `feat`, `fix`, or `perf` commit that touches `src/main/` must either update
-[`CHANGELOG.md`](CHANGELOG.md) or justify the skip, for example:
+[`CHANGELOG.md`](https://github.com/jamesj999/OpenGGF/blob/develop/CHANGELOG) or justify the skip, for example:
 
 ```text
 Changelog: n/a: test-only helper
 ```
 
-See [Documentation And Branch Policy](docs/guide/contributing/documentation-policy.md) for the
+See [Documentation And Branch Policy](/docs/guide/contributing/documentation-policy) for the
 human-facing policy details.
 
 ## Pull Request Checklist

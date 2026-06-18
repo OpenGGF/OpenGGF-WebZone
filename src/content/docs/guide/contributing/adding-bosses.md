@@ -7,7 +7,7 @@ order: 99
 # Adding Bosses
 
 Boss fights follow the same object implementation pattern described in the
-[tutorial](tutorial-implement-object.md), but with additional complexity. This page covers
+[tutorial](/docs/guide/contributing/tutorial-implement-object), but with additional complexity. This page covers
 the boss-specific patterns.
 
 ## State Machine
@@ -214,6 +214,6 @@ Files:
 
 ## Next Steps
 
-- [Adding Zones](adding-zones.md) -- If the boss's zone is not yet supported
-- [Tutorial: Implement an Object](tutorial-implement-object.md) -- Base patterns
-- [Testing](testing.md) -- Writing boss tests
+- [Adding Zones](/docs/guide/contributing/adding-zones) -- If the boss's zone is not yet supported
+- [Tutorial: Implement an Object](/docs/guide/contributing/tutorial-implement-object) -- Base patterns
+- [Testing](/docs/guide/contributing/testing) -- Writing boss tests

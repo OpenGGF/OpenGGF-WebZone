@@ -31,7 +31,7 @@ incorrect results.
 | Sonic 3&K | `Sonic and Knuckles & Sonic 3 (W) [!].gen` | World (lock-on combined ROM) |
 
 ROM filenames can be changed in `config.yaml` if yours differ. See
-[Configuration](configuration.md) for details.
+[Configuration](/docs/guide/playing/configuration) for details.
 
 ## Install and Run
 
@@ -105,11 +105,11 @@ does not exist, defaults are used. A few settings you might want to change immed
 
 Key bindings can be written as names like `"SPACE"` and `"F9"` instead of raw numeric key codes.
 
-For the full list, see [Configuration](configuration.md) or the
-[Configuration Reference](/CONFIGURATION).
+For the full list, see [Configuration](/docs/guide/playing/configuration) or the
+[Configuration Reference](/docs/reference/configuration).
 
 ## What Next?
 
-- [Controls](controls.md) -- Learn the keyboard layout
-- [Game Status](game-status.md) -- See what works in each game
-- [Troubleshooting](troubleshooting.md) -- If something went wrong
+- [Controls](/docs/guide/playing/controls) -- Learn the keyboard layout
+- [Game Status](/docs/guide/playing/game-status) -- See what works in each game
+- [Troubleshooting](/docs/guide/playing/troubleshooting) -- If something went wrong

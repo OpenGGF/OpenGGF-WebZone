@@ -225,7 +225,7 @@ The current framework stack includes:
   paths, stable identity ids, and policy registry used to close object/player
   snapshot coverage. Default object subclass scalar capture is centrally gated so
   broad object coverage does not require repeated leaf-object edits. See
-  [Rewind System](rewind-system.md).
+  [Rewind System](/docs/guide/contributing/rewind-system).
 - `ZoneRuntimeRegistry` - typed per-zone runtime state adapters over raw event/state bytes
 - `PaletteOwnershipRegistry` - palette-write arbitration, precedence, and underwater mirroring
 - `AnimatedTileChannelGraph` - shared animated tile channels for script-driven and custom uploads
@@ -418,7 +418,7 @@ To play a sound effect from an object: `services().playSfx(SfxEnum.SOUND_NAME.id
 
 ## Next Steps
 
-- [Tutorial: Implement an Object](tutorial-implement-object.md) -- Apply this knowledge
-- [Adding Bosses](adding-bosses.md) -- Boss-specific patterns
-- [Adding Zones](adding-zones.md) -- Bringing up a new zone
-- [Audio System](audio-system.md) -- Audio details for contributors
+- [Tutorial: Implement an Object](/docs/guide/contributing/tutorial-implement-object) -- Apply this knowledge
+- [Adding Bosses](/docs/guide/contributing/adding-bosses) -- Boss-specific patterns
+- [Adding Zones](/docs/guide/contributing/adding-zones) -- Bringing up a new zone
+- [Audio System](/docs/guide/contributing/audio-system) -- Audio details for contributors

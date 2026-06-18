@@ -7,7 +7,7 @@ order: 99
 # Controls Reference
 
 All controls are keyboard-based. Key bindings can be changed in `config.yaml`
-(see [Configuration](configuration.md)) using either GLFW integer codes or
+(see [Configuration](/docs/guide/playing/configuration)) using either GLFW integer codes or
 human-readable key names such as `"SPACE"` and `"F9"`.
 
 ## Gameplay

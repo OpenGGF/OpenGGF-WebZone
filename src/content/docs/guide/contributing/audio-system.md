@@ -208,5 +208,5 @@ An off-by-one error here will play the wrong sound for every SFX call.
 
 ## Next Steps
 
-- [Architecture](architecture.md) -- Overall engine architecture
-- [Testing](testing.md) -- Audio regression testing
+- [Architecture](/docs/guide/contributing/architecture) -- Overall engine architecture
+- [Testing](/docs/guide/contributing/testing) -- Audio regression testing

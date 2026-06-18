@@ -23,7 +23,7 @@ Check that your ROM files match these revisions:
 **Missing ROM file.** If the ROM file is not found in the working directory, the engine
 will show an error. Ensure the files are in the same directory as the JAR (or the project
 root if running from source). ROM filenames can be configured in `config.yaml` -- see
-[Configuration](configuration.md).
+[Configuration](/docs/guide/playing/configuration).
 
 **Java version too old.** The engine requires Java 21 or later. Run `java -version` to
 check. If you have multiple Java installations, ensure the correct one is on your PATH.
@@ -78,9 +78,9 @@ that it does not have an implementation for. This is normal for zones or games t
 still being developed. The unimplemented object will simply not appear in the level.
 
 Check the object checklists to see if the object is planned:
-- [Sonic 2 Object Checklist](/OBJECT_CHECKLIST)
-- [Sonic 1 Object Checklist](/S1_OBJECT_CHECKLIST)
-- [Sonic 3&K Object Checklist](/S3K_OBJECT_CHECKLIST)
+- [Sonic 2 Object Checklist](https://github.com/jamesj999/OpenGGF/blob/develop/OBJECT_CHECKLIST)
+- [Sonic 1 Object Checklist](https://github.com/jamesj999/OpenGGF/blob/develop/S1_OBJECT_CHECKLIST)
+- [Sonic 3&K Object Checklist](https://github.com/jamesj999/OpenGGF/blob/develop/S3K_OBJECT_CHECKLIST)
 
 ## Special stage issues
 
@@ -96,4 +96,4 @@ S3K support is currently focused on playable route slices from Angel Island thro
 Hydrocity, with CNZ/MGZ/ICZ work in progress. Other zones may load (tiles and layout
 visible) but will likely be missing objects, events, scroll handlers, and other
 zone-specific features. This is the expected state of the project, not a bug. See
-[Game Status](game-status.md) for details.
+[Game Status](/docs/guide/playing/game-status) for details.

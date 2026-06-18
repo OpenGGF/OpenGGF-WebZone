@@ -11,7 +11,7 @@ from the BizHawk Lua recorders and the stable-retro Python twin, through the on-
 format, the Java replay harness, divergence reporting, CI wiring, and the iterative
 agent-driven accuracy loop that consumes all of it.
 
-For a shorter contributor-facing guide, see [`trace-replay.md`](trace-replay.md). This document
+For a shorter contributor-facing guide, see [`trace-replay.md`](/docs/guide/contributing/trace-replay). This document
 is the long-form companion that documents every layer.
 
 ---
@@ -88,7 +88,7 @@ The trace framework is the plumbing that does that:
   skill and/or subagent-driven execution) to diagnose and fix the first non-cascading error,
   and re-run.
 
-Trace replay tests are described by [`trace-replay.md`](trace-replay.md) as "the highest-signal
+Trace replay tests are described by [`trace-replay.md`](/docs/guide/contributing/trace-replay) as "the highest-signal
 tests in the repo for physics, object timing, spawn timing, and collision parity work."
 
 ---
@@ -353,7 +353,7 @@ In `aiz_end_to_end` mode the recorder emits:
   - `aiz2_main_gameplay` — zone=0, act=1, unlocked
   - `hcz_handoff_complete` — zone=1, act=0, unlocked
 
-A PowerShell sanity gate in [`trace-replay.md`](trace-replay.md) (section "Recording The S3K
+A PowerShell sanity gate in [`trace-replay.md`](/docs/guide/contributing/trace-replay) (section "Recording The S3K
 End-To-End Fixture") verifies the checkpoint set is complete and ordered before the fixture
 is committed.
 
@@ -1247,7 +1247,7 @@ itself cannot match pixel-perfectly through the intro." Solution:
    harness.
 3. Update the recorder (`s3k_trace_recorder.lua`'s `aiz_end_to_end` profile) to emit the
    same six checkpoints into `aux_state.jsonl`.
-4. Add a fixture sanity gate (PowerShell block in [`trace-replay.md`](trace-replay.md)) that
+4. Add a fixture sanity gate (PowerShell block in [`trace-replay.md`](/docs/guide/contributing/trace-replay)) that
    verifies no checkpoints are missing, duplicated, or out of order *before* the fixture is
    committed.
 5. Enable strict pixel comparison only outside the elastic windows; allow up to

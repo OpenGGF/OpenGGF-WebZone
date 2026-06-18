@@ -17,14 +17,14 @@ Every exercise follows the same three steps:
 3. Verify the correspondence
 
 If you are not comfortable reading 68000 assembly, start with the
-[68000 Primer](68000-primer.md) first.
+[68000 Primer](/docs/guide/cross-referencing/68000-primer) first.
 
 **A note on games:** These exercises use Sonic 2 and its disassembly (s2disasm) because
 S2 is the engine's most complete module. The *methods* apply to all three games, but the
 disassembly structure differs significantly between s1disasm, s2disasm, and skdisasm --
 different directory layouts, different label conventions, different object code
-organisation. See [How the Engine Reads ROMs](how-the-engine-reads-roms.md) for a
-comparison table, and [Per-Game Notes](per-game-notes.md) for the specifics of each game.
+organisation. See [How the Engine Reads ROMs](/docs/guide/cross-referencing/how-the-engine-reads-roms) for a
+comparison table, and [Per-Game Notes](/docs/guide/cross-referencing/per-game-notes) for the specifics of each game.
 
 ---
 
@@ -459,8 +459,8 @@ you want to find; the middle columns are where to look; the right column is how 
 
 ## Next Steps
 
-- [Architecture Overview](architecture-overview.md) -- Understand the codebase layout
-- [Tooling](tooling.md) -- Detailed RomOffsetFinder reference
-- [Per-Game Notes](per-game-notes.md) -- S1/S2/S3K specific differences
+- [Architecture Overview](/docs/guide/cross-referencing/architecture-overview) -- Understand the codebase layout
+- [Tooling](/docs/guide/cross-referencing/tooling) -- Detailed RomOffsetFinder reference
+- [Per-Game Notes](/docs/guide/cross-referencing/per-game-notes) -- S1/S2/S3K specific differences
 - [Tutorial: Implement an Object](/docs/guide/contributing/tutorial-implement-object) -- Go
   from reading to writing

@@ -604,7 +604,7 @@ Trace payload tooling:
 
 Skills:
 
-- [`trace-replay-bug-fixing`](/.claude/skills/trace-replay-bug-fixing/skill) — the
+- [`trace-replay-bug-fixing`](https://github.com/jamesj999/OpenGGF/blob/develop/.claude/skills/trace-replay-bug-fixing/skill) — the
   canonical workflow for any `*TraceReplay` test failure.
 - [`s1-trace-replay`](../../../.claude/skills/s1-trace-replay/) — Sonic 1 trace recording
   specifics.
@@ -613,8 +613,8 @@ Skills:
 
 ## Next Steps
 
-- [Testing](testing.md)
-- [Tutorial: Implement an Object](tutorial-implement-object.md)
+- [Testing](/docs/guide/contributing/testing)
+- [Tutorial: Implement an Object](/docs/guide/contributing/tutorial-implement-object)
 - [Tooling](/docs/guide/cross-referencing/tooling)
 
 ## Diagnostic note: validating hypotheses against the recorded JSONL

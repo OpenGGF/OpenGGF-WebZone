@@ -129,7 +129,7 @@ with per-zone cycle definitions. Adding a new zone's palette cycles means:
 ### Which Objects Does the Zone Need?
 
 Check the object checklists:
-- [Sonic 2 Object Checklist](/OBJECT_CHECKLIST) -- shows which objects appear
+- [Sonic 2 Object Checklist](https://github.com/jamesj999/OpenGGF/blob/develop/OBJECT_CHECKLIST) -- shows which objects appear
   in each zone and their implementation status.
 
 You can also load the zone and look for "Object registry missing id" log messages, which
@@ -147,7 +147,7 @@ Not all objects are equally important. Prioritise:
 5. **High-usage badniks** -- enemies make the zone feel alive and exercise touch/collision parity.
 6. **Scenery and decoration** (waterfalls, background animations) -- visual polish.
 
-See [Tutorial: Implement an Object](tutorial-implement-object.md) for the implementation
+See [Tutorial: Implement an Object](/docs/guide/contributing/tutorial-implement-object) for the implementation
 pattern.
 
 ## Step 5: Level Events
@@ -199,7 +199,7 @@ Water zones need:
 
 ## Step 7: Boss (If Applicable)
 
-See [Adding Bosses](adding-bosses.md) for the full boss implementation pattern. Key
+See [Adding Bosses](/docs/guide/contributing/adding-bosses) for the full boss implementation pattern. Key
 integration points with the zone:
 - The boss is spawned by the level event when the player reaches the trigger position.
 - The level event manages camera lock/unlock around the boss arena.
@@ -218,6 +218,6 @@ You do not need to complete everything at once. A reasonable progression:
 
 ## Next Steps
 
-- [Tutorial: Implement an Object](tutorial-implement-object.md) -- Object implementation pattern
-- [Adding Bosses](adding-bosses.md) -- Boss-specific patterns
-- [Testing](testing.md) -- Writing tests for zone behavior
+- [Tutorial: Implement an Object](/docs/guide/contributing/tutorial-implement-object) -- Object implementation pattern
+- [Adding Bosses](/docs/guide/contributing/adding-bosses) -- Boss-specific patterns
+- [Testing](/docs/guide/contributing/testing) -- Writing tests for zone behavior

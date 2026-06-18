@@ -15,8 +15,8 @@ The real implementation is available as an answer key at the end. After completi
 tutorial, you should be able to implement any standard game object by following the same
 pattern.
 
-**Prerequisites:** You should have completed [Dev Setup](dev-setup.md), read the
-[Architecture](architecture.md) page, and be comfortable reading 68000 assembly at the
+**Prerequisites:** You should have completed [Dev Setup](/docs/guide/contributing/dev-setup), read the
+[Architecture](/docs/guide/contributing/architecture) page, and be comfortable reading 68000 assembly at the
 level covered in the [68000 Primer](/docs/guide/cross-referencing/68000-primer).
 
 ---
@@ -604,7 +604,7 @@ void testArrowShooterDetection() {
 }
 ```
 
-See [Testing](testing.md) for more details on the test framework.
+See [Testing](/docs/guide/contributing/testing) for more details on the test framework.
 
 ---
 
@@ -666,11 +666,11 @@ When implementing a new object:
 11. **Test manually, then write automated tests.** If a source guard needs a baseline for
     existing legacy code, ratchet it down when your object migrates instead of growing it.
 
-The [Object Checklists](/docs/OBJECT_CHECKLIST) show which objects are implemented and
+The [Object Checklists](https://github.com/jamesj999/OpenGGF/blob/develop/docs/OBJECT_CHECKLIST) show which objects are implemented and
 which are still needed.
 
 ## Next Steps
 
-- [Adding Bosses](adding-bosses.md) -- Boss-specific patterns beyond simple objects
-- [Adding Zones](adding-zones.md) -- Bringing up a new zone
-- [Testing](testing.md) -- Writing thorough tests
+- [Adding Bosses](/docs/guide/contributing/adding-bosses) -- Boss-specific patterns beyond simple objects
+- [Adding Zones](/docs/guide/contributing/adding-zones) -- Bringing up a new zone
+- [Testing](/docs/guide/contributing/testing) -- Writing thorough tests

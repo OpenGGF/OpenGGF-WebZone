@@ -187,7 +187,7 @@ between games:
 | Sprite mappings | `Map_Crabmeat` | `MapUnc_Sonic` | `Map_` |
 | Palettes | `Pal_GHZ` | `Pal_EHZ` | `Pal_` |
 
-See [Per-Game Notes](per-game-notes.md) for complete details.
+See [Per-Game Notes](/docs/guide/cross-referencing/per-game-notes) for complete details.
 
 ## Tips
 

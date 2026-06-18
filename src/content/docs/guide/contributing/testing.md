@@ -33,7 +33,7 @@ each other.
 ## Rewind Tests And Benchmark
 
 The rewind system has both ordinary regression tests and an opt-in benchmark. See
-[Rewind System](rewind-system.md) for usage, limitations, and architecture details.
+[Rewind System](/docs/guide/contributing/rewind-system) for usage, limitations, and architecture details.
 
 Run the regular rewind suite:
 
@@ -361,7 +361,7 @@ mvn test -Dtest=TestS1Ghz1TraceReplay,TestS1Mz1TraceReplay
 ```
 
 For the full workflow, including recording traces and reading divergence reports, see
-[Trace Replay Testing](trace-replay.md).
+[Trace Replay Testing](/docs/guide/contributing/trace-replay).
 
 ## Visual Regression Tests
 
@@ -405,6 +405,6 @@ state management.
 
 ## Next Steps
 
-- [Dev Setup](dev-setup.md) -- Build and run configuration
-- [Tutorial: Implement an Object](tutorial-implement-object.md) -- Testing is step 7
-- [Trace Replay Testing](trace-replay.md) -- ROM-vs-engine parity workflow
+- [Dev Setup](/docs/guide/contributing/dev-setup) -- Build and run configuration
+- [Tutorial: Implement an Object](/docs/guide/contributing/tutorial-implement-object) -- Testing is step 7
+- [Trace Replay Testing](/docs/guide/contributing/trace-replay) -- ROM-vs-engine parity workflow
