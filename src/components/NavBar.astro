@@ -1,0 +1,26 @@
+---
+const links = [
+  { href: '/docs', label: 'Docs' },
+  { href: '/#download', label: 'Download' },
+  { href: '/#releases', label: 'Releases' },
+  { href: '/#news', label: 'News' },
+  { href: '/#faq', label: 'FAQ' },
+];
+---
+<nav class="nav">
+  <a class="logo" href="/">OpenGGF</a>
+  {links.map((l) => <a href={l.href}>{l.label}</a>)}
+  <span class="sp"></span>
+  <button id="nav-search" aria-label="Search docs">⌕ Search</button>
+  <a class="gh" href="https://github.com/jamesj999/OpenGGF">GitHub ★</a>
+</nav>
+<style>
+  .nav { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; gap: 16px;
+    background: var(--ogf-ink); color: #fff; padding: 11px 20px; font: 800 13px var(--font-body); }
+  .nav a { color: #cfd2ff; text-decoration: none; }
+  .logo { font-family: var(--font-display); color: var(--ogf-yellow); letter-spacing: 1px; }
+  .sp { flex: 1; }
+  #nav-search { background: #2a2c44; color: #aeb2d6; border: none; border-radius: 6px;
+    padding: 6px 12px; font: 700 12px var(--font-body); cursor: pointer; }
+  .gh { background: var(--ogf-yellow); color: var(--ogf-ink); padding: 6px 12px; border-radius: 6px; }
+</style>
