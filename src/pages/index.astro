@@ -1,5 +1,33 @@
 ---
-import '../styles/tokens.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TitleCardHero from '../components/TitleCardHero.astro';
+import ZigzagDivider from '../components/ZigzagDivider.astro';
+import SectionDownload from '../components/SectionDownload.astro';
+import SectionReleases from '../components/SectionReleases.astro';
+import SectionNews from '../components/SectionNews.astro';
+import SectionFaq from '../components/SectionFaq.astro';
+import { getReleaseData, selectHeroVersion, type Release } from '../lib/releases';
+import { loadPlatforms, matchAssets } from '../lib/platforms';
+import { getCollection } from 'astro:content';
+import cache from '../data/releases.cache.json';
+import faq from '../data/faq.yaml';
+
+// Build-time-injected per the spec (set SITE_FALLBACK_VERSION in the Pages env / .env);
+// the literal 'v0.5' is the documented default for local/dev builds only.
+const SITE_FALLBACK_VERSION = import.meta.env.SITE_FALLBACK_VERSION ?? 'v0.5';
+const { releases, source } = await getReleaseData({ token: import.meta.env.GITHUB_TOKEN, cache: cache as Release[] });
+const hasData = source !== 'none';
+const version = selectHeroVersion(releases, SITE_FALLBACK_VERSION);
+const matches = matchAssets(releases[0], loadPlatforms());
+const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date)
+  .map((p) => ({ slug: p.slug, data: p.data }));
+const faqItems = faq as { q: string; a: string }[];
 ---
-<html lang="en"><head><meta charset="utf-8"><title>OpenGGF</title></head>
-<body><h1 style="font-family:var(--font-display)">OpenGGF</h1></body></html>
+<BaseLayout title="OpenGGF — Open-Source Sonic Engine">
+  <TitleCardHero version={version} />
+  <ZigzagDivider />
+  <SectionDownload matches={matches} hasData={hasData} />
+  <SectionReleases releases={releases} />
+  <SectionNews posts={posts} />
+  <SectionFaq items={faqItems} />
+</BaseLayout>

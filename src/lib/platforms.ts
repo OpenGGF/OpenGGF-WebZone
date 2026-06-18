@@ -1,12 +1,14 @@
 import type { Release } from './releases';
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import yaml from 'js-yaml';
 
 export interface Platform { id: string; label: string; icon: string; match: string; }
 
 export function loadPlatforms(): Platform[] {
-  const p = fileURLToPath(new URL('../data/download-platforms.yaml', import.meta.url));
+  // Use process.cwd() (project root) so this works both in source and in Astro's
+  // SSG build output (where import.meta.url resolves to dist/, not src/).
+  const p = join(process.cwd(), 'src', 'data', 'download-platforms.yaml');
   return yaml.load(readFileSync(p, 'utf8')) as Platform[];
 }
 
