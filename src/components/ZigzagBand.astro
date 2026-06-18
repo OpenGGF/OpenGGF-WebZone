@@ -1,0 +1,12 @@
+---
+interface Props { side: 'left' | 'right'; color: string; width?: string; }
+const { side, color, width = '25%' } = Astro.props;
+// Gentle teeth: step in ~10% over a tall pitch (8 steps), matching the deck polygon.
+const left = 'polygon(0 0,100% 0,90% 12.5%,100% 25%,90% 37.5%,100% 50%,90% 62.5%,100% 75%,90% 87.5%,100% 100%,0 100%)';
+const right = 'polygon(10% 0,100% 0,100% 100%,10% 100%,0 87.5%,10% 75%,0 62.5%,10% 50%,0 37.5%,10% 25%,0 12.5%)';
+const clip = side === 'left' ? left : right;
+---
+<div class="band" data-side={side} style={`background:${color};width:${width};clip-path:${clip};${side === 'left' ? 'left:0' : 'right:0'};`}></div>
+<style>
+  .band { position: absolute; top: 0; bottom: 0; }
+</style>

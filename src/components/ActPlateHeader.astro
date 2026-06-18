@@ -1,0 +1,11 @@
+---
+interface Props { label: string; accent?: string; }
+const { label, accent } = Astro.props;
+---
+<h2 class="plate">{accent ? <>{label} <b>{accent}</b></> : label}</h2>
+<style>
+  .plate { display: inline-block; background: var(--ogf-ink); color: #fff;
+    font: 900 clamp(15px,2.4vw,22px)/1 var(--font-body); text-transform: uppercase;
+    letter-spacing: 1px; padding: 10px 20px; transform: skewX(-7deg); margin-bottom: 16px; }
+  .plate b { color: var(--ogf-yellow); }
+</style>
