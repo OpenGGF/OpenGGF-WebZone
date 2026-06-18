@@ -1,0 +1,28 @@
+---
+import ActPlateHeader from './ActPlateHeader.astro';
+interface Props { posts: { slug: string; data: { title: string; date: Date; summary: string } }[]; }
+const { posts } = Astro.props;
+---
+<section id="news" class="sec" data-reveal>
+  <ActPlateHeader label="News" />
+  <div class="grid">
+    {posts.slice(0, 4).map((p) => (
+      <a class="card" href={`/news/${p.slug}`}>
+        <time>{p.data.date.toISOString().slice(0, 10)}</time>
+        <h3>{p.data.title}</h3>
+        <p>{p.data.summary}</p>
+      </a>
+    ))}
+  </div>
+  <a class="all" href="/news">All news →</a>
+</section>
+<style>
+  .sec { padding: 48px 20px; max-width: 1000px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 14px; }
+  .card { display: block; background: #fff; border: 3px solid var(--ogf-ink); border-radius: 8px;
+    padding: 16px; text-decoration: none; color: var(--ogf-ink); }
+  .card time { font: 700 11px var(--font-body); color: var(--ogf-blue); }
+  .card h3 { font: 900 16px var(--font-body); margin: 6px 0; }
+  .card p { font: 400 13px/1.5 var(--font-body); color: #555; }
+  .all { display: inline-block; margin-top: 12px; font: 800 13px var(--font-body); color: var(--ogf-blue); }
+</style>

@@ -1,0 +1,17 @@
+---
+// src/pages/news/index.astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date);
+---
+<BaseLayout title="News — OpenGGF">
+  <section style="max-width:800px;margin:0 auto;padding:48px 20px">
+    <h1 style="font-family:var(--font-display)">News</h1>
+    {posts.map((p) => (
+      <article style="margin:18px 0">
+        <a href={`/news/${p.slug}`} style="font:900 18px var(--font-body);color:var(--ogf-ink);text-decoration:none">{p.data.title}</a>
+        <p style="color:#888;font:600 12px var(--font-body)">{p.data.date.toISOString().slice(0,10)}</p>
+      </article>
+    ))}
+  </section>
+</BaseLayout>

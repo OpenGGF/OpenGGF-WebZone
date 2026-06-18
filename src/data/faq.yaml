@@ -1,0 +1,7 @@
+# src/data/faq.yaml
+- q: "Do I need a ROM?"
+  a: "Yes — OpenGGF requires a legally-obtained ROM image. None are distributed with the engine."
+- q: "Which games are supported?"
+  a: "The mainline 16-bit Sonic titles: Sonic 1, Sonic 2, and Sonic 3 & Knuckles."
+- q: "Is this affiliated with Sega?"
+  a: "No. OpenGGF is an independent open-source project, not affiliated with or endorsed by Sega."

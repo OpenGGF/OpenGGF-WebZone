@@ -1,0 +1,22 @@
+---
+import ActPlateHeader from './ActPlateHeader.astro';
+interface Props { items: { q: string; a: string }[]; }
+const { items } = Astro.props;
+---
+<section id="faq" class="sec" data-reveal>
+  <ActPlateHeader label="FAQ" />
+  {items.map((it) => (
+    <details class="faq">
+      <summary>{it.q}</summary>
+      <p>{it.a}</p>
+    </details>
+  ))}
+</section>
+<style>
+  .sec { padding: 48px 20px; max-width: 800px; margin: 0 auto; background: #fff; }
+  .faq { border-bottom: 2px solid #eef0f7; padding: 12px 0; }
+  .faq summary { font: 800 14px var(--font-body); cursor: pointer; list-style: none; }
+  .faq summary::after { content: ' ＋'; color: var(--ogf-blue); }
+  .faq[open] summary::after { content: ' －'; }
+  .faq p { font: 400 13px/1.6 var(--font-body); color: #555; margin-top: 8px; }
+</style>
