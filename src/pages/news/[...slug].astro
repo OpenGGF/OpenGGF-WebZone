@@ -1,13 +1,13 @@
 ---
 // src/pages/news/[...slug].astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 export async function getStaticPaths() {
   const posts = await getCollection('news');
-  return posts.map((p) => ({ params: { slug: p.slug }, props: { post: p } }));
+  return posts.map((p) => ({ params: { slug: p.id }, props: { post: p } }));
 }
 const { post } = Astro.props;
-const { Content } = await post.render();
+const { Content } = await render(post);
 ---
 <BaseLayout title={`${post.data.title} — OpenGGF`} description={post.data.summary}>
   <article style="max-width:760px;margin:0 auto;padding:48px 20px">

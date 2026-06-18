@@ -8,6 +8,6 @@ export async function GET(context: APIContext) {
     title: 'OpenGGF News', description: 'Updates from the OpenGGF project',
     site: context.site,
     items: posts.map((p) => ({ title: p.data.title, pubDate: p.data.date,
-      description: p.data.summary, link: `/news/${p.slug}/` })),
+      description: p.data.summary, link: `/news/${p.id}/` })),
   });
 }

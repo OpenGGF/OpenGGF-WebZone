@@ -20,7 +20,7 @@ const hasData = source !== 'none';
 const version = selectHeroVersion(releases, SITE_FALLBACK_VERSION);
 const matches = matchAssets(releases[0], loadPlatforms());
 const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date)
-  .map((p) => ({ slug: p.slug, data: p.data }));
+  .map((p) => ({ slug: p.id, data: p.data }));
 const faqItems = faq as { q: string; a: string }[];
 ---
 <BaseLayout title="OpenGGF — Open-Source Sonic Engine">

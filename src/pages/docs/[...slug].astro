@@ -1,6 +1,6 @@
 ---
 import DocLayout from '../../layouts/DocLayout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const docs = await getCollection('docs');
@@ -9,16 +9,16 @@ export async function getStaticPaths() {
   for (const d of [...docs].sort((a, b) => a.data.order - b.data.order)) {
     const g = d.data.group;
     if (!map.has(g)) map.set(g, []);
-    map.get(g)!.push({ title: d.data.title, slug: d.slug });
+    map.get(g)!.push({ title: d.data.title, slug: d.id });
   }
   const groups = order.filter((g) => map.has(g)).map((name) => ({ name, items: map.get(name)! }));
-  return docs.map((d) => ({ params: { slug: d.slug }, props: { doc: d, groups } }));
+  return docs.map((d) => ({ params: { slug: d.id }, props: { doc: d, groups } }));
 }
 
 const { doc, groups } = Astro.props;
-const { Content, headings } = await doc.render();
+const { Content, headings } = await render(doc);
 ---
-<DocLayout title={doc.data.title} group={doc.data.group} current={doc.slug}
+<DocLayout title={doc.data.title} group={doc.data.group} current={doc.id}
   groups={groups} headings={headings}>
   <Content />
 </DocLayout>

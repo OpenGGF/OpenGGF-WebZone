@@ -15,7 +15,7 @@ const defs = [
 const cards = defs
   .map((d) => ({ ...d, doc: firstIn(d.group) }))
   .filter((d) => d.doc)
-  .map((d) => ({ ...d, href: `/docs/${d.doc!.slug}` }));
+  .map((d) => ({ ...d, href: `/docs/${d.doc!.id}` }));
 ---
 <BaseLayout title="Docs — OpenGGF">
   <section class="hub">
