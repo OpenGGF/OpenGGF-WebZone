@@ -1,0 +1,4 @@
+# src/data/download-platforms.yaml
+- { id: win,   label: Windows, icon: "🪟", match: "windows|win|\\.exe|\\.msi" }
+- { id: mac,   label: macOS,   icon: "🍎", match: "mac|darwin|\\.dmg|\\.pkg" }
+- { id: linux, label: Linux,   icon: "🐧", match: "linux|\\.AppImage|\\.deb|\\.tar\\.gz" }
