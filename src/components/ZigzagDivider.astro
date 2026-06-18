@@ -5,14 +5,15 @@ interface Props { color?: string; toothWidth?: string; }
 // stay constant at any viewport width; the count adapts. A solid pale band below
 // the teeth extends past the hero into the next section (no seam/gap).
 //
-// Shadow: a separate dark layer masked to the TEETH ONLY (no band) sits behind the
-// pale and is offset down/right, so each tooth casts a hard shadow into the yellow/
-// red notches — without the band producing a full-width shadow line.
+// Shadow: an INSET shadow drawn ON the pale teeth (a dark layer masked to the tooth
+// shape MINUS an offset copy of itself = a band along the inner top-left edge).
+// Inset always renders — an outset copy hides behind the solid band.
 const { color = 'var(--ogf-paper)', toothWidth = '30px' } = Astro.props;
+const TOOTH = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10 H10 V6 L5 0 L0 6 Z' fill='black'/%3E%3C/svg%3E";
 ---
 <div class="zig-wrap" style={`--tw:${toothWidth};`}>
-  <div class="zig-shadow"></div>
   <div class="zig" style={`background:${color};`}></div>
+  <div class="zig-inner"></div>
 </div>
 <style>
   .zig-wrap {
@@ -20,22 +21,25 @@ const { color = 'var(--ogf-paper)', toothWidth = '30px' } = Astro.props;
     height: 26px; margin-top: -16px; margin-bottom: -10px;
     --tw: 30px;
   }
-  .zig, .zig-shadow {
-    position: absolute; inset: 0;
-    -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
-    -webkit-mask-size: var(--tw) 100%; mask-size: var(--tw) 100%;
-  }
-  /* pale teeth + solid band (front) */
+  .zig, .zig-inner { position: absolute; inset: 0; }
+  /* pale teeth + solid band */
   .zig {
     background: var(--ogf-paper);
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10 H10 V6 L5 0 L0 6 Z' fill='black'/%3E%3C/svg%3E");
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10 H10 V6 L5 0 L0 6 Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10 H10 V6 L5 0 L0 6 Z' fill='black'/%3E%3C/svg%3E") repeat-x;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10 H10 V6 L5 0 L0 6 Z' fill='black'/%3E%3C/svg%3E") repeat-x;
+    -webkit-mask-size: var(--tw) 100%; mask-size: var(--tw) 100%;
   }
-  /* teeth-only dark shadow (behind), offset down/right */
-  .zig-shadow {
+  /* inset shadow: tooth shape minus a down-right-offset copy = a dark band on the
+     top-left inner edge of each tooth */
+  .zig-inner {
     background: rgba(14, 14, 16, 0.5);
-    transform: translate(4px, 6px);
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 6 L5 0 L10 6 Z' fill='black'/%3E%3C/svg%3E");
-            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 6 L5 0 L10 6 Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10 H10 V6 L5 0 L0 6 Z' fill='black'/%3E%3C/svg%3E") 0 0 / var(--tw) 100% repeat-x,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10 H10 V6 L5 0 L0 6 Z' fill='black'/%3E%3C/svg%3E") 3px 4px / var(--tw) 100% repeat-x;
+    -webkit-mask-composite: source-out;
+    mask:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10 H10 V6 L5 0 L0 6 Z' fill='black'/%3E%3C/svg%3E") 0 0 / var(--tw) 100% repeat-x,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' preserveAspectRatio='none'%3E%3Cpath d='M0 10 H10 V6 L5 0 L0 6 Z' fill='black'/%3E%3C/svg%3E") 3px 4px / var(--tw) 100% repeat-x;
+    mask-composite: subtract;
   }
 </style>
