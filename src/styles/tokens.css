@@ -5,6 +5,8 @@
 @font-face { font-family: 'Jacked';   src: url('/fonts/Jacked.ttf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Gaslight'; src: url('/fonts/Gaslight Regular.ttf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Andes';    src: url('/fonts/Andes.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Schola';   src: url('/fonts/texgyreschola-bold.otf') format('opentype'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Schola';   src: url('/fonts/texgyreschola-regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
 
 :root {
   --ogf-blue: #1A4FE6;
@@ -19,6 +21,7 @@
   --font-s2-title: 'Jacked', var(--font-display);
   --font-s2-text: 'Gaslight', var(--font-black);
   --font-s3k-text: 'Andes', var(--font-black);
+  --font-s1-text: 'Schola', serif;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { font-family: var(--font-body); color: var(--ogf-ink); }
