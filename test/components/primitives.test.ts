@@ -17,7 +17,7 @@ describe('primitives', () => {
     const defaultHtml = await c.renderToString(ZigzagDivider, { props: {} });
     expect(defaultHtml).toContain('clip-path');
     expect(defaultHtml).toContain('polygon');
-    expect(defaultHtml).toContain('var(--ogf-blue)');
+    expect(defaultHtml).toContain('var(--ogf-paper)');
     const customHtml = await c.renderToString(ZigzagDivider, { props: { color: '#E62B33' } });
     expect(customHtml).toContain('#E62B33');
   });

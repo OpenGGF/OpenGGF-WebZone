@@ -1,16 +1,13 @@
 ---
-interface Props { color?: string; cover?: string; }
-// A thin band of `color` (blue) sits at the hero's lower edge; `cover` (the page
-// colour) fills from the top down to a 13-tooth zig-zag, covering most of the blue
-// so only small triangles peek through the notches. 13 teeth matches the hero's
-// red pane. Raise the `82%` recede point toward 100% to hide even more blue.
-const { color = 'var(--ogf-blue)', cover = 'var(--ogf-paper)' } = Astro.props;
-const overlay = 'polygon(0% 0%,100% 0%,100% 82%,96.15% 100%,92.31% 82%,88.46% 100%,84.62% 82%,80.77% 100%,76.92% 82%,73.08% 100%,69.23% 82%,65.38% 100%,61.54% 82%,57.69% 100%,53.85% 82%,50% 100%,46.15% 82%,42.31% 100%,38.46% 82%,34.62% 100%,30.77% 82%,26.92% 100%,23.08% 82%,19.23% 100%,15.38% 82%,11.54% 100%,7.69% 82%,3.85% 100%,0% 82%)';
+interface Props { color?: string; overlap?: string; }
+// Pale page-coloured zig teeth that OVERLAY the bottom of the hero, biting UP into
+// the yellow/red. The element is pulled up by `overlap` so its peaks (clip y=0)
+// poke into the hero; the yellow/red shows in the notches; below it the page
+// continues seamlessly. 13 teeth to match the hero's red pane.
+const { color = 'var(--ogf-paper)', overlap = '26px' } = Astro.props;
+const clip = 'polygon(0% 100%,100% 100%,100% 55%,96.15% 0%,92.31% 55%,88.46% 0%,84.62% 55%,80.77% 0%,76.92% 55%,73.08% 0%,69.23% 55%,65.38% 0%,61.54% 55%,57.69% 0%,53.85% 55%,50% 0%,46.15% 55%,42.31% 0%,38.46% 55%,34.62% 0%,30.77% 55%,26.92% 0%,23.08% 55%,19.23% 0%,15.38% 55%,11.54% 0%,7.69% 55%,3.85% 0%,0% 55%)';
 ---
-<div class="zig" style={`background:${color}`}>
-  <div class="zig-cover" style={`background:${cover};clip-path:${overlay};`}></div>
-</div>
+<div class="zig" style={`background:${color};clip-path:${clip};height:${overlap};margin-top:calc(-1 * ${overlap});`}></div>
 <style>
-  .zig { position: relative; height: 18px; width: 100%; }
-  .zig-cover { position: absolute; inset: 0; }
+  .zig { position: relative; z-index: 5; width: 100%; }
 </style>
