@@ -1,0 +1,35 @@
+---
+import ActPlateHeader from './ActPlateHeader.astro';
+import type { Platform } from '../lib/platforms';
+interface Props { matches: { platform: Platform; assetUrl: string | null }[]; hasData: boolean; }
+const { matches, hasData } = Astro.props;
+const RELEASES = 'https://github.com/jamesj999/OpenGGF/releases';
+const LATEST = 'https://github.com/jamesj999/OpenGGF/releases/latest';
+---
+<section id="download" class="sec" data-reveal>
+  <ActPlateHeader label="⬇" accent="Download" />
+  {hasData ? (
+    <div class="grid">
+      {matches.map(({ platform, assetUrl }) => (
+        <a class="dl" href={assetUrl ?? RELEASES}>
+          <span class="icon">{platform.icon}</span>{platform.label}
+          {!assetUrl && <span class="note">find your build</span>}
+        </a>
+      ))}
+    </div>
+  ) : (
+    <a class="dl single" href={LATEST}>⬇ Download from GitHub →</a>
+  )}
+  <p class="req">Requires a legally-obtained ROM. JDK 21+.</p>
+</section>
+<style>
+  .sec { padding: 48px 20px; max-width: 1000px; margin: 0 auto; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 12px; }
+  .dl { display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--ogf-red);
+    color: #fff; border: 3px solid var(--ogf-ink); border-radius: 8px; padding: 18px; font: 900 14px var(--font-body);
+    text-decoration: none; }
+  .dl .icon { font-size: 24px; }
+  .dl .note { font: 700 10px var(--font-body); opacity: .85; }
+  .dl.single { background: var(--ogf-ink); }
+  .req { margin-top: 12px; font: 600 12px var(--font-body); color: #888; }
+</style>

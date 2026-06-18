@@ -1,0 +1,35 @@
+---
+import ActPlateHeader from './ActPlateHeader.astro';
+import type { Release } from '../lib/releases';
+interface Props { releases: Release[]; }
+const { releases } = Astro.props;
+const RELEASES = 'https://github.com/jamesj999/OpenGGF/releases';
+const fmt = (d: string) => (d ? new Date(d).toISOString().slice(0, 7) : '');
+---
+<section id="releases" class="sec" data-reveal>
+  <ActPlateHeader label="Releases" />
+  {releases.length ? (
+    <>
+      <ul class="list">
+        {releases.slice(0, 6).map((r) => (
+          <li class="rel">
+            <a class="tag" href={r.url}>{r.tag}{r.prerelease ? ' (pre)' : ''}</a>
+            <span class="date">{fmt(r.publishedAt)}</span>
+          </li>
+        ))}
+      </ul>
+      <a class="all" href={RELEASES}>All releases →</a>
+    </>
+  ) : (
+    <a class="linkout" href={RELEASES}>View all releases on GitHub →</a>
+  )}
+</section>
+<style>
+  .sec { padding: 48px 20px; max-width: 1000px; margin: 0 auto; background: #fff; }
+  .list { list-style: none; }
+  .rel { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #eef0f7; padding: 10px 0; }
+  .tag { background: var(--ogf-yellow); border: 2px solid var(--ogf-ink); border-radius: 4px;
+    font: 900 12px var(--font-body); padding: 3px 10px; text-decoration: none; color: var(--ogf-ink); }
+  .date { color: #888; font: 700 12px var(--font-body); }
+  .all, .linkout { display: inline-block; margin-top: 12px; font: 800 13px var(--font-body); color: var(--ogf-blue); }
+</style>
