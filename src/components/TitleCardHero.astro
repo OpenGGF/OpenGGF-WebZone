@@ -1,8 +1,8 @@
 ---
 // Sonic 2 title-card hero. Layout + slide-in choreography are modelled on the
 // engine's TitleCardManager / TitleCardElement (s2.asm Obj34_TitleCardData):
-//   blue plane drops from top, yellow bar in from right, red block+stripes from
-//   left, zone name from right, ZONE + act from left — staggered, then HOLD
+//   blue plane drops from top, yellow bar in from right, red block from left,
+//   zone name from right, tagline + version from left — staggered, then HOLD
 //   (no exit). Brand palette is used in place of the ROM's exact hues.
 interface Props {
   version: { label: string; isPre: boolean } | null;
@@ -12,7 +12,6 @@ interface Props {
 const { version, videoSrc, posterSrc = '/media/hero-poster.svg' } = Astro.props;
 ---
 <section class="tc" data-hero aria-label="OpenGGF — Open-Source Sonic Engine">
-  <!-- video sits behind the blue plane (faint texture; surfaced later if wanted) -->
   <div class="tc-video" aria-hidden="true">
     {videoSrc
       ? <video class="hero-video" muted loop playsinline preload="none" poster={posterSrc}><source src={videoSrc} type="video/mp4" /></video>
@@ -21,22 +20,20 @@ const { version, videoSrc, posterSrc = '/media/hero-poster.svg' } = Astro.props;
 
   <div class="tc-blue" data-tc="blue"></div>
   <div class="tc-yellow" data-tc="yellow"></div>
-
   <div class="tc-red" data-tc="red"></div>
 
   <h1 class="tc-zone" data-tc="zone">OpenGGF</h1>
-  <div class="tc-zonelabel" data-tc="zonelabel">ZONE</div>
+  <p class="tc-tagline" data-tc="bar">Open-Source Sonic Engine</p>
 
   {version && (
     <div class="tc-act" data-tc="act">
       <div class="tc-act-inner">
-        <span class="tc-act-label">VER</span>
+        <span class="tc-act-label">Latest Version</span>
         <span class="tc-act-num">{version.label}</span>
       </div>
     </div>
   )}
 
-  <div class="tc-baretext" data-tc="bar">Open-Source Sonic Engine</div>
   <div class="tc-ctas" data-tc="ctas">
     <a class="tc-btn p" href="/#download">⬇ Download</a>
     <a class="tc-btn s" href="/docs">Read the docs</a>
@@ -57,14 +54,13 @@ const { version, videoSrc, posterSrc = '/media/hero-poster.svg' } = Astro.props;
   /* ---- coloured planes ---- */
   .tc-blue   { position: absolute; left: 0; right: 0; top: 0; height: 68%;
                background: var(--ogf-blue); z-index: 1; }
-  /* yellow overlaps the seam by 1px so no blue hairline shows between the planes */
   .tc-yellow { position: absolute; left: 0; right: 0; top: calc(68% - 1px); bottom: 0;
                background: var(--ogf-yellow); z-index: 1; }
 
-  /* red left block; its right edge is a fine pinking sawtooth (the title-card swoosh).
-     Many small teeth (~25), shallow amplitude (6% of block width) — close to the ROM card. */
+  /* red left block; narrower + capped so the title never extends into it.
+     Right edge is a fine pinking sawtooth (~13 teeth) — the title-card swoosh. */
   .tc-red {
-    position: absolute; left: 0; top: 0; bottom: 0; width: 34%;
+    position: absolute; left: 0; top: 0; bottom: 0; width: 26%; max-width: 340px;
     background: var(--ogf-red); z-index: 2;
     clip-path: polygon(0 0,
       100% 0%, 94% 4%, 100% 8%, 94% 12%, 100% 16%, 94% 20%, 100% 24%, 94% 28%,
@@ -73,53 +69,52 @@ const { version, videoSrc, posterSrc = '/media/hero-poster.svg' } = Astro.props;
       100% 96%, 94% 100%, 0 100%);
   }
 
-  /* ---- type ---- */
+  /* content sits in the blue area, clear of the red block */
   .tc-zone {
-    position: absolute; left: 0; right: 0; top: 24%;
-    text-align: center; z-index: 5;
+    position: absolute; left: max(27%, 360px); right: 2%; top: 19%; z-index: 5;
     font-family: var(--font-display);
-    font-size: clamp(52px, 12vw, 150px); line-height: .85;
+    font-size: clamp(52px, 11vw, 140px); line-height: .85;
     color: #fff; -webkit-text-stroke: clamp(3px, 0.6vw, 7px) var(--ogf-ink);
     paint-order: stroke fill;
   }
-  .tc-zonelabel {
-    position: absolute; left: 60%; top: 46%; z-index: 5;
-    font-family: var(--font-display);
-    font-size: clamp(20px, 3.2vw, 44px); color: var(--ogf-yellow);
-    -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill;
-    letter-spacing: 2px;
+  /* tagline moved up into the blue, under the wordmark (where ZONE used to be) */
+  .tc-tagline {
+    position: absolute; left: max(27%, 360px); right: 2%; top: 48%; z-index: 5;
+    font-family: var(--font-black); font-style: italic;
+    font-size: clamp(20px, 3.4vw, 42px);
+    color: var(--ogf-yellow); -webkit-text-stroke: 1.5px var(--ogf-ink);
+    paint-order: stroke fill; transform: skewX(-6deg);
   }
-  /* act / version plate */
-  .tc-act { position: absolute; left: 78%; top: 44%; z-index: 6; }
+
+  /* version plate, top-right corner of the blue area. Sits ABOVE the wordmark
+     (which starts at 19%) so it can't collide with it at any width, and scales
+     fluidly with clamp() instead of fixed px. */
+  .tc-act { position: absolute; top: 5%; right: 4%; z-index: 6; max-width: 42vw; }
   .tc-act-inner {
     transform: rotate(-5deg);
-    background: var(--ogf-yellow); border: 4px solid var(--ogf-ink);
-    box-shadow: 5px 5px 0 rgba(14,14,16,.45);
-    text-align: center; padding-bottom: 4px;
+    background: var(--ogf-yellow); border: clamp(3px, 0.35vw, 4px) solid var(--ogf-ink);
+    box-shadow: 4px 4px 0 rgba(14,14,16,.45);
+    text-align: center; padding-bottom: 3px;
   }
-  .tc-act-label { display: block; font: 900 11px var(--font-body); letter-spacing: 1px;
-    color: var(--ogf-ink); border-bottom: 3px solid var(--ogf-ink); padding: 4px 14px; }
-  .tc-act-num { display: block; font: 700 22px var(--font-display); color: var(--ogf-ink); padding: 4px 14px; }
+  .tc-act-label { display: block; font: 900 clamp(9px, 0.95vw, 12px) var(--font-body);
+    letter-spacing: 1px; text-transform: uppercase; color: var(--ogf-ink);
+    border-bottom: 3px solid var(--ogf-ink); padding: clamp(3px,0.5vw,5px) clamp(10px,1.2vw,16px); }
+  .tc-act-num { display: block; font: 700 clamp(15px, 2.1vw, 24px) var(--font-display);
+    color: var(--ogf-ink); padding: clamp(3px,0.5vw,5px) clamp(10px,1.2vw,16px); white-space: nowrap; }
 
-  /* yellow-bar tagline */
-  .tc-baretext {
-    position: absolute; left: 38%; top: 82%; z-index: 5;
-    font-family: var(--font-black); font-style: italic;
-    font-size: clamp(15px, 2.6vw, 30px); color: var(--ogf-ink);
-    transform: skewX(-7deg); white-space: nowrap;
-  }
-  /* CTAs ride in with the yellow bar, sat at its right */
-  .tc-ctas { position: absolute; right: 4%; top: 80%; z-index: 6; display: flex; gap: 10px; }
-  .tc-btn { font: 900 clamp(11px,1.3vw,14px) var(--font-body); padding: 10px 18px;
-    border: 3px solid var(--ogf-ink); border-radius: 6px; text-decoration: none; }
+  /* big CTAs in the yellow bar, where the tagline used to sit */
+  .tc-ctas { position: absolute; left: max(27%, 360px); top: 80%; z-index: 6;
+    display: flex; gap: 16px; transform: translateY(-50%); }
+  .tc-btn { font: 900 clamp(15px, 1.8vw, 20px) var(--font-body); padding: 16px 32px;
+    border: 4px solid var(--ogf-ink); border-radius: 8px; text-decoration: none;
+    box-shadow: 4px 4px 0 rgba(14,14,16,.35); }
   .tc-btn.p { background: var(--ogf-ink); color: #fff; }
   .tc-btn.s { background: #fff; color: var(--ogf-ink); }
 
-  @media (max-width: 640px) {
-    .tc-zonelabel { left: 50%; }
-    .tc-act { left: 70%; }
-    .tc-baretext { left: 38%; font-size: 14px; }
-    .tc-ctas { top: 87%; right: 3%; flex-direction: column; }
+  @media (max-width: 700px) {
+    .tc-zone, .tc-tagline, .tc-ctas { left: 30%; right: 3%; }
+    .tc-ctas { flex-direction: column; gap: 10px; }
+    .tc-btn { padding: 12px 22px; }
   }
 </style>
 

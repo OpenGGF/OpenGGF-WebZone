@@ -1,7 +1,16 @@
 ---
-interface Props { color?: string; }
-const { color = 'var(--ogf-blue)' } = Astro.props;
-const clip = 'polygon(0 0,5% 100%,10% 0,15% 100%,20% 0,25% 100%,30% 0,35% 100%,40% 0,45% 100%,50% 0,55% 100%,60% 0,65% 100%,70% 0,75% 100%,80% 0,85% 100%,90% 0,95% 100%,100% 0)';
+interface Props { color?: string; cover?: string; }
+// A thin band of `color` (blue) sits at the hero's lower edge; `cover` (the page
+// colour) fills from the top down to a 13-tooth zig-zag, covering most of the blue
+// so only small triangles peek through the notches. 13 teeth matches the hero's
+// red pane. Raise the `82%` recede point toward 100% to hide even more blue.
+const { color = 'var(--ogf-blue)', cover = 'var(--ogf-paper)' } = Astro.props;
+const overlay = 'polygon(0% 0%,100% 0%,100% 82%,96.15% 100%,92.31% 82%,88.46% 100%,84.62% 82%,80.77% 100%,76.92% 82%,73.08% 100%,69.23% 82%,65.38% 100%,61.54% 82%,57.69% 100%,53.85% 82%,50% 100%,46.15% 82%,42.31% 100%,38.46% 82%,34.62% 100%,30.77% 82%,26.92% 100%,23.08% 82%,19.23% 100%,15.38% 82%,11.54% 100%,7.69% 82%,3.85% 100%,0% 82%)';
 ---
-<div class="zig" style={`background:${color};clip-path:${clip};`}></div>
-<style>.zig { height: 14px; width: 100%; }</style>
+<div class="zig" style={`background:${color}`}>
+  <div class="zig-cover" style={`background:${cover};clip-path:${overlay};`}></div>
+</div>
+<style>
+  .zig { position: relative; height: 18px; width: 100%; }
+  .zig-cover { position: absolute; inset: 0; }
+</style>

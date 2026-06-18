@@ -11,22 +11,27 @@ export function initAnimations(): void {
   const heroVideo = document.querySelector<HTMLVideoElement>('.hero-video');
   if (heroVideo) { heroVideo.autoplay = true; heroVideo.play().catch(() => {}); }
 
-  // Sonic 2 title-card SLIDE-IN choreography (engine TitleCardElement order/directions),
-  // staggered then held — no exit. Each `.from` animates FROM an off-screen offset TO the
-  // element's CSS resting position, so reduced-motion (early return above) shows the final
-  // composition immediately. Directions mirror the disassembly:
-  //   blue ← top · yellow/zone/bar/ctas ← right · red/ZONE/act ← left.
+  // Sonic 2 title-card SLIDE-IN, translated faithfully from the engine
+  // (TitleCardElement / s2.asm Obj34_TitleCardData): constant-velocity slides
+  // (16 px/frame, hence `ease: 'none'`), each starting after its authored delay,
+  // then held — no exit. Frame counts are mapped to seconds via SPF, which folds
+  // in a gentle on-screen slowdown so the native-320 timing reads well at web scale.
+  //   delays (frames): blue 0 · yellow 8 · red 21 · zone 27 · tagline/version 28
+  //   travel (frames): blue 10 · yellow 20 · red 8 · zone 18 · tagline/version 18
+  //   directions: blue ← top · yellow/zone ← right · red/tagline/version ← left.
   const hero = document.querySelector('[data-hero]');
   if (hero) {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.from('[data-tc="blue"]',      { yPercent: -100, duration: .45 })
-      .from('[data-tc="red"]',       { xPercent: -210, duration: .5 }, 0.06)
-      .from('[data-tc="yellow"]',    { xPercent: 130, duration: .5 }, 0.06)
-      .from('[data-tc="bar"]',       { x: () => window.innerWidth * 0.6, opacity: 0, duration: .45 }, 0.16)
-      .from('[data-tc="ctas"]',      { x: () => window.innerWidth * 0.6, opacity: 0, duration: .45 }, 0.18)
-      .from('[data-tc="zone"]',      { x: () => window.innerWidth, opacity: 0, duration: .5, ease: 'power4.out' }, 0.24)
-      .from('[data-tc="zonelabel"]', { x: -window.innerWidth * 0.6, opacity: 0, duration: .45 }, 0.32)
-      .from('[data-tc="act"]',       { x: -window.innerWidth * 0.5, opacity: 0, duration: .45 }, 0.32);
+    const SPF = 0.032; // seconds per engine-frame (1/60 × ~1.9 slowdown for web comfort)
+    const f = (frames: number) => frames * SPF;
+    const W = () => window.innerWidth;
+    const tl = gsap.timeline({ defaults: { ease: 'none' } });
+    tl.from('[data-tc="blue"]',   { yPercent: -100, duration: f(10) }, f(0))
+      .from('[data-tc="yellow"]', { xPercent: 130, duration: f(20) }, f(8))
+      .from('[data-tc="ctas"]',   { xPercent: 160, opacity: 0, duration: f(20) }, f(12))
+      .from('[data-tc="red"]',    { xPercent: -170, duration: f(8) }, f(21))
+      .from('[data-tc="zone"]',   { x: () => W(), opacity: 0, duration: f(18) }, f(27))
+      .from('[data-tc="bar"]',    { x: () => -W() * 0.5, opacity: 0, duration: f(18) }, f(28))
+      .from('[data-tc="act"]',    { x: () => -W() * 0.4, opacity: 0, duration: f(18) }, f(28));
   }
 
   gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((el) => {
