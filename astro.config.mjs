@@ -3,5 +3,8 @@ import yaml from '@rollup/plugin-yaml';
 export default defineConfig({
   site: 'https://openggf.com',
   build: { format: 'directory' },
-  vite: { plugins: [yaml()] },
+  vite: {
+    plugins: [yaml()],
+    build: { rollupOptions: { external: [/^\/pagefind\//] } },
+  },
 });
