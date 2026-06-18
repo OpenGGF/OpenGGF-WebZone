@@ -1448,7 +1448,7 @@ Expected: FAIL — script missing.
 
 ```js
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, statSync, rmSync } from 'node:fs';
-import { join, dirname, resolve } from 'node:path';
+import { join, dirname, resolve, posix } from 'node:path';
 
 function arg(name) { const i = process.argv.indexOf(name); return i > -1 ? process.argv[i + 1] : undefined; }
 const enginePath = resolve(arg('--engine-path') || process.env.OPENGGF_ENGINE_PATH || '../sonic-engine');
@@ -1487,9 +1487,12 @@ const titleFor = (txt, rel) => {
   const h1 = txt.match(/^#\s+(.+)$/m);
   return h1 ? h1[1].trim() : rel.split('/').pop().replace(/\.md$/, '');
 };
-// Rewrite ./foo.md and ../bar/baz.md links to /docs/... slugs.
+// Rewrite ./foo.md and ../bar/baz.md links to /docs/... slugs. Use POSIX path semantics:
+// node:path.resolve() is OS-specific and would emit a drive-qualified "C:/docs/..." on
+// Windows. relDir is always POSIX (slugs use forward slashes), so posix.join + normalize
+// collapses ./ and ../ correctly and yields a clean site URL on every platform.
 const rewriteLinks = (txt, relDir) => txt.replace(/\]\((\.[^)]+?)\.md(#[^)]*)?\)/g, (_, p, hash) => {
-  const target = resolve('/docs', relDir, p).replace(/\\/g, '/');
+  const target = posix.normalize(posix.join('/docs', relDir, p));
   return `](${target}${hash || ''})`;
 });
 
@@ -1500,7 +1503,7 @@ function copyMd(absSrc, relFromEngine) {
   const raw = readFileSync(absSrc, 'utf8');
   const title = titleFor(raw, slug);
   const group = groupFor('/' + slug);
-  const body = rewriteLinks(raw, dirname(slug));
+  const body = rewriteLinks(raw, posix.dirname(slug));   // slug is POSIX; keep URL math POSIX
   const fm = `---\ntitle: ${JSON.stringify(title)}\ngroup: ${JSON.stringify(group)}\norder: 99\n---\n\n`;
   mkdirSync(dirname(dest), { recursive: true });
   writeFileSync(dest, fm + body);
@@ -2084,3 +2087,7 @@ git commit -m "ci: cache-refresh workflow + deployment runbook"
 - **SectionReleases adjacent siblings** (T7): wrapped the truthy ternary branch (`<ul>` + `<a>`) in a `<>…</>` fragment — would otherwise be a build/parse failure.
 - **SITE_FALLBACK_VERSION** (T9): now `import.meta.env.SITE_FALLBACK_VERSION ?? 'v0.5'` (build-time injected per spec; literal is the documented dev default).
 - **Pagefind first-focus** (T13): `#nav-search` gets a one-shot `focus` listener in addition to `click`, matching the spec's "loads on first focus"; `openSearch` is idempotent via the `loaded` flag.
+
+### Review-round 3 fixes
+
+- **Cross-platform link rewriting** (T10): `rewriteLinks` now builds site URLs with `node:path/posix` (`posix.join('/docs', relDir, p)` + `posix.normalize`) instead of `path.resolve('/docs', …)`, which drive-qualifies to `C:/docs/...` on Windows. relDir comes from `posix.dirname(slug)`. Filesystem paths still use OS-native `join`/`dirname`. Fixes the `/docs/...` link assertion failing on this (Windows) workspace and prevents publishing broken links.
