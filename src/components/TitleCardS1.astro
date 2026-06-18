@@ -4,11 +4,21 @@
 // (mirrors the real "ACT 1"). The composition is absolutely centred so the tagline/CTAs
 // below never shift the blob. Version pruned to major.minor (hidden if unparseable).
 import { shortVersion } from '../lib/releases';
+import { PROMO_VIDEO_S1 } from '../lib/media';
 interface Props { version: { label: string; isPre: boolean } | null; }
 const { version } = Astro.props;
 const ver = shortVersion(version);
 ---
 <section class="s1" data-hero="s1" aria-label="OpenGGF — Open-Source Sonic Engine">
+  <!-- promo video behind everything; the black cover above it fades ~1s after the
+       title card finishes animating, revealing the video under the title elements -->
+  <div class="s1-video" aria-hidden="true">
+    <video class="promo-video" muted loop playsinline preload="auto">
+      <source src={PROMO_VIDEO_S1} type="video/mp4" />
+    </video>
+  </div>
+  <div class="s1-cover" aria-hidden="true"></div>
+
   <div class="s1-stage">
     <div class="s1-blob" aria-hidden="true"></div>
     <h1 class="s1-name">OpenGGF</h1>
@@ -25,13 +35,26 @@ const ver = shortVersion(version);
   .s1 { position: relative; width: 100%; height: clamp(480px, 84vh, 820px);
     overflow: hidden; background: #000; isolation: isolate; }
 
-  /* composition centred independently of the tagline/CTAs below */
-  .s1-stage { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); display: inline-block; }
+  /* promo video layer (cover-fit, behind all title elements). The clip is native
+     320x224 pixel art, so upscale it nearest-neighbour (crisp pixels, like the game). */
+  .s1-video { position: absolute; inset: 0; z-index: 0; }
+  .s1-video video { width: 100%; height: 100%; object-fit: cover; display: block;
+    image-rendering: pixelated; }
+  /* black background that fades out ~1s after the card finishes animating, revealing
+     the video. Reduced motion disables the animation, so it stays black (no video). */
+  .s1-cover { position: absolute; inset: 0; z-index: 1; background: #000;
+    animation: s1-reveal 1.2s ease-in 1.95s forwards; }
+
+  /* composition centred independently of the tagline/CTAs below; above the cover */
+  .s1-stage { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%);
+    display: inline-block; z-index: 3; }
 
   .s1-name {
     position: relative; z-index: 2; margin: 0; text-transform: uppercase; white-space: nowrap;
     font-family: var(--font-s1-text); font-weight: 700; color: #fff;
     font-size: clamp(40px, 8vw, 96px); letter-spacing: 2px; line-height: 1;
+    /* hard black border offset down-right — legibility over the revealed video */
+    text-shadow: 2px 2px 0 var(--ogf-ink);
     animation: s1-inL .5s ease-out both;
   }
   /* lavender organic blob behind the wordmark's right end, vertically centred on it */
@@ -48,9 +71,11 @@ const ver = shortVersion(version);
     animation: s1-inUp .45s ease-out .3s both;
   }
   .s1-ver span { font-family: var(--font-s1-text); font-weight: 700; color: #ff8a00;
-    font-size: clamp(15px, 1.7vw, 22px); letter-spacing: 1px; }
+    font-size: clamp(15px, 1.7vw, 22px); letter-spacing: 1px;
+    text-shadow: 2px 2px 0 var(--ogf-ink); }
   .s1-ver b { font-family: var(--font-s1-text); font-weight: 700; color: var(--ogf-yellow);
-    font-size: clamp(30px, 3.6vw, 50px); -webkit-text-stroke: 1px #0007; line-height: 1; }
+    font-size: clamp(30px, 3.6vw, 50px); line-height: 1;
+    text-shadow: 2px 2px 0 var(--ogf-ink); }
 
   .s1-tagline {
     position: absolute; left: 0; right: 0; top: 74%; z-index: 4; text-align: center;
@@ -71,6 +96,7 @@ const ver = shortVersion(version);
   @keyframes s1-inR  { from { transform: translateX(40vw); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes s1-inUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes s1-pop  { from { transform: rotate(-12deg) scale(0); opacity: 0; } to { opacity: 1; } }
+  @keyframes s1-reveal { from { opacity: 1; } to { opacity: 0; } }
 
   @media (max-width: 640px) { .s1-ctas { flex-direction: column; align-items: center; } }
 </style>

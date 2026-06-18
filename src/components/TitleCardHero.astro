@@ -6,20 +6,21 @@
 //   (no exit). Brand palette is used in place of the ROM's exact hues.
 import OpenggfWordmark from './OpenggfWordmark.astro';
 import { shortVersion } from '../lib/releases';
+import { PROMO_VIDEO_S2 } from '../lib/media';
 interface Props {
   version: { label: string; isPre: boolean } | null;
-  videoSrc?: string;
   posterSrc?: string;
 }
-const { version, videoSrc, posterSrc = '/media/hero-poster.svg' } = Astro.props;
+const { version, posterSrc = '/media/hero-poster.svg' } = Astro.props;
 const ver = shortVersion(version);
 ---
 <section class="tc" data-hero="s2" aria-label="OpenGGF — Open-Source Sonic Engine">
   <div class="tc-video" aria-hidden="true">
-    {videoSrc
-      ? <video class="hero-video" muted loop playsinline preload="none" poster={posterSrc}><source src={videoSrc} type="video/mp4" /></video>
-      : <img src={posterSrc} alt="" />}
+    <video class="promo-video" muted loop playsinline preload="auto" poster={posterSrc}><source src={PROMO_VIDEO_S2} type="video/mp4" /></video>
   </div>
+  <!-- black pane hides the video while the planes slide in; GSAP drops it the moment the
+       slide-in completes (planes then fully cover), so the blue-fade reveal exposes video -->
+  <div class="tc-black" data-tc="black" aria-hidden="true"></div>
 
   <div class="tc-blue" data-tc="blue"></div>
   <div class="tc-yellow" data-tc="yellow"></div>
@@ -45,10 +46,20 @@ const ver = shortVersion(version);
     overflow: hidden;
     isolation: isolate;
   }
-  .tc-video { position: absolute; inset: 0; z-index: 0; }
-  .tc-video video, .tc-video img { width: 100%; height: 100%; object-fit: cover; }
+  /* video occupies only the visible blue area — right edge of the red block to the right
+     of the screen, top down to the yellow band — so it's framed to where it's actually
+     seen, not stretched to the full screen. Left runs ~under the red's teeth (red width
+     min(26%,340px) minus the 18px tooth depth) so the sawtooth stays backed by video. */
+  .tc-video { position: absolute; right: 0; top: 0; height: 68%;
+    left: calc(min(26%, 340px) - 20px); z-index: 0; }
+  /* native 320x224 pixel-art clip — nearest-neighbour upscale (crisp, like the game) */
+  .tc-video video, .tc-video img { width: 100%; height: 100%; object-fit: cover;
+    image-rendering: pixelated; }
 
   /* ---- coloured planes ---- */
+  /* black pane above the video, below the planes — obscures the video during the
+     slide-in; removed by GSAP once the intro completes (see animate.ts) */
+  .tc-black  { position: absolute; inset: 0; z-index: 1; background: #000; }
   .tc-blue   { position: absolute; left: 0; right: 0; top: 0; height: 68%;
                background: var(--ogf-blue); z-index: 1; }
   .tc-yellow { position: absolute; left: 0; right: 0; top: calc(68% - 1px); bottom: 0;

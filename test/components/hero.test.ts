@@ -18,10 +18,11 @@ describe('TitleCardHero', () => {
     const html = await c.renderToString(Hero, { props: { version: { label: 'nightly', isPre: true } } });
     expect(html).not.toContain('tc-ver');
   });
-  it('renders the video WITHOUT autoplay (poster shows until JS opts in)', async () => {
+  it('renders the promo video WITHOUT autoplay (poster shows until JS opts in)', async () => {
     const c = await AstroContainer.create();
-    const html = await c.renderToString(Hero, { props: { version: null, videoSrc: '/media/hero.mp4' } });
-    expect(html).toContain('hero-video');
+    const html = await c.renderToString(Hero, { props: { version: null } });
+    expect(html).toContain('promo-video');
+    expect(html).toContain('/media/promo.mp4');
     expect(html).toContain('poster=');
     expect(html).not.toContain('autoplay');   // reduced-motion users get the poster
   });

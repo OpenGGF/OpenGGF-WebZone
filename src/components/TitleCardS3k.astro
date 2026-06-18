@@ -5,11 +5,21 @@
 // the centre (not edge-bound). No "ZONE". Version pruned to major.minor (hidden if
 // unparseable).
 import { shortVersion } from '../lib/releases';
+import { PROMO_VIDEO_S3K } from '../lib/media';
 interface Props { version: { label: string; isPre: boolean } | null; }
 const { version } = Astro.props;
 const ver = shortVersion(version);
 ---
 <section class="s3k" data-hero="s3k" aria-label="OpenGGF — Open-Source Sonic Engine">
+  <!-- promo video behind everything; the black cover above it fades ~1s after the card
+       finishes animating, revealing the video under the title elements (the rest stays) -->
+  <div class="s3k-video" aria-hidden="true">
+    <video class="promo-video" muted loop playsinline preload="auto">
+      <source src={PROMO_VIDEO_S3K} type="video/mp4" />
+    </video>
+  </div>
+  <div class="s3k-cover" aria-hidden="true"></div>
+
   <div class="s3k-group">
     <div class="s3k-banner"><span class="s3k-banner-label">OPEN<br />SOURCE</span></div>
     <div class="s3k-text">
@@ -30,8 +40,18 @@ const ver = shortVersion(version);
     overflow: hidden; background: #000; isolation: isolate;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(28px, 6vh, 64px); }
 
-  /* banner + wordmark grouped right next to each other, centred */
-  .s3k-group { display: flex; align-items: center; justify-content: center; gap: clamp(4px, 0.8vw, 12px); }
+  /* promo video layer (cover-fit, behind all title elements). Native 320x224 pixel art,
+     so upscale nearest-neighbour for crisp pixels like the game. */
+  .s3k-video { position: absolute; inset: 0; z-index: 0; }
+  .s3k-video video { width: 100%; height: 100%; object-fit: cover; display: block;
+    image-rendering: pixelated; }
+  /* black background that fades out ~1s after the card finishes animating, revealing the
+     video. Reduced motion disables the animation, so it stays black (no video). */
+  .s3k-cover { position: absolute; inset: 0; z-index: 1; background: #000;
+    animation: s3k-reveal 1.2s ease-in 1.95s forwards; }
+
+  /* banner + wordmark grouped right next to each other, centred; above the cover */
+  .s3k-group { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: clamp(4px, 0.8vw, 12px); }
 
   .s3k-banner {
     width: clamp(90px, 11vw, 150px); height: clamp(260px, 46vh, 420px);
@@ -63,11 +83,12 @@ const ver = shortVersion(version);
     -webkit-text-stroke: 1px #0006; line-height: 1; }
 
   .s3k-tagline {
+    position: relative; z-index: 2;
     font-family: var(--font-black); font-style: italic; font-size: clamp(17px, 2.6vw, 32px);
     color: #fff; -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill; text-align: center;
     animation: s3k-inR .55s ease-out .34s both;
   }
-  .s3k-ctas { display: flex; gap: 14px; justify-content: center; animation: s3k-inUp .5s ease-out .44s both; }
+  .s3k-ctas { position: relative; z-index: 2; display: flex; gap: 14px; justify-content: center; animation: s3k-inUp .5s ease-out .44s both; }
   .s3k-btn { font: 900 clamp(14px,1.7vw,19px) var(--font-body); padding: 14px 28px;
     border: 4px solid #fff; border-radius: 8px; text-decoration: none; box-shadow: 4px 4px 0 rgba(0,0,0,.5); }
   .s3k-btn.p { background: var(--ogf-yellow); color: var(--ogf-ink); border-color: var(--ogf-ink); }
@@ -76,6 +97,7 @@ const ver = shortVersion(version);
   @keyframes s3k-drop { from { transform: translateY(-120%); } to { transform: none; } }
   @keyframes s3k-inR  { from { transform: translateX(40vw); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes s3k-inUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes s3k-reveal { from { opacity: 1; } to { opacity: 0; } }
 
   @media (max-width: 640px) {
     .s3k-banner { height: clamp(180px, 30vh, 260px); }

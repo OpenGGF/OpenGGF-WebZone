@@ -9,12 +9,15 @@ export function initAnimations(): void {
   // Only the VISIBLE title-card variant is animated (the others are display:none).
   // S2 uses this GSAP timeline; S1/S3K use scoped CSS keyframes (reduced-motion safe
   // via the global tokens.css rule).
+  // Play the active title card's promo background video. Markup omits `autoplay`, so
+  // reduced-motion users (we returned above) never start it; only the visible variant
+  // has layout rects. S1/S3K reveal it via a CSS cover fade; S2 via the blue plane below.
+  document.querySelectorAll<HTMLVideoElement>('.promo-video').forEach((v) => {
+    if (v.getClientRects().length > 0) v.play().catch(() => {});
+  });
+
   const s2 = document.querySelector<HTMLElement>('[data-hero="s2"]');
   if (s2 && s2.getClientRects().length > 0) {
-    // opt the hero video into playback (markup omits `autoplay` so reduced-motion users keep the poster)
-    const heroVideo = s2.querySelector<HTMLVideoElement>('.hero-video');
-    if (heroVideo) { heroVideo.autoplay = true; heroVideo.play().catch(() => {}); }
-
     // Sonic 2 title-card SLIDE-IN, translated faithfully from the engine
     // (TitleCardElement / s2.asm Obj34_TitleCardData): constant-velocity slides
     // (16 px/frame, hence `ease: 'none'`), each starting after its authored delay,
@@ -31,7 +34,13 @@ export function initAnimations(): void {
       .from(q('[data-tc="ctas"]'),   { xPercent: 160, opacity: 0, duration: f(20) }, f(12))
       .from(q('[data-tc="red"]'),    { xPercent: -170, duration: f(8) }, f(21))
       .from(q('[data-tc="zone"]'),   { x: () => W(), opacity: 0, duration: f(18) }, f(27))
-      .from(q('[data-tc="bar"]'),    { x: () => -W() * 0.5, opacity: 0, duration: f(18) }, f(28));
+      .from(q('[data-tc="bar"]'),    { x: () => -W() * 0.5, opacity: 0, duration: f(18) }, f(28))
+      // slide-in done: the planes now fully cover the frame, so drop the black pane that
+      // was hiding the video during the assembly (invisible — planes are over it).
+      .set(q('[data-tc="black"]'),   { autoAlpha: 0 })
+      // ~1s later, fade the blue plane out to reveal the promo video behind it
+      // (the yellow band, red block, wordmark, tagline & CTAs all stay).
+      .to(q('[data-tc="blue"]'),     { opacity: 0, duration: 1.2, ease: 'power1.in' }, '+=1');
     // GSAP has set the start state (immediateRender) — now reveal (it was hidden to
     // avoid a rest-state flash on load).
     s2.style.visibility = 'visible';
