@@ -38,4 +38,31 @@ describe('sync-docs', () => {
     expect(existsSync(join(OUT, 'guide/old/removed.md'))).toBe(false);   // pruned
     expect(existsSync(join(OUT, 'guide/playing/getting-started.md'))).toBe(true); // re-synced
   });
+
+  it('rewrites bare relative links (no leading dot) to /docs/... slugs', () => {
+    execFileSync('node', ['scripts/sync-docs.mjs', '--engine-path', FIX, '--out-dir', OUT], { encoding: 'utf8' });
+    const txt = readFileSync(join(OUT, 'guide/playing/getting-started.md'), 'utf8');
+    expect(txt).toContain('/docs/guide/playing/game-status');
+    expect(txt).not.toMatch(/\]\(game-status\.md\)/);
+  });
+
+  it('rewrites dotted relative links to /docs/... slugs', () => {
+    execFileSync('node', ['scripts/sync-docs.mjs', '--engine-path', FIX, '--out-dir', OUT], { encoding: 'utf8' });
+    const txt = readFileSync(join(OUT, 'guide/playing/getting-started.md'), 'utf8');
+    expect(txt).toContain('/docs/guide/playing/controls');
+    expect(txt).not.toMatch(/\]\(\.\/controls\.md\)/);
+  });
+
+  it('rewrites non-synced targets to GitHub blob URL (not bare .md)', () => {
+    execFileSync('node', ['scripts/sync-docs.mjs', '--engine-path', FIX, '--out-dir', OUT], { encoding: 'utf8' });
+    const txt = readFileSync(join(OUT, 'guide/playing/getting-started.md'), 'utf8');
+    expect(txt).toContain('https://github.com/jamesj999/OpenGGF/blob/develop/');
+    expect(txt).not.toMatch(/\]\([^)]*\.md\)/);  // no bare .md site link remains
+  });
+
+  it('excludes PLAN.md (denylist) from output', () => {
+    execFileSync('node', ['scripts/sync-docs.mjs', '--engine-path', FIX, '--out-dir', OUT], { encoding: 'utf8' });
+    expect(existsSync(join(OUT, 'guide/PLAN.md'))).toBe(false);
+    expect(existsSync(join(OUT, 'guide/PLAN'))).toBe(false);
+  });
 });
