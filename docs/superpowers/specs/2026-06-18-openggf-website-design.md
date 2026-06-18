@@ -32,24 +32,43 @@ Java). Parity/Trace work is a supporting detail, not the pitch.
 
 ### Release-triggered rebuild (first-class requirement)
 
-Downloads/Releases/hero-version are resolved from the GitHub Releases API **at build time**, but
-Pages only rebuilds on pushes to `openggf-webzone`. So a new `jamesj999/OpenGGF` release would not
-appear until the next webzone push. To keep the "latest" promise:
+Downloads/Releases/hero-version are resolved from a committed `releases.cache.json` **at build
+time**, but Pages only rebuilds on pushes to `openggf-webzone`, and a Pages build **cannot commit
+back to the repo**. So a new `jamesj999/OpenGGF` release must (a) refresh the committed cache and
+(b) trigger a rebuild. Both happen in a **webzone-side workflow**, not in the Pages build and not
+via a bare deploy hook (a deploy hook would rebuild but never refresh the committed cache):
 
-- Create a **Cloudflare Pages Deploy Hook** for the webzone project (a unique POST URL that
-  triggers a production rebuild).
-- Add a **GitHub Action in `jamesj999/OpenGGF`** that `POST`s to the deploy hook (URL stored as a
-  repo secret). New releases trigger a webzone rebuild within minutes; the site stays static and
-  CDN-cached. Canonical trigger (note the `types` key — `on: release: [published]` is **not** valid
-  workflow YAML):
+1. **Engine side** — a GitHub Action in `jamesj999/OpenGGF` fires on published release and sends a
+   `repository_dispatch` event to `openggf-webzone` (using a fine-grained PAT stored as a secret):
 
-  ```yaml
-  on:
-    release:
-      types: [published]
-  ```
-- This is a deploy-time wiring step (the hook URL + the workflow live in the engine repo), tracked
-  as an open item, but it is a **required** part of the design, not optional polish.
+   ```yaml
+   # in jamesj999/OpenGGF
+   on:
+     release:
+       types: [published]
+   ```
+
+2. **Webzone side** — a workflow in `openggf-webzone` listens for that event (plus a manual and a
+   scheduled backstop), runs the cache-refresh script, and commits + pushes any change. The push
+   is what triggers the Cloudflare Pages production build:
+
+   ```yaml
+   # in openggf-webzone
+   on:
+     repository_dispatch: { types: [engine-release] }
+     workflow_dispatch: {}
+     schedule: [{ cron: '0 6 * * *' }]   # daily backstop in case a dispatch is missed
+   ```
+   The job runs `npm run refresh-cache` (writes `src/data/releases.cache.json` from the Releases
+   API using `GITHUB_TOKEN`), then commits with `[skip ci]`-safe logic and pushes to `main` only
+   if the file changed.
+
+3. **Pages build** — reads the now-updated committed cache (read-only). It may also attempt a live
+   API fetch as the primary source, with the committed cache as the guaranteed fallback (§7).
+
+This is the single mechanism for the "latest" promise — a **required** part of the design. The
+cross-repo wiring (PAT secret + the engine workflow + the webzone workflow) is a deploy-time step,
+tracked as an open item.
 
 ## 3. Stack & Key Libraries
 
@@ -77,6 +96,9 @@ openggf-webzone/
   package.json
   scripts/
     sync-docs.mjs          # copies allowlisted docs from ../sonic-engine
+    refresh-cache.mjs      # writes src/data/releases.cache.json from Releases API
+  .github/workflows/
+    refresh-on-release.yml # repository_dispatch + schedule: refresh cache, commit, push
   src/
     components/            # TitleCardHero, ActPlateHeader, ZigzagBand/Divider,
                            # SectionDownload/Releases/News/Faq, DocsSidebar, DocsTOC, NavBar, Footer
@@ -189,19 +211,23 @@ fetch is wrapped so any failure degrades gracefully rather than failing the buil
 The "non-fatal build" requirement is not enough on its own — implementers must hit these exact
 behaviours so a degraded fetch never ships empty or broken primary CTAs. Tiering per surface:
 
-- **Cached snapshot (preferred middle tier):** the successful fetch result is written to a
-  committed `src/data/releases.cache.json`. On fetch failure the build uses this last-known-good
-  snapshot, so the site still renders real (if slightly stale) data. A successful fetch always
-  refreshes it.
+- **Cached snapshot (the source the Pages build reads):** `src/data/releases.cache.json` is
+  committed and is **refreshed only by the webzone-side refresh workflow / local
+  `npm run refresh-cache`** (§2) — never by the Pages build, which is read-only. The build prefers
+  a live API fetch and falls back to this committed snapshot, so it always renders real (if
+  slightly stale) data.
 - **Downloads:**
   - *Live or cached data present* → per-OS buttons as designed.
   - *An OS has no matching asset* → that OS button links to the GitHub Releases **page** (not a
-    dead/hidden button) with a small "find your build" note.
-  - *No data at all (fetch failed, no cache)* → replace the per-OS row with a **single primary
-    "Download from GitHub →" button** linking to `…/releases/latest`. The CTA is never empty.
+    dead/hidden button) with a small "find your build" note:
+    `https://github.com/jamesj999/OpenGGF/releases`
+  - *No data at all (live fetch fails AND no committed cache)* → replace the per-OS row with a
+    **single primary "Download from GitHub →" button** linking to the literal URL
+    `https://github.com/jamesj999/OpenGGF/releases/latest`. The CTA is never empty.
 - **Releases:**
   - *Live or cached data present* → version list + changelog as designed.
-  - *No data at all* → render a compact "View all releases on GitHub →" link-out card instead of
+  - *No data at all* → render a compact "View all releases on GitHub →" link-out card
+    (`https://github.com/jamesj999/OpenGGF/releases`) instead of
     an empty list. No empty section, no error text.
 - **Hero version:** as already specified — latest stable tag → prerelease `(pre)` →
   `SITE_FALLBACK_VERSION` → hide plate.
@@ -233,7 +259,8 @@ Each is independently testable with a clear interface:
 - **openggf.com DNS cutover** — performed at deploy time once Pages is live.
 - **Webzone GitHub repo + Pages project** — created at deploy time (private repo, connect to
   Pages, add custom domain).
-- **Release webhook wiring** — create the Pages Deploy Hook, store its URL as a secret in
-  `jamesj999/OpenGGF`, and add the release-triggered workflow there (the `on: { release: { types:
-  [published] } }` shape from §2). Required for the "latest" promise; done at deploy time since it
-  touches the engine repo and Pages settings.
+- **Release webhook wiring** — the cross-repo refresh path from §2: (a) a fine-grained PAT secret
+  granting `repository_dispatch` to `openggf-webzone`, (b) the `on: release: [published]` workflow
+  in `jamesj999/OpenGGF` that dispatches it, and (c) the `refresh-on-release.yml` workflow in
+  webzone that refreshes the cache, commits, and pushes. Required for the "latest" promise; done at
+  deploy time since it spans both repos.
