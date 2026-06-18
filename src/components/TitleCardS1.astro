@@ -1,0 +1,88 @@
+---
+// Sonic 1 title card (faithful to the engine's Sonic1TitleCardManager): no coloured
+// bands — a horizontally-striped OVAL decoration with the zone name, "ZONE" and act
+// over blue, sliding in (engine has zoneName/ZONE/act/oval elements + a palette fade).
+// No S1 title font was provided, so Bungee stands in for the labels.
+import OpenggfWordmark from './OpenggfWordmark.astro';
+interface Props { version: { label: string; isPre: boolean } | null; }
+const { version } = Astro.props;
+---
+<section class="s1" data-hero="s1" aria-label="OpenGGF — Open-Source Sonic Engine">
+  <div class="s1-oval"></div>
+  <div class="s1-wordmark"><OpenggfWordmark /></div>
+
+  <div class="s1-row">
+    <span class="s1-zone">ZONE</span>
+    {version && <span class="s1-ver"><i>Latest Version</i><b>{version.label}</b></span>}
+  </div>
+
+  <p class="s1-tagline">Open-Source Sonic Engine</p>
+  <div class="s1-ctas">
+    <a class="s1-btn p" href="/#download">⬇ Download</a>
+    <a class="s1-btn s" href="/docs">Read the docs</a>
+  </div>
+</section>
+
+<style>
+  .s1 { position: relative; width: 100%; height: clamp(480px, 84vh, 820px);
+    overflow: hidden; background: var(--ogf-blue); isolation: isolate; }
+
+  /* striped oval behind the wordmark */
+  .s1-oval {
+    position: absolute; left: 50%; top: 34%; z-index: 1;
+    width: min(74vw, 780px); height: min(36vh, 320px);
+    border-radius: 50%; border: 6px solid var(--ogf-ink);
+    background: repeating-linear-gradient(0deg, #2f60ff 0 16px, #123aae 16px 32px);
+    box-shadow: 0 7px 0 rgba(14, 14, 16, .4);
+    animation: s1-grow .5s cubic-bezier(.2,.7,.2,1) both;
+  }
+  .s1-wordmark {
+    position: absolute; left: 0; right: 0; top: 34%; z-index: 3;
+    display: flex; justify-content: center; transform: translateY(-50%);
+    animation: s1-inR .55s ease-out .15s both;
+  }
+  .s1-wordmark :global(svg) { width: clamp(280px, 44vw, 540px); height: auto;
+    filter: drop-shadow(0 5px 0 rgba(14, 14, 16, .8)); }
+
+  .s1-row {
+    position: absolute; left: 0; right: 0; top: 62%; z-index: 3;
+    display: flex; gap: 26px; align-items: center; justify-content: center;
+    animation: s1-inL .55s ease-out .25s both;
+  }
+  .s1-zone {
+    font-family: var(--font-display); font-size: clamp(22px, 3.6vw, 46px);
+    color: var(--ogf-yellow); -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill;
+  }
+  .s1-ver { display: inline-flex; flex-direction: column; align-items: center;
+    background: var(--ogf-yellow); border: 4px solid var(--ogf-ink); transform: rotate(-3deg);
+    box-shadow: 4px 4px 0 rgba(14,14,16,.45); padding: 4px 14px; }
+  .s1-ver i { font: 900 10px var(--font-body); text-transform: uppercase; letter-spacing: 1px; color: var(--ogf-ink); font-style: normal; }
+  .s1-ver b { font: 700 18px var(--font-display); color: var(--ogf-ink); }
+
+  .s1-tagline {
+    position: absolute; left: 0; right: 0; top: 76%; z-index: 3; text-align: center;
+    font-family: var(--font-black); font-style: italic; font-size: clamp(18px, 3vw, 36px);
+    color: #fff; -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill;
+    animation: s1-inR .55s ease-out .32s both;
+  }
+  .s1-ctas {
+    position: absolute; left: 0; right: 0; top: 87%; z-index: 3;
+    display: flex; gap: 16px; justify-content: center;
+    animation: s1-inUp .5s ease-out .42s both;
+  }
+  .s1-btn { font: 900 clamp(15px,1.8vw,20px) var(--font-body); padding: 15px 30px;
+    border: 4px solid var(--ogf-ink); border-radius: 8px; text-decoration: none;
+    box-shadow: 4px 4px 0 rgba(14,14,16,.35); }
+  .s1-btn.p { background: var(--ogf-ink); color: #fff; }
+  .s1-btn.s { background: #fff; color: var(--ogf-ink); }
+
+  @keyframes s1-grow { from { transform: translate(-50%, -50%) scale(.6); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+  @keyframes s1-inR  { from { transform: translateY(-50%) translateX(70vw); opacity: 0; } to { transform: translateY(-50%); opacity: 1; } }
+  @keyframes s1-inL  { from { transform: translateX(-60vw); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes s1-inUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  @media (max-width: 640px) {
+    .s1-row { flex-direction: column; gap: 12px; }
+    .s1-ctas { flex-direction: column; align-items: center; }
+  }
+</style>

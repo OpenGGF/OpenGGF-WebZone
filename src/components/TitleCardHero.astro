@@ -12,7 +12,7 @@ interface Props {
 }
 const { version, videoSrc, posterSrc = '/media/hero-poster.svg' } = Astro.props;
 ---
-<section class="tc" data-hero aria-label="OpenGGF — Open-Source Sonic Engine">
+<section class="tc" data-hero="s2" aria-label="OpenGGF — Open-Source Sonic Engine">
   <div class="tc-video" aria-hidden="true">
     {videoSrc
       ? <video class="hero-video" muted loop playsinline preload="none" poster={posterSrc}><source src={videoSrc} type="video/mp4" /></video>

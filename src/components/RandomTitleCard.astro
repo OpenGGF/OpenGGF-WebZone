@@ -1,0 +1,31 @@
+---
+// Renders all three title-card variants (S1 / S2 / S3&K) and shows ONE, chosen at
+// random per page load. The choice is made by a tiny inline script that runs before
+// the variants paint (sets html[data-titlecard]), so there's no flash. CSS reveals
+// only the active variant. Each variant self-animates (S2 via GSAP, S1/S3K via CSS).
+import TitleCardS1 from './TitleCardS1.astro';
+import TitleCardHero from './TitleCardHero.astro'; // S2
+import TitleCardS3k from './TitleCardS3k.astro';
+interface Props { version: { label: string; isPre: boolean } | null; }
+const { version } = Astro.props;
+---
+<script is:inline>
+  // Pick before the variants below are parsed/painted → no flash.
+  document.documentElement.setAttribute(
+    'data-titlecard',
+    ['s1', 's2', 's3k'][Math.floor(Math.random() * 3)]
+  );
+</script>
+<div class="rtc">
+  <div class="rtc-v" data-variant="s1"><TitleCardS1 version={version} /></div>
+  <div class="rtc-v" data-variant="s2"><TitleCardHero version={version} /></div>
+  <div class="rtc-v" data-variant="s3k"><TitleCardS3k version={version} /></div>
+</div>
+<style is:global>
+  .rtc-v { display: none; }
+  /* default to S2 before the script sets the attribute (SSR / no-JS fallback) */
+  html:not([data-titlecard]) .rtc-v[data-variant="s2"],
+  html[data-titlecard="s1"]  .rtc-v[data-variant="s1"],
+  html[data-titlecard="s2"]  .rtc-v[data-variant="s2"],
+  html[data-titlecard="s3k"] .rtc-v[data-variant="s3k"] { display: block; }
+</style>

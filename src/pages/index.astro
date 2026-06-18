@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import TitleCardHero from '../components/TitleCardHero.astro';
+import RandomTitleCard from '../components/RandomTitleCard.astro';
 import ZigzagDivider from '../components/ZigzagDivider.astro';
 import SectionDownload from '../components/SectionDownload.astro';
 import SectionReleases from '../components/SectionReleases.astro';
@@ -24,7 +24,7 @@ const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.dat
 const faqItems = faq as { q: string; a: string }[];
 ---
 <BaseLayout title="OpenGGF — Open-Source Sonic Engine">
-  <TitleCardHero version={version} />
+  <RandomTitleCard version={version} />
   <ZigzagDivider />
   <SectionDownload matches={matches} hasData={hasData} />
   <SectionReleases releases={releases} />
