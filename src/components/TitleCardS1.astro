@@ -1,21 +1,17 @@
 ---
-// Sonic 1 title card (faithful to the engine's Sonic1TitleCardManager): no coloured
-// bands — a horizontally-striped OVAL decoration with the zone name, "ZONE" and act
-// over blue, sliding in (engine has zoneName/ZONE/act/oval elements + a palette fade).
-// No S1 title font was provided, so Bungee stands in for the labels.
-import OpenggfWordmark from './OpenggfWordmark.astro';
+// Sonic 1 title card — matched to the real thing: black background, zone name + "ZONE"
+// in a white serif (TeX Gyre Schola), a solid lavender organic blob on the right with
+// "ACT <n>" overlapping it (yellow number). Our zone name is "OpenGGF".
 interface Props { version: { label: string; isPre: boolean } | null; }
 const { version } = Astro.props;
 ---
 <section class="s1" data-hero="s1" aria-label="OpenGGF — Open-Source Sonic Engine">
-  <div class="s1-oval"></div>
-  <div class="s1-wordmark"><OpenggfWordmark /></div>
-
-  <div class="s1-row">
-    <span class="s1-zone">ZONE</span>
-    {version && <span class="s1-ver"><i>Latest Version</i><b>{version.label}</b></span>}
+  <div class="s1-stage">
+    <div class="s1-blob" aria-hidden="true"></div>
+    <h1 class="s1-name">OpenGGF</h1>
+    <div class="s1-zone">ZONE</div>
+    <div class="s1-act"><span>ACT</span><b>{version ? version.label : '1'}</b></div>
   </div>
-
   <p class="s1-tagline">Open-Source Sonic Engine</p>
   <div class="s1-ctas">
     <a class="s1-btn p" href="/#download">⬇ Download</a>
@@ -25,64 +21,57 @@ const { version } = Astro.props;
 
 <style>
   .s1 { position: relative; width: 100%; height: clamp(480px, 84vh, 820px);
-    overflow: hidden; background: var(--ogf-blue); isolation: isolate; }
+    overflow: hidden; background: #000; isolation: isolate;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(28px, 6vh, 70px); }
 
-  /* striped oval behind the wordmark */
-  .s1-oval {
-    position: absolute; left: 50%; top: 34%; z-index: 1;
-    width: min(74vw, 780px); height: min(36vh, 320px);
-    border-radius: 50%; border: 6px solid var(--ogf-ink);
-    background: repeating-linear-gradient(0deg, #2f60ff 0 16px, #123aae 16px 32px);
-    box-shadow: 0 7px 0 rgba(14, 14, 16, .4);
-    animation: s1-grow .5s cubic-bezier(.2,.7,.2,1) both;
-  }
-  .s1-wordmark {
-    position: absolute; left: 0; right: 0; top: 34%; z-index: 3;
-    display: flex; justify-content: center; transform: translateY(-50%);
-    animation: s1-inR .55s ease-out .15s both;
-  }
-  .s1-wordmark :global(svg) { width: clamp(280px, 44vw, 540px); height: auto;
-    filter: drop-shadow(0 5px 0 rgba(14, 14, 16, .8)); }
+  /* the title-card composition lives in a centred stage so name/zone/blob/act align */
+  .s1-stage { position: relative; width: min(720px, 86vw); }
 
-  .s1-row {
-    position: absolute; left: 0; right: 0; top: 62%; z-index: 3;
-    display: flex; gap: 26px; align-items: center; justify-content: center;
-    animation: s1-inL .55s ease-out .25s both;
+  .s1-name {
+    font-family: var(--font-s1-text); font-weight: 700; color: #fff;
+    font-size: clamp(40px, 8vw, 96px); letter-spacing: 2px; line-height: 1;
+    text-align: center; margin: 0;
+    animation: s1-inL .5s ease-out both;
   }
   .s1-zone {
-    font-family: var(--font-s1-text); font-weight: 700; font-size: clamp(24px, 4vw, 50px);
-    color: var(--ogf-yellow); -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill;
+    font-family: var(--font-s1-text); font-weight: 700; color: #fff;
+    font-size: clamp(30px, 6vw, 72px); letter-spacing: 6px; line-height: 1;
+    text-align: center; margin-top: .12em;
+    animation: s1-inL .5s ease-out .12s both;
   }
-  .s1-ver { display: inline-flex; flex-direction: column; align-items: center;
-    background: var(--ogf-yellow); border: 4px solid var(--ogf-ink); transform: rotate(-3deg);
-    box-shadow: 4px 4px 0 rgba(14,14,16,.45); padding: 4px 14px; }
-  .s1-ver i { font: 900 10px var(--font-body); text-transform: uppercase; letter-spacing: 1px; color: var(--ogf-ink); font-style: normal; }
-  .s1-ver b { font: 700 18px var(--font-display); color: var(--ogf-ink); }
+  /* lavender organic blob behind the act, lower-right (clear of ZONE) */
+  .s1-blob {
+    position: absolute; right: -4%; bottom: -18%; width: clamp(150px, 28%, 230px); aspect-ratio: 1.1;
+    background: #9a9ae6;
+    border-radius: 62% 38% 56% 44% / 58% 46% 54% 42%;
+    transform: rotate(-12deg); z-index: -1;
+    animation: s1-pop .45s ease-out .2s both;
+  }
+  /* ACT + version, stacked + centred over the blob so the long version doesn't hit ZONE */
+  .s1-act {
+    position: absolute; right: 1%; bottom: -6%; width: clamp(140px, 26%, 210px);
+    display: flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.05;
+    animation: s1-pop .45s ease-out .28s both;
+  }
+  .s1-act span { font-family: var(--font-s1-text); font-weight: 700; color: #fff; font-size: clamp(13px, 1.5vw, 18px); letter-spacing: 1px; }
+  .s1-act b { font-family: var(--font-s1-text); font-weight: 700; color: var(--ogf-yellow);
+    font-size: clamp(14px, 1.7vw, 22px); -webkit-text-stroke: .75px #0008; }
 
   .s1-tagline {
-    position: absolute; left: 0; right: 0; top: 76%; z-index: 3; text-align: center;
-    font-family: var(--font-black); font-style: italic; font-size: clamp(18px, 3vw, 36px);
-    color: #fff; -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill;
-    animation: s1-inR .55s ease-out .32s both;
+    font-family: var(--font-black); font-style: italic; font-size: clamp(18px, 3vw, 34px);
+    color: #fff; -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill; text-align: center;
+    animation: s1-inR .5s ease-out .34s both;
   }
-  .s1-ctas {
-    position: absolute; left: 0; right: 0; top: 87%; z-index: 3;
-    display: flex; gap: 16px; justify-content: center;
-    animation: s1-inUp .5s ease-out .42s both;
-  }
+  .s1-ctas { display: flex; gap: 16px; justify-content: center; animation: s1-inUp .5s ease-out .44s both; }
   .s1-btn { font: 900 clamp(15px,1.8vw,20px) var(--font-body); padding: 15px 30px;
-    border: 4px solid var(--ogf-ink); border-radius: 8px; text-decoration: none;
-    box-shadow: 4px 4px 0 rgba(14,14,16,.35); }
-  .s1-btn.p { background: var(--ogf-ink); color: #fff; }
-  .s1-btn.s { background: #fff; color: var(--ogf-ink); }
+    border: 4px solid #fff; border-radius: 8px; text-decoration: none; box-shadow: 4px 4px 0 rgba(0,0,0,.5); }
+  .s1-btn.p { background: var(--ogf-yellow); color: var(--ogf-ink); border-color: var(--ogf-ink); }
+  .s1-btn.s { background: #111; color: #fff; }
 
-  @keyframes s1-grow { from { transform: translate(-50%, -50%) scale(.6); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
-  @keyframes s1-inR  { from { transform: translateY(-50%) translateX(70vw); opacity: 0; } to { transform: translateY(-50%); opacity: 1; } }
-  @keyframes s1-inL  { from { transform: translateX(-60vw); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes s1-inL  { from { transform: translateX(-50vw); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes s1-inR  { from { transform: translateX(40vw); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes s1-inUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes s1-pop  { from { transform: rotate(-12deg) scale(0); opacity: 0; } to { opacity: 1; } }
 
-  @media (max-width: 640px) {
-    .s1-row { flex-direction: column; gap: 12px; }
-    .s1-ctas { flex-direction: column; align-items: center; }
-  }
+  @media (max-width: 640px) { .s1-ctas { flex-direction: column; align-items: center; } }
 </style>

@@ -1,87 +1,81 @@
 ---
-// Sonic 3 & Knuckles title card (faithful to the engine's Sonic3kTitleCardManager /
-// ObjArray_TtlCard): a red banner drops from the top, the zone name + "ZONE" + act
-// slide in from the right (16 px/frame). Held, no exit. Andes (S3 cutscene font) for
-// the text. CSS keyframes (reduced-motion-safe via the global tokens.css rule).
-import OpenggfWordmark from './OpenggfWordmark.astro';
+// Sonic 3 & Knuckles title card — matched to the real thing: black background, a tall
+// RED VERTICAL banner on the left (with a label at its base, Andes font), the zone
+// name on the right in silver Andes with a grey offset shadow, "ZONE" below, and
+// "ACT <n>" bottom-right. Our zone name is "OpenGGF".
 interface Props { version: { label: string; isPre: boolean } | null; }
 const { version } = Astro.props;
 ---
 <section class="s3k" data-hero="s3k" aria-label="OpenGGF — Open-Source Sonic Engine">
-  <div class="s3k-banner"></div>
-  <div class="s3k-wordmark"><OpenggfWordmark /></div>
+  <div class="s3k-banner"><span class="s3k-banner-label">OPEN<br />SOURCE</span></div>
 
-  <div class="s3k-row">
-    <span class="s3k-zone">ZONE</span>
-    {version && <span class="s3k-ver"><i>Latest Version</i><b>{version.label}</b></span>}
-  </div>
-
-  <p class="s3k-tagline">Open-Source Sonic Engine</p>
-  <div class="s3k-ctas">
-    <a class="s3k-btn p" href="/#download">⬇ Download</a>
-    <a class="s3k-btn s" href="/docs">Read the docs</a>
+  <div class="s3k-content">
+    <div class="s3k-name">OpenGGF</div>
+    <div class="s3k-zone">ZONE</div>
+    <div class="s3k-act"><span>ACT</span> <b>{version ? version.label : '1'}</b></div>
+    <p class="s3k-tagline">Open-Source Sonic Engine</p>
+    <div class="s3k-ctas">
+      <a class="s3k-btn p" href="/#download">⬇ Download</a>
+      <a class="s3k-btn s" href="/docs">Read the docs</a>
+    </div>
   </div>
 </section>
 
 <style>
   .s3k { position: relative; width: 100%; height: clamp(480px, 84vh, 820px);
-    overflow: hidden; background: var(--ogf-blue); isolation: isolate; }
+    overflow: hidden; background: #000; isolation: isolate; }
 
-  /* red banner drops from the top, holds across the upper-middle */
+  /* tall red vertical banner on the left */
   .s3k-banner {
-    position: absolute; left: 0; right: 0; top: 22%; height: 30%;
-    background: var(--ogf-red);
-    border-top: 5px solid var(--ogf-ink); border-bottom: 5px solid var(--ogf-ink);
-    z-index: 1; animation: s3k-drop .6s cubic-bezier(.18,.7,.2,1) both;
+    position: absolute; left: 13%; top: 0; width: 16%; height: 82%;
+    background: var(--ogf-red); border: 4px solid var(--ogf-ink); border-top: none;
+    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 14%;
+    animation: s3k-drop .55s cubic-bezier(.18,.7,.2,1) both;
   }
-  /* wordmark sits on the banner; flex-centred so the slide transform can't fight centering */
-  .s3k-wordmark {
-    position: absolute; left: 0; right: 0; top: 26%; z-index: 3;
-    display: flex; justify-content: center;
-    animation: s3k-inR .55s ease-out .15s both;
-  }
-  .s3k-wordmark :global(svg) { width: clamp(280px, 46vw, 560px); height: auto;
-    filter: drop-shadow(0 5px 0 rgba(14, 14, 16, .8)); }
+  .s3k-banner-label { font-family: var(--font-s3k-text); color: #fff; font-size: clamp(13px, 1.5vw, 20px);
+    letter-spacing: 1px; text-align: center; line-height: 1.15; }
 
-  .s3k-row {
-    position: absolute; left: 0; right: 0; top: 60%; z-index: 3;
-    display: flex; gap: 28px; align-items: center; justify-content: center;
-    animation: s3k-inR .55s ease-out .25s both;
+  /* right-aligned content column */
+  .s3k-content {
+    position: absolute; right: 6%; top: 0; bottom: 0; width: min(64%, 760px);
+    display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: clamp(6px, 1.4vh, 16px);
+    text-align: right;
+  }
+  .s3k-name {
+    font-family: var(--font-s3k-text); color: #e9e9f2; font-size: clamp(40px, 7.5vw, 104px);
+    line-height: .95; letter-spacing: 2px; text-shadow: 6px 7px 0 #4a4a55;
+    animation: s3k-inR .55s ease-out .12s both;
   }
   .s3k-zone {
-    font-family: var(--font-s3k-text); font-size: clamp(26px, 4.4vw, 56px);
-    color: var(--ogf-yellow); -webkit-text-stroke: 2px var(--ogf-ink);
-    paint-order: stroke fill; letter-spacing: 3px;
+    font-family: var(--font-s3k-text); color: #e9e9f2; font-size: clamp(30px, 5.5vw, 76px);
+    line-height: 1; letter-spacing: 6px; text-shadow: 5px 6px 0 #4a4a55;
+    animation: s3k-inR .55s ease-out .22s both;
   }
-  .s3k-ver { display: inline-flex; flex-direction: column; align-items: center;
-    background: var(--ogf-yellow); border: 4px solid var(--ogf-ink); transform: rotate(-3deg);
-    box-shadow: 4px 4px 0 rgba(14,14,16,.45); padding: 4px 14px; }
-  .s3k-ver i { font: 900 10px var(--font-body); text-transform: uppercase; letter-spacing: 1px; color: var(--ogf-ink); font-style: normal; }
-  .s3k-ver b { font: 700 18px var(--font-display); color: var(--ogf-ink); }
+  .s3k-act {
+    font-family: var(--font-s3k-text); color: #fff; font-size: clamp(16px, 2vw, 26px);
+    animation: s3k-inR .55s ease-out .3s both;
+  }
+  .s3k-act b { color: var(--ogf-yellow); -webkit-text-stroke: 1px #0006; }
 
   .s3k-tagline {
-    position: absolute; left: 0; right: 0; top: 74%; z-index: 3; text-align: center;
-    font-family: var(--font-black); font-style: italic; font-size: clamp(18px, 3vw, 36px);
+    margin-top: clamp(10px, 2vh, 22px);
+    font-family: var(--font-black); font-style: italic; font-size: clamp(17px, 2.6vw, 32px);
     color: #fff; -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill;
-    animation: s3k-inR .55s ease-out .32s both;
+    animation: s3k-inR .55s ease-out .36s both;
   }
-  .s3k-ctas {
-    position: absolute; left: 0; right: 0; top: 86%; z-index: 3;
-    display: flex; gap: 16px; justify-content: center;
-    animation: s3k-inUp .5s ease-out .42s both;
-  }
-  .s3k-btn { font: 900 clamp(15px,1.8vw,20px) var(--font-body); padding: 15px 30px;
-    border: 4px solid var(--ogf-ink); border-radius: 8px; text-decoration: none;
-    box-shadow: 4px 4px 0 rgba(14,14,16,.35); }
-  .s3k-btn.p { background: var(--ogf-ink); color: #fff; }
-  .s3k-btn.s { background: #fff; color: var(--ogf-ink); }
+  .s3k-ctas { display: flex; gap: 14px; animation: s3k-inUp .5s ease-out .46s both; }
+  .s3k-btn { font: 900 clamp(14px,1.7vw,19px) var(--font-body); padding: 14px 28px;
+    border: 4px solid #fff; border-radius: 8px; text-decoration: none; box-shadow: 4px 4px 0 rgba(0,0,0,.5); }
+  .s3k-btn.p { background: var(--ogf-yellow); color: var(--ogf-ink); border-color: var(--ogf-ink); }
+  .s3k-btn.s { background: #111; color: #fff; }
 
-  @keyframes s3k-drop { from { transform: translateY(-180%); } to { transform: none; } }
-  @keyframes s3k-inR  { from { transform: translateX(70vw); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes s3k-drop { from { transform: translateY(-120%); } to { transform: none; } }
+  @keyframes s3k-inR  { from { transform: translateX(60vw); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes s3k-inUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
 
   @media (max-width: 640px) {
-    .s3k-row { flex-direction: column; gap: 12px; }
-    .s3k-ctas { flex-direction: column; align-items: center; }
+    .s3k-banner { left: 4%; width: 22%; }
+    .s3k-content { width: 70%; }
+    .s3k-ctas { flex-direction: column; align-items: flex-end; }
   }
 </style>
