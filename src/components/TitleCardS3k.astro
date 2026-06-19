@@ -23,7 +23,7 @@ const ver = shortVersion(version);
   <div class="s3k-group">
     <div class="s3k-banner"><span class="s3k-banner-label">OPEN<br />SOURCE</span></div>
     <div class="s3k-text">
-      <div class="s3k-name">OpenGGF</div>
+      <div class="s3k-name">openggf</div>
       {ver && <div class="s3k-ver"><span>VER</span> <b>{ver}</b></div>}
     </div>
   </div>
@@ -45,8 +45,9 @@ const ver = shortVersion(version);
   .s3k-video { position: absolute; inset: 0; z-index: 0; }
   .s3k-video video { width: 100%; height: 100%; object-fit: cover; display: block;
     image-rendering: pixelated; }
-  /* black background that fades out ~1s after the card finishes animating, revealing the
-     video. Reduced motion disables the animation, so it stays black (no video). */
+  /* black background ~1s after the card finishes animating fades from opaque down to a
+     ~25% scrim — revealing the video while keeping it dimmed for legibility. Reduced
+     motion disables the animation, so it stays fully black (no video). */
   .s3k-cover { position: absolute; inset: 0; z-index: 1; background: #000;
     animation: s3k-reveal 1.2s ease-in 1.95s forwards; }
 
@@ -97,7 +98,7 @@ const ver = shortVersion(version);
   @keyframes s3k-drop { from { transform: translateY(-120%); } to { transform: none; } }
   @keyframes s3k-inR  { from { transform: translateX(40vw); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes s3k-inUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
-  @keyframes s3k-reveal { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes s3k-reveal { from { opacity: 1; } to { opacity: .25; } }
 
   @media (max-width: 640px) {
     .s3k-banner { height: clamp(180px, 30vh, 260px); }

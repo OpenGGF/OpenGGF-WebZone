@@ -40,8 +40,9 @@ const ver = shortVersion(version);
   .s1-video { position: absolute; inset: 0; z-index: 0; }
   .s1-video video { width: 100%; height: 100%; object-fit: cover; display: block;
     image-rendering: pixelated; }
-  /* black background that fades out ~1s after the card finishes animating, revealing
-     the video. Reduced motion disables the animation, so it stays black (no video). */
+  /* black background ~1s after the card finishes animating fades from opaque down to a
+     ~25% scrim — revealing the video while keeping it dimmed so the title elements stay
+     legible. Reduced motion disables the animation, so it stays fully black (no video). */
   .s1-cover { position: absolute; inset: 0; z-index: 1; background: #000;
     animation: s1-reveal 1.2s ease-in 1.95s forwards; }
 
@@ -96,7 +97,7 @@ const ver = shortVersion(version);
   @keyframes s1-inR  { from { transform: translateX(40vw); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes s1-inUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes s1-pop  { from { transform: rotate(-12deg) scale(0); opacity: 0; } to { opacity: 1; } }
-  @keyframes s1-reveal { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes s1-reveal { from { opacity: 1; } to { opacity: .25; } }
 
   @media (max-width: 640px) { .s1-ctas { flex-direction: column; align-items: center; } }
 </style>

@@ -38,9 +38,12 @@ export function initAnimations(): void {
       // slide-in done: the planes now fully cover the frame, so drop the black pane that
       // was hiding the video during the assembly (invisible — planes are over it).
       .set(q('[data-tc="black"]'),   { autoAlpha: 0 })
-      // ~1s later, fade the blue plane out to reveal the promo video behind it
-      // (the yellow band, red block, wordmark, tagline & CTAs all stay).
-      .to(q('[data-tc="blue"]'),     { opacity: 0, duration: 1.2, ease: 'power1.in' }, '+=1');
+      // ~1s later the title card disassembles like the game: the coloured planes slide
+      // off (blue up, yellow out right, red out left — retracing how they entered),
+      // revealing the full-screen video. The wordmark, version, tagline & CTAs stay.
+      .to(q('[data-tc="blue"]'),     { yPercent: -100, duration: .55, ease: 'power2.in' }, '+=1')
+      .to(q('[data-tc="yellow"]'),   { xPercent: 130,  duration: .55, ease: 'power2.in' }, '<')
+      .to(q('[data-tc="red"]'),      { xPercent: -130, duration: .55, ease: 'power2.in' }, '<');
     // GSAP has set the start state (immediateRender) — now reveal (it was hidden to
     // avoid a rest-state flash on load).
     s2.style.visibility = 'visible';

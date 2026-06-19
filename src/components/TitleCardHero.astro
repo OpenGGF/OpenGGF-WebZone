@@ -18,8 +18,11 @@ const ver = shortVersion(version);
   <div class="tc-video" aria-hidden="true">
     <video class="promo-video" muted loop playsinline preload="auto" poster={posterSrc}><source src={PROMO_VIDEO_S2} type="video/mp4" /></video>
   </div>
+  <!-- ~25% black scrim over the video, under the planes & text — dims the footage once
+       revealed so the wordmark/version/tagline stay legible -->
+  <div class="tc-scrim" aria-hidden="true"></div>
   <!-- black pane hides the video while the planes slide in; GSAP drops it the moment the
-       slide-in completes (planes then fully cover), so the blue-fade reveal exposes video -->
+       slide-in completes (planes then fully cover), so the reveal exposes the video -->
   <div class="tc-black" data-tc="black" aria-hidden="true"></div>
 
   <div class="tc-blue" data-tc="blue"></div>
@@ -46,17 +49,17 @@ const ver = shortVersion(version);
     overflow: hidden;
     isolation: isolate;
   }
-  /* video occupies only the visible blue area — right edge of the red block to the right
-     of the screen, top down to the yellow band — so it's framed to where it's actually
-     seen, not stretched to the full screen. Left runs ~under the red's teeth (red width
-     min(26%,340px) minus the 18px tooth depth) so the sawtooth stays backed by video. */
-  .tc-video { position: absolute; right: 0; top: 0; height: 68%;
-    left: calc(min(26%, 340px) - 20px); z-index: 0; }
+  /* full-screen video — revealed when the coloured planes slide away (see animate.ts),
+     leaving the wordmark, version, tagline & CTAs over the footage */
+  .tc-video { position: absolute; inset: 0; z-index: 0; }
   /* native 320x224 pixel-art clip — nearest-neighbour upscale (crisp, like the game) */
   .tc-video video, .tc-video img { width: 100%; height: 100%; object-fit: cover;
     image-rendering: pixelated; }
 
   /* ---- coloured planes ---- */
+  /* permanent dimming scrim over the video; planes (above it) hide it during the intro
+     and slide away to reveal it. Sits below the text/CTAs so only the footage is dimmed. */
+  .tc-scrim  { position: absolute; inset: 0; z-index: 1; background: rgba(0, 0, 0, .25); }
   /* black pane above the video, below the planes — obscures the video during the
      slide-in; removed by GSAP once the intro completes (see animate.ts) */
   .tc-black  { position: absolute; inset: 0; z-index: 1; background: #000; }
@@ -131,6 +134,8 @@ const ver = shortVersion(version);
 
   @media (max-width: 700px) {
     .tc-zone, .tc-tagline, .tc-ctas { left: 30%; right: 3%; }
+    /* let left+right size the wordmark so its 280px min-width can't overflow the phone */
+    .tc-zone { width: auto; }
     .tc-ctas { flex-direction: column; gap: 10px; }
     .tc-btn { padding: 12px 22px; }
   }

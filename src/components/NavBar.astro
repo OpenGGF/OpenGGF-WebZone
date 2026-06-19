@@ -40,4 +40,12 @@ const links = [
     padding: 6px 12px; font: 700 12px var(--font-body); cursor: pointer; }
   .nav a.gh { background: var(--ogf-yellow); color: var(--ogf-ink); padding: 6px 12px; border-radius: 6px; }
   .nav a.gh .fa-github { margin-right: 5px; }
+
+  /* on narrow screens the single non-wrapping row (logo + links + search + GitHub) was
+     wider than the viewport, causing a horizontal scroll. Let it wrap and drop the
+     flex spacer so the items flow onto multiple rows instead. */
+  @media (max-width: 640px) {
+    .nav { flex-wrap: wrap; gap: 10px 14px; padding: 10px 16px; }
+    .sp { display: none; }
+  }
 </style>
