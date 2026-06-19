@@ -9,7 +9,7 @@ describe('chrome', () => {
     const html = await c.renderToString(NavBar);
     for (const t of ['Docs', 'Download', 'Releases', 'News', 'FAQ', 'GitHub']) expect(html).toContain(t);
     expect(html).toContain('id="nav-search"');
-    expect(html).toContain('github.com/jamesj999/OpenGGF');
+    expect(html).toContain('github.com/OpenGGF/OpenGGF');
   });
   it('Footer carries the Sega disclaimer', async () => {
     const c = await AstroContainer.create();

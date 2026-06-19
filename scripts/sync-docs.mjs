@@ -96,7 +96,7 @@ for (const f of ALLOW_FILES) {
  * - Synced target → /docs/<slug>[hash]
  * - Non-synced target → GitHub blob URL[hash]
  */
-const GITHUB_BASE = 'https://github.com/jamesj999/OpenGGF/blob/develop/';
+const GITHUB_BASE = 'https://github.com/OpenGGF/OpenGGF/blob/develop/';
 const LINK_RE = /\]\(((?!https?:|mailto:|\/|#)[^)\s]+?)\.md(#[^)]*)?\)/g;
 
 const DIR_RE = /\]\(((?!https?:|mailto:|\/|#)[^)\s]+\/)\)/g;
@@ -115,7 +115,7 @@ function rewriteLinks(txt, repoPath) {
   });
   txt = txt.replace(DIR_RE, (_, p) => {
     const targetRepo = posix.normalize(posix.join(srcDir, p));
-    return `](https://github.com/jamesj999/OpenGGF/tree/develop/${targetRepo})`;
+    return `](https://github.com/OpenGGF/OpenGGF/tree/develop/${targetRepo})`;
   });
   return txt;
 }

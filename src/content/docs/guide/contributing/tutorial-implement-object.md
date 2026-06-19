@@ -666,7 +666,7 @@ When implementing a new object:
 11. **Test manually, then write automated tests.** If a source guard needs a baseline for
     existing legacy code, ratchet it down when your object migrates instead of growing it.
 
-The [Object Checklists](https://github.com/jamesj999/OpenGGF/blob/develop/docs/OBJECT_CHECKLIST) show which objects are implemented and
+The [Object Checklists](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/OBJECT_CHECKLIST) show which objects are implemented and
 which are still needed.
 
 ## Next Steps

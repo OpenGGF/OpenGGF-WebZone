@@ -56,7 +56,7 @@ describe('sync-docs', () => {
   it('rewrites non-synced targets to GitHub blob URL (not bare .md)', () => {
     execFileSync('node', ['scripts/sync-docs.mjs', '--engine-path', FIX, '--out-dir', OUT], { encoding: 'utf8' });
     const txt = readFileSync(join(OUT, 'guide/playing/getting-started.md'), 'utf8');
-    expect(txt).toContain('https://github.com/jamesj999/OpenGGF/blob/develop/');
+    expect(txt).toContain('https://github.com/OpenGGF/OpenGGF/blob/develop/');
     expect(txt).not.toMatch(/\]\([^)]*\.md\)/);  // no bare .md site link remains
   });
 
@@ -69,7 +69,7 @@ describe('sync-docs', () => {
   it('rewrites relative directory links (trailing /) to a GitHub tree URL', () => {
     execFileSync('node', ['scripts/sync-docs.mjs', '--engine-path', FIX, '--out-dir', OUT], { encoding: 'utf8' });
     const txt = readFileSync(join(OUT, 'guide/playing/dir-link.md'), 'utf8');
-    expect(txt).toContain('https://github.com/jamesj999/OpenGGF/tree/develop/');
+    expect(txt).toContain('https://github.com/OpenGGF/OpenGGF/tree/develop/');
     expect(txt).not.toContain('](sub/)');
   });
 });

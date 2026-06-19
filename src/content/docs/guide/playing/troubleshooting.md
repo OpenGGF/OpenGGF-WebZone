@@ -78,9 +78,9 @@ that it does not have an implementation for. This is normal for zones or games t
 still being developed. The unimplemented object will simply not appear in the level.
 
 Check the object checklists to see if the object is planned:
-- [Sonic 2 Object Checklist](https://github.com/jamesj999/OpenGGF/blob/develop/OBJECT_CHECKLIST)
-- [Sonic 1 Object Checklist](https://github.com/jamesj999/OpenGGF/blob/develop/S1_OBJECT_CHECKLIST)
-- [Sonic 3&K Object Checklist](https://github.com/jamesj999/OpenGGF/blob/develop/S3K_OBJECT_CHECKLIST)
+- [Sonic 2 Object Checklist](https://github.com/OpenGGF/OpenGGF/blob/develop/OBJECT_CHECKLIST)
+- [Sonic 1 Object Checklist](https://github.com/OpenGGF/OpenGGF/blob/develop/S1_OBJECT_CHECKLIST)
+- [Sonic 3&K Object Checklist](https://github.com/OpenGGF/OpenGGF/blob/develop/S3K_OBJECT_CHECKLIST)
 
 ## Special stage issues
 

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { selectHeroVersion, getReleaseData, type Release } from '../../src/lib/releases';
 
 const mk = (tag: string, pre = false): Release => ({
-  tag, name: tag, url: `https://github.com/jamesj999/OpenGGF/releases/tag/${tag}`,
+  tag, name: tag, url: `https://github.com/OpenGGF/OpenGGF/releases/tag/${tag}`,
   prerelease: pre, publishedAt: '2026-06-01T00:00:00Z', body: '', assets: [],
 });
 

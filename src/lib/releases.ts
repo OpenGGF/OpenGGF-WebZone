@@ -2,7 +2,7 @@ export interface Release {
   tag: string; name: string; url: string; prerelease: boolean;
   publishedAt: string; body: string; assets: { name: string; url: string }[];
 }
-const API = 'https://api.github.com/repos/jamesj999/OpenGGF/releases?per_page=20';
+const API = 'https://api.github.com/repos/OpenGGF/OpenGGF/releases?per_page=20';
 
 function normalize(raw: any): Release {
   return {

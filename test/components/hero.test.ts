@@ -22,7 +22,7 @@ describe('TitleCardHero', () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Hero, { props: { version: null } });
     expect(html).toContain('promo-video');
-    expect(html).toContain('/media/promo.mp4');
+    expect(html).toContain('/media/promo-s2.mp4');
     expect(html).toContain('poster=');
     expect(html).not.toContain('autoplay');   // reduced-motion users get the poster
   });

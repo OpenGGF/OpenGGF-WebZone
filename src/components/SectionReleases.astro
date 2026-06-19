@@ -3,7 +3,7 @@ import ActPlateHeader from './ActPlateHeader.astro';
 import type { Release } from '../lib/releases';
 interface Props { releases: Release[]; }
 const { releases } = Astro.props;
-const RELEASES = 'https://github.com/jamesj999/OpenGGF/releases';
+const RELEASES = 'https://github.com/OpenGGF/OpenGGF/releases';
 const fmt = (d: string) => (d ? new Date(d).toISOString().slice(0, 7) : '');
 ---
 <section id="releases" class="sec" data-reveal>

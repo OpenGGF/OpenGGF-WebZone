@@ -57,11 +57,11 @@ You want to add objects, bosses, zones, or engine improvements.
 
 These documents live at the repository root and complement this guide:
 
-- [README](https://github.com/jamesj999/OpenGGF/blob/develop/README) -- Project overview and FAQ
-- [CHANGELOG](https://github.com/jamesj999/OpenGGF/blob/develop/CHANGELOG) -- Detailed release history
+- [README](https://github.com/OpenGGF/OpenGGF/blob/develop/README) -- Project overview and FAQ
+- [CHANGELOG](https://github.com/OpenGGF/OpenGGF/blob/develop/CHANGELOG) -- Detailed release history
 - [ROADMAP](/docs/reference/roadmap) -- Development priorities
 - [CONFIGURATION](/docs/reference/configuration) -- Full configuration reference (all keys)
 - [CREDITS](/docs/reference/credits) -- Community resources this project builds on
-- [OBJECT_CHECKLIST](https://github.com/jamesj999/OpenGGF/blob/develop/OBJECT_CHECKLIST) -- Sonic 2 object implementation status
-- [S1_OBJECT_CHECKLIST](https://github.com/jamesj999/OpenGGF/blob/develop/S1_OBJECT_CHECKLIST) -- Sonic 1 object implementation status
-- [S3K_OBJECT_CHECKLIST](https://github.com/jamesj999/OpenGGF/blob/develop/S3K_OBJECT_CHECKLIST) -- Sonic 3&K object implementation status
+- [OBJECT_CHECKLIST](https://github.com/OpenGGF/OpenGGF/blob/develop/OBJECT_CHECKLIST) -- Sonic 2 object implementation status
+- [S1_OBJECT_CHECKLIST](https://github.com/OpenGGF/OpenGGF/blob/develop/S1_OBJECT_CHECKLIST) -- Sonic 1 object implementation status
+- [S3K_OBJECT_CHECKLIST](https://github.com/OpenGGF/OpenGGF/blob/develop/S3K_OBJECT_CHECKLIST) -- Sonic 3&K object implementation status

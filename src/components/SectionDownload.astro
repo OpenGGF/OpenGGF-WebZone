@@ -3,8 +3,8 @@ import ActPlateHeader from './ActPlateHeader.astro';
 import type { Platform } from '../lib/platforms';
 interface Props { matches: { platform: Platform; assetUrl: string | null }[]; hasData: boolean; }
 const { matches, hasData } = Astro.props;
-const RELEASES = 'https://github.com/jamesj999/OpenGGF/releases';
-const LATEST = 'https://github.com/jamesj999/OpenGGF/releases/latest';
+const RELEASES = 'https://github.com/OpenGGF/OpenGGF/releases';
+const LATEST = 'https://github.com/OpenGGF/OpenGGF/releases/latest';
 ---
 <section id="download" class="sec" data-reveal>
   <ActPlateHeader label="⬇" accent="Download" />

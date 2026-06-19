@@ -129,7 +129,7 @@ with per-zone cycle definitions. Adding a new zone's palette cycles means:
 ### Which Objects Does the Zone Need?
 
 Check the object checklists:
-- [Sonic 2 Object Checklist](https://github.com/jamesj999/OpenGGF/blob/develop/OBJECT_CHECKLIST) -- shows which objects appear
+- [Sonic 2 Object Checklist](https://github.com/OpenGGF/OpenGGF/blob/develop/OBJECT_CHECKLIST) -- shows which objects appear
   in each zone and their implementation status.
 
 You can also load the zone and look for "Object registry missing id" log messages, which
