@@ -14,6 +14,8 @@ describe('chrome', () => {
   it('Footer carries the Sega disclaimer', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Footer);
-    expect(html).toContain('not affiliated with or endorsed by Sega');
+    expect(html).toContain('community-made fan project');
+    expect(html).toContain('not affiliated with');
+    expect(html).toContain('endorsed by Sega');
   });
 });
