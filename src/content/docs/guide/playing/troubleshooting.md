@@ -12,13 +12,13 @@ order: 99
 different revision (e.g., Sonic 2 REV00 instead of REV01) will cause incorrect ROM address
 lookups, which can result in crashes, garbled graphics, or a black screen.
 
-Check that your ROM files match these revisions:
+Check that your ROM files match these revisions and hashes:
 
-| Game | Required Revision |
-|------|-------------------|
-| Sonic 1 | World, REV01 |
-| Sonic 2 | World, REV01 |
-| Sonic 3&K | World, lock-on combined |
+| Game | Required ROM | CRC32 | SHA-1 |
+|------|--------------|-------|-------|
+| Sonic 1 | World REV01 | `AFE05EEE` | `69E102855D4389C3FD1A8F3DC7D193F8EEE5FE5B` |
+| Sonic 2 | World REV01 | `7B905383` | `8BCA5DCEF1AF3E00098666FD892DC1C2A76333F9` |
+| Sonic 3&K | Lock-on combined | `63522553` | `CFBF98C36C776677290A872547AC47C53D2761D6` |
 
 **Missing ROM file.** If the ROM file is not found in the working directory, the engine
 will show an error. Ensure the files are in the same directory as the JAR (or the project

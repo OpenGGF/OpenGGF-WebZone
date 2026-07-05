@@ -148,9 +148,9 @@ Paths are relative to the working directory (where the JAR is launched).
 | Key | YAML path | Type | Default | Description |
 |-----|-----------|------|---------|-------------|
 | `DEFAULT_ROM` | `roms.default` | string | `"s2"` | Which game to boot: `"s1"`, `"s2"`, or `"s3k"`. Selects the corresponding ROM key below. |
-| `SONIC_1_ROM` | `roms.sonic1` | string | `"Sonic The Hedgehog (W) (REV01) [!].gen"` | Filename of the Sonic 1 ROM. |
-| `SONIC_2_ROM` | `roms.sonic2` | string | `"Sonic The Hedgehog 2 (W) (REV01) [!].gen"` | Filename of the Sonic 2 ROM. |
-| `SONIC_3K_ROM` | `roms.sonic3k` | string | `"Sonic and Knuckles & Sonic 3 (W) [!].gen"` | Filename of the Sonic 3&K (locked-on) ROM. |
+| `SONIC_1_ROM` | `roms.sonic1` | string | `"s1.gen"` | Filename of the Sonic 1 ROM. |
+| `SONIC_2_ROM` | `roms.sonic2` | string | `"s2.gen"` | Filename of the Sonic 2 ROM. |
+| `SONIC_3K_ROM` | `roms.sonic3k` | string | `"s3k.gen"` | Filename of the Sonic 3&K (locked-on) ROM. |
 
 ---
 
@@ -503,9 +503,9 @@ characters:
 
 # ── ROMs ──
 roms:
-  sonic1: "Sonic The Hedgehog (W) (REV01) [!].gen"   # Filename of the Sonic 1 ROM
-  sonic2: "Sonic The Hedgehog 2 (W) (REV01) [!].gen"   # Filename of the Sonic 2 ROM
-  sonic3k: "Sonic and Knuckles & Sonic 3 (W) [!].gen"   # Filename of the Sonic 3&K ROM
+  sonic1: "s1.gen"   # Filename of the Sonic 1 ROM
+  sonic2: "s2.gen"   # Filename of the Sonic 2 ROM
+  sonic3k: "s3k.gen"   # Filename of the Sonic 3&K ROM
   default: "s2"   # Which game to load by default
 
 # ── Startup ──

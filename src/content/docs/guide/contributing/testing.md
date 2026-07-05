@@ -206,13 +206,13 @@ specify paths via system properties or environment variables:
 
 ```bash
 # System properties
-mvn test -Dsonic1.rom.path="path/to/sonic1.gen"
-mvn test -Dsonic2.rom.path="path/to/sonic2.gen"
-mvn test -Ds3k.rom.path="Sonic and Knuckles & Sonic 3 (W) [!].gen"
+mvn test -Dsonic1.rom.path="path/to/s1.gen"
+mvn test -Dsonic2.rom.path="path/to/s2.gen"
+mvn test -Ds3k.rom.path="s3k.gen"
 
 # Environment variables
-export SONIC_1_ROM_PATH="path/to/sonic1.gen"
-export SONIC_2_ROM_PATH="path/to/sonic2.gen"
+export SONIC_1_ROM_PATH="path/to/s1.gen"
+export SONIC_2_ROM_PATH="path/to/s2.gen"
 export SONIC_3K_ROM_PATH="path/to/s3k.gen"
 ```
 

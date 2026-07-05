@@ -21,14 +21,14 @@ This page gets you from zero to playing in under five minutes.
 
 ### Expected ROM Files
 
-The engine is verified against these specific ROM revisions. Other revisions may produce
-incorrect results.
+The engine is verified against these specific ROM revisions. Check the file hashes rather
+than relying on ROM naming conventions; other revisions may produce incorrect results.
 
-| Game | Expected Filename | Revision |
-|------|-------------------|----------|
-| Sonic 1 | `Sonic The Hedgehog (W) (REV01) [!].gen` | World, Revision 01 |
-| Sonic 2 | `Sonic The Hedgehog 2 (W) (REV01) [!].gen` | World, Revision 01 |
-| Sonic 3&K | `Sonic and Knuckles & Sonic 3 (W) [!].gen` | World (lock-on combined ROM) |
+| Game | Default filename | Required ROM | CRC32 | SHA-1 |
+|------|------------------|--------------|-------|-------|
+| Sonic 1 | `s1.gen` | World REV01 | `AFE05EEE` | `69E102855D4389C3FD1A8F3DC7D193F8EEE5FE5B` |
+| Sonic 2 | `s2.gen` | World REV01 | `7B905383` | `8BCA5DCEF1AF3E00098666FD892DC1C2A76333F9` |
+| Sonic 3&K | `s3k.gen` | Lock-on combined | `63522553` | `CFBF98C36C776677290A872547AC47C53D2761D6` |
 
 ROM filenames can be changed in `config.yaml` if yours differ. See
 [Configuration](/docs/guide/playing/configuration) for details.

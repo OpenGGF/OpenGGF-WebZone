@@ -604,7 +604,7 @@ wsl -d Ubuntu-24.04 -- bash -c 'python3 -m venv ~/retro-env'
 wsl -d Ubuntu-24.04 -- bash -c 'source ~/retro-env/bin/activate && pip install stable-retro numpy'
 
 # Copy ROM to WSL-local path (avoid slow /mnt/ I/O)
-wsl -d Ubuntu-24.04 -- bash -c 'mkdir -p /tmp/roms && cp "/mnt/c/.../Sonic The Hedgehog (W) (REV01) [!].gen" /tmp/roms/'
+wsl -d Ubuntu-24.04 -- bash -c 'mkdir -p /tmp/roms && cp "/mnt/c/.../s1.gen" /tmp/roms/'
 
 # Import ROM
 wsl -d Ubuntu-24.04 -- bash -c 'cd /home && source ~/retro-env/bin/activate && PYTHONPATH="" python3 -m stable_retro.import /tmp/roms'
@@ -615,7 +615,13 @@ installed package, so **always `cd /home`** and **always set `PYTHONPATH=""`** b
 retro scripts inside WSL. All subsequent `python3` commands must be wrapped in
 `wsl -d Ubuntu-24.04 -- bash -c 'cd /home && source ~/retro-env/bin/activate && PYTHONPATH="" python3 -u ...'`.
 
-ROM SHA-1 must be `69e102855d4389c3fd1a8f3dc7d193f8eee5fe5b` (Sonic 1 REV01 World).
+Verify imported ROMs by revision and hash, not by GoodGen-style names:
+
+| Game | Required ROM | CRC32 | SHA-1 |
+| --- | --- | --- | --- |
+| Sonic 1 | World REV01 | `AFE05EEE` | `69E102855D4389C3FD1A8F3DC7D193F8EEE5FE5B` |
+| Sonic 2 | World REV01 | `7B905383` | `8BCA5DCEF1AF3E00098666FD892DC1C2A76333F9` |
+| Sonic 3&K | Lock-on combined | `63522553` | `CFBF98C36C776677290A872547AC47C53D2761D6` |
 
 ---
 
