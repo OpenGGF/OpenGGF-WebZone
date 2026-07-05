@@ -7,7 +7,7 @@ describe('TitleCardHero', () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Hero, { props: { version: { label: 'v0.5.20260411', isPre: false } } });
     expect(html).toContain('OpenGGF');                       // zone name (wordmark)
-    expect(html).toContain('Open-Source Sonic Engine');      // tagline
+    expect(html).toContain('Fan-Made Open-Source Sonic Engine'); // tagline
     expect(html).toContain('data-tc="red"');                 // red left block (toothed swoosh)
     expect(html).toContain('tc-ver');                        // version below the wordmark
     expect(html).toContain('>0.5<');                         // pruned to major.minor (v stripped)

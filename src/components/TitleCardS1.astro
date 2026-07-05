@@ -9,7 +9,7 @@ interface Props { version: { label: string; isPre: boolean } | null; }
 const { version } = Astro.props;
 const ver = shortVersion(version);
 ---
-<section class="s1" data-hero="s1" aria-label="OpenGGF — Open-Source Sonic Engine">
+<section class="s1" data-hero="s1" aria-label="OpenGGF — Fan-Made Open-Source Sonic Engine">
   <!-- promo video behind everything; the black cover above it fades ~1s after the
        title card finishes animating, revealing the video under the title elements -->
   <div class="s1-video" aria-hidden="true">
@@ -24,7 +24,7 @@ const ver = shortVersion(version);
     <h1 class="s1-name">OpenGGF</h1>
     {ver && <div class="s1-ver"><span>VER</span><b>{ver}</b></div>}
   </div>
-  <p class="s1-tagline">Open-Source Sonic Engine</p>
+  <p class="s1-tagline">Fan-Made Open-Source Sonic Engine</p>
   <div class="s1-ctas">
     <a class="s1-btn p" href="/#download">⬇ Download</a>
     <a class="s1-btn s" href="/docs">Read the docs</a>

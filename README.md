@@ -1,7 +1,7 @@
 # OpenGGF WebZone
 
 The marketing + documentation website for **[OpenGGF](https://github.com/OpenGGF/OpenGGF)** — an
-open-source, OpenGL-accelerated, accurate Sonic engine written in Java. Live at
+community-made, open-source, OpenGL-accelerated Sonic engine written in Java. Live at
 **[openggf.com](https://openggf.com)**.
 
 It's a static site: an animated, Sonic-title-card-themed homepage, a docs section synced from the

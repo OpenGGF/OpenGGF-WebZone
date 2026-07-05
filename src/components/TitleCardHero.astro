@@ -14,7 +14,7 @@ interface Props {
 const { version, posterSrc = '/media/hero-poster.svg' } = Astro.props;
 const ver = shortVersion(version);
 ---
-<section class="tc" data-hero="s2" aria-label="OpenGGF — Open-Source Sonic Engine">
+<section class="tc" data-hero="s2" aria-label="OpenGGF — Fan-Made Open-Source Sonic Engine">
   <div class="tc-video" aria-hidden="true">
     <video class="promo-video" muted loop playsinline preload="auto" poster={posterSrc}><source src={PROMO_VIDEO_S2} type="video/mp4" /></video>
   </div>
@@ -33,7 +33,7 @@ const ver = shortVersion(version);
     <OpenggfWordmark />
     {ver && <div class="tc-ver">{ver}</div>}
   </div>
-  <p class="tc-tagline" data-tc="bar">Open-Source Sonic Engine</p>
+  <p class="tc-tagline" data-tc="bar">Fan-Made Open-Source Sonic Engine</p>
 
   <div class="tc-ctas" data-tc="ctas">
     <a class="tc-btn p" href="/#download">⬇ Download</a>

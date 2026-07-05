@@ -24,7 +24,7 @@ const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.dat
   .map((p) => ({ slug: p.id, data: p.data }));
 const faqItems = faq as { q: string; a: string }[];
 ---
-<BaseLayout title="OpenGGF — Open-Source Sonic Engine">
+<BaseLayout title="OpenGGF — Fan-Made Open-Source Sonic Engine">
   <RandomTitleCard version={version} />
   <ZigzagDivider />
   <SectionAbout />
