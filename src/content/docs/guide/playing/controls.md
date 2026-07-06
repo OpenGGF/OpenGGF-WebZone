@@ -1,7 +1,7 @@
 ---
 title: "Controls Reference"
 group: "Players"
-order: 99
+order: 2
 ---
 
 # Controls Reference

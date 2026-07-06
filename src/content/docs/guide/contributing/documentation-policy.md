@@ -1,7 +1,7 @@
 ---
 title: "Documentation And Branch Policy"
 group: "Contributors"
-order: 99
+order: 3
 ---
 
 # Documentation And Branch Policy

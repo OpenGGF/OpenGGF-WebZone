@@ -1,7 +1,7 @@
 ---
 title: "Game Status"
 group: "Players"
-order: 99
+order: 4
 ---
 
 # Game Status

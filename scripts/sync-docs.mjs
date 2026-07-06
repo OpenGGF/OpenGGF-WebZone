@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, statSync, rmSync } from 'node:fs';
 import { join, dirname, resolve, posix } from 'node:path';
+import { orderFor } from './docs-order.mjs';
 
 function arg(name) { const i = process.argv.indexOf(name); return i > -1 ? process.argv[i + 1] : undefined; }
 const enginePath = resolve(arg('--engine-path') || process.env.OPENGGF_ENGINE_PATH || '../sonic-engine');
@@ -132,7 +133,7 @@ for (const { absSrc, repoPath, slug } of records) {
   const title = titleFor(raw, slug);
   const group = groupFor('/' + slug);
   const body = rewriteLinks(raw, repoPath);
-  const fm = `---\ntitle: ${JSON.stringify(title)}\ngroup: ${JSON.stringify(group)}\norder: 99\n---\n\n`;
+  const fm = `---\ntitle: ${JSON.stringify(title)}\ngroup: ${JSON.stringify(group)}\norder: ${orderFor(slug)}\n---\n\n`;
   mkdirSync(dirname(dest), { recursive: true });
   writeFileSync(dest, fm + body);
   count++;

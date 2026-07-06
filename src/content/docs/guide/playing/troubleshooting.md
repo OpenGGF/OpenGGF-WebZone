@@ -1,7 +1,7 @@
 ---
 title: "Troubleshooting"
 group: "Players"
-order: 99
+order: 5
 ---
 
 # Troubleshooting

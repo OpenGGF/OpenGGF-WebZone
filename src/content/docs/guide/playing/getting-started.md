@@ -1,7 +1,7 @@
 ---
 title: "Getting Started"
 group: "Players"
-order: 99
+order: 1
 ---
 
 # Getting Started

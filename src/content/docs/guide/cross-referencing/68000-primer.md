@@ -1,7 +1,7 @@
 ---
 title: "68000 Assembly Primer"
 group: "Cross-referencing"
-order: 99
+order: 2
 ---
 
 # 68000 Assembly Primer

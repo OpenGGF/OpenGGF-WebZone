@@ -1,7 +1,7 @@
 ---
 title: "Configuration"
 group: "Players"
-order: 99
+order: 3
 ---
 
 # Configuration

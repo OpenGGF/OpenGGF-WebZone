@@ -1,7 +1,7 @@
 ---
 title: "Architecture Overview"
 group: "Cross-referencing"
-order: 99
+order: 1
 ---
 
 # Architecture Overview

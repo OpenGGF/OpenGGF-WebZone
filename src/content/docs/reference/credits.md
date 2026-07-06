@@ -1,7 +1,7 @@
 ---
 title: "Credits"
 group: "Reference"
-order: 99
+order: 5
 ---
 
 # Credits

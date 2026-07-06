@@ -1,7 +1,7 @@
 ---
 title: "How the Engine Reads ROMs"
 group: "Cross-referencing"
-order: 99
+order: 3
 ---
 
 # How the Engine Reads ROMs

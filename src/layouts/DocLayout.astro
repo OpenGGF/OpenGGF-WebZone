@@ -22,17 +22,77 @@ const { title, group, current, groups, headings } = Astro.props;
   </div>
 </BaseLayout>
 <style>
-  .layout { display: grid; grid-template-columns: 220px 1fr 180px; max-width: 1200px; margin: 0 auto; min-height: 70vh; }
+  .layout { display: grid; grid-template-columns: 240px 1fr 200px; max-width: 1240px; margin: 0 auto; min-height: 70vh; }
   .l { border-right: 2px solid #ececf3; background: var(--ogf-paper); }
-  .r { border-left: 2px solid #ececf3; padding: 22px 14px; }
-  .m { padding: 28px 32px; }
+  .r { border-left: 2px solid #ececf3; padding: 26px 18px; }
+  .m { padding: 34px 44px; min-width: 0; }
   .crumb { font: 700 11px var(--font-body); color: #999; }
   .tag { display: inline-block; background: var(--ogf-ink); color: #fff; font: 900 11px var(--font-body);
     padding: 5px 12px; transform: skewX(-7deg); margin: 8px 0; }
-  .m h1 { font-family: var(--font-display); font-size: 30px; margin-bottom: 14px; }
-  .prose :global(h2) { font-family: var(--font-display); font-size: 20px; margin: 22px 0 10px; }
-  .prose :global(pre) { background: var(--ogf-ink); color: #d6e0ff; padding: 14px; border-radius: 8px;
-    border-left: 5px solid var(--ogf-yellow); overflow-x: auto; margin: 12px 0; }
-  .prose :global(p) { font: 400 14px/1.7 var(--font-body); color: #444; margin: 10px 0; }
-  @media (max-width: 880px) { .layout { grid-template-columns: 1fr; } .l, .r { border: none; } }
+  .m h1 { font-family: var(--font-display); font-size: 30px; margin: 6px 0 20px; line-height: 1.15; }
+
+  /* Base prose rhythm: cap the MEASURE on text elements for readability, but let
+     tables and code blocks use the full column so wide data (ROM hashes) fits. */
+  .prose :global(p),
+  .prose :global(li) { font: 400 15px/1.75 var(--font-body); color: #3a3a42; }
+  .prose :global(p),
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4),
+  .prose :global(blockquote) { max-width: 68ch; }
+  .prose :global(ul),
+  .prose :global(ol) { max-width: 66ch; }
+  .prose :global(p) { margin: 14px 0; }
+
+  /* Heading hierarchy — Bungee for h2 section breaks, a cleaner weighted h3/h4
+     underneath so sub-sections read as a step down, not a jarring font swap. */
+  .prose :global(h2) { font-family: var(--font-display); font-size: 21px; line-height: 1.25;
+    margin: 40px 0 14px; padding-top: 8px; border-top: 2px solid #ececf3; }
+  .prose :global(h2:first-child) { margin-top: 8px; border-top: none; padding-top: 0; }
+  .prose :global(h3) { font: 800 17px var(--font-body); color: var(--ogf-ink); margin: 28px 0 8px; }
+  .prose :global(h4) { font: 800 14px var(--font-body); color: var(--ogf-ink);
+    text-transform: uppercase; letter-spacing: .4px; margin: 22px 0 6px; }
+
+  /* Links — clearly interactive without shouting. */
+  .prose :global(a) { color: var(--ogf-blue); text-decoration: underline;
+    text-underline-offset: 2px; text-decoration-thickness: 1px; }
+  .prose :global(a:hover) { text-decoration-thickness: 2px; }
+
+  /* Lists — room between items and a comfortable indent for nested levels. */
+  .prose :global(ul),
+  .prose :global(ol) { margin: 14px 0; padding-left: 26px; }
+  .prose :global(li) { margin: 6px 0; }
+  .prose :global(li > ul),
+  .prose :global(li > ol) { margin: 6px 0; }
+
+  /* Inline code — a subtle chip so filenames/keys stand out from prose. */
+  .prose :global(:not(pre) > code) { font: 500 .88em ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+    background: #eceef6; color: #1b1b6b; padding: 1.5px 6px; border-radius: 5px;
+    border: 1px solid #dfe2ef; white-space: nowrap; }
+
+  .prose :global(pre) { background: var(--ogf-ink); color: #d6e0ff; padding: 16px 18px; border-radius: 8px;
+    border-left: 5px solid var(--ogf-yellow); overflow-x: auto; margin: 18px 0; line-height: 1.6; }
+  .prose :global(pre code) { background: none; border: none; padding: 0; color: inherit;
+    white-space: pre; font-size: 13.5px; }
+
+  /* Tables — the ROM/hash tables were the worst offender: give them borders,
+     header shading, cell padding, and a horizontal scroll safety valve. */
+  .prose :global(table) { display: block; width: 100%; overflow-x: auto; border-collapse: collapse;
+    margin: 18px 0; font-size: 14px; }
+  .prose :global(thead) { background: var(--ogf-paper); }
+  .prose :global(th) { text-align: left; font: 800 13px var(--font-body); color: var(--ogf-ink);
+    padding: 9px 14px; border-bottom: 2px solid #d5d8e6; white-space: nowrap; }
+  .prose :global(td) { padding: 9px 14px; border-bottom: 1px solid #ececf3; color: #3a3a42;
+    vertical-align: top; }
+  .prose :global(tbody tr:hover) { background: #f8f9fe; }
+
+  /* Blockquotes / callouts. */
+  .prose :global(blockquote) { margin: 18px 0; padding: 4px 18px; border-left: 4px solid var(--ogf-blue);
+    background: #f4f6fd; color: #444; border-radius: 0 6px 6px 0; }
+
+  .prose :global(hr) { border: none; border-top: 2px solid #ececf3; margin: 32px 0; }
+  .prose :global(img) { max-width: 100%; border-radius: 8px; }
+
+  @media (max-width: 880px) { .layout { grid-template-columns: 1fr; } .l, .r { border: none; }
+    .m { padding: 24px 20px; } }
 </style>

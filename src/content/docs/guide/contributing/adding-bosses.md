@@ -1,7 +1,7 @@
 ---
 title: "Adding Bosses"
 group: "Contributors"
-order: 99
+order: 5
 ---
 
 # Adding Bosses

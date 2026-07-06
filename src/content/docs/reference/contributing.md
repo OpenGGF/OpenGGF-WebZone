@@ -1,7 +1,7 @@
 ---
 title: "Contributing to OpenGGF"
 group: "Reference"
-order: 99
+order: 3
 ---
 
 # Contributing to OpenGGF

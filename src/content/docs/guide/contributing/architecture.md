@@ -1,7 +1,7 @@
 ---
 title: "Architecture Deep Dive"
 group: "Contributors"
-order: 99
+order: 2
 ---
 
 # Architecture Deep Dive

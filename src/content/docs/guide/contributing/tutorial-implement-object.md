@@ -1,7 +1,7 @@
 ---
 title: "Tutorial: Implement an Object from Scratch"
 group: "Contributors"
-order: 99
+order: 11
 ---
 
 # Tutorial: Implement an Object from Scratch

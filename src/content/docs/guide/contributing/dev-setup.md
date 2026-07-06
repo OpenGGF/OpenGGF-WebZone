@@ -1,7 +1,7 @@
 ---
 title: "Developer Setup"
 group: "Contributors"
-order: 99
+order: 1
 ---
 
 # Developer Setup

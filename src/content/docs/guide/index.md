@@ -1,7 +1,7 @@
 ---
 title: "OpenGGF User Guide"
 group: "Reference"
-order: 99
+order: 1
 ---
 
 # OpenGGF User Guide

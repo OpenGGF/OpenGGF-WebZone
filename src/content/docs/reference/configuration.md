@@ -1,7 +1,7 @@
 ---
 title: "Configuration Reference"
 group: "Reference"
-order: 99
+order: 2
 ---
 
 # Configuration Reference

@@ -1,7 +1,7 @@
 ---
 title: "Mapping Exercises"
 group: "Cross-referencing"
-order: 99
+order: 4
 ---
 
 # Mapping Exercises

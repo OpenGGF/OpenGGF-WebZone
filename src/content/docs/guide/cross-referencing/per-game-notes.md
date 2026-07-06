@@ -1,7 +1,7 @@
 ---
 title: "Per-Game Notes"
 group: "Cross-referencing"
-order: 99
+order: 5
 ---
 
 # Per-Game Notes
