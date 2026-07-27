@@ -5,6 +5,15 @@
    `npm run build`. Output dir: `dist`. (Pages auto-deploys on push to `main`.)
 2. Add custom domain `openggf.com` (Cloudflare DNS preferred; otherwise CNAME to `*.pages.dev`).
 
+## Vanity redirects
+`/discord` → the Discord invite is a **302 Redirect Rule configured in the Cloudflare
+dashboard** (zone level), not a file in this repo. The nav and footer link to `/discord` so the
+invite can be rotated in the dashboard without a site rebuild.
+
+Two consequences: the rule is not honoured by `astro dev` or `astro preview`, so `/discord`
+404s locally — that is expected, verify against production. And don't add a `public/_redirects`
+entry for it; keeping the target in one place is the point.
+
 ## Release-triggered refresh (the "latest" promise)
 Add this workflow to **`jamesj999/OpenGGF`** so a published release pings the webzone repo:
 

@@ -33,6 +33,31 @@ than relying on ROM naming conventions; other revisions may produce incorrect re
 ROM filenames can be changed in `config.yaml` if yours differ. See
 [Configuration](/docs/guide/playing/configuration) for details.
 
+### Where to Get the ROMs
+
+We do not distribute ROMs, and we cannot help you find copies to download. Asking for them
+in our community spaces will get you removed. These are the routes we know of:
+
+- **A pre-2022 Steam purchase.** Sega sold *Sonic the Hedgehog*, *Sonic the Hedgehog 2* and
+  *Sonic 3 & Knuckles* standalone on Steam, and the same three appeared in *Sega Mega Drive &
+  Genesis Classics*. Those releases install real Mega Drive ROM images to disk — notably
+  `Sonic_Knuckles_wSonic3.bin`, the pre-combined lock-on image the engine expects. All three
+  standalone titles were **delisted on 20 May 2022**, and the Classics collection was removed
+  in **December 2024**. If you bought any of them before those dates they are still in your
+  Steam library and still installable; if you didn't, this route is closed.
+- **Dumping your own cartridges.** If you own the carts, a cartridge reader such as the
+  [Open Source Cartridge Reader](https://github.com/sanni/cartreader) (Sanni/OSCR) will dump
+  Mega Drive titles to an SD card. For Sonic 3 & Knuckles you must dump *Sonic the Hedgehog 3*
+  and *Sonic & Knuckles* separately and concatenate them — Sonic & Knuckles first, then Sonic 3
+  — to produce the 4 MB combined image. Verify the result against the SHA-1 above.
+  (Whether personal backups of media you own are lawful varies by country; check your own
+  jurisdiction rather than assuming.)
+
+Things that will **not** give you usable ROMs: *Sonic Origins* and *Origins Plus* (Retro Engine
+remakes, assets in proprietary containers), the mobile remasters, Sonic Mega Collection, Nintendo
+Switch Online, and the Genesis Mini. They are fine ways to play the games — just not sources of
+ROM files for this engine.
+
 ## Install and Run
 
 ### Option A: Download a Release

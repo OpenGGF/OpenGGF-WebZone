@@ -1,6 +1,8 @@
 # src/data/faq.yaml
 - q: "Do I need a ROM?"
   a: "Yes — OpenGGF requires a legally-obtained ROM image. None are distributed with the engine."
+- q: "Where do I get the ROMs?"
+  a: "We can't help you find copies to download, and asking in our community spaces will get you removed. The realistic legitimate routes are a pre-2022 Steam purchase of the standalone Sonic titles (still installable if you own them) or dumping cartridges you own. See Getting Started for the details."
 - q: "Which games are supported?"
   a: "The mainline 16-bit Sonic titles: Sonic 1, Sonic 2, and Sonic 3 & Knuckles."
 - q: "Is this affiliated with Sega?"

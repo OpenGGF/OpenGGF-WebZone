@@ -12,6 +12,7 @@ const links = [
   {links.map((l) => <a href={l.href}>{l.label}</a>)}
   <span class="sp"></span>
   <button id="nav-search" aria-label="Search docs">⌕ Search</button>
+  <a class="dc" href="/discord"><i class="fa-brands fa-discord" aria-hidden="true"></i> Discord</a>
   <a class="gh" href="https://github.com/OpenGGF/OpenGGF"><i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a>
 </nav>
 <div id="search-modal" hidden>
@@ -40,6 +41,8 @@ const links = [
     padding: 6px 12px; font: 700 12px var(--font-body); cursor: pointer; }
   .nav a.gh { background: var(--ogf-yellow); color: var(--ogf-ink); padding: 6px 12px; border-radius: 6px; }
   .nav a.gh .fa-github { margin-right: 5px; }
+  .nav a.dc { background: #5865f2; color: #fff; padding: 6px 12px; border-radius: 6px; }
+  .nav a.dc .fa-discord { margin-right: 5px; }
 
   /* on narrow screens the single non-wrapping row (logo + links + search + GitHub) was
      wider than the viewport, causing a horizontal scroll. Let it wrap and drop the

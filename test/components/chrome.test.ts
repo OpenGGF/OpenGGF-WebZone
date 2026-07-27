@@ -11,11 +11,18 @@ describe('chrome', () => {
     expect(html).toContain('id="nav-search"');
     expect(html).toContain('github.com/OpenGGF/OpenGGF');
   });
+  it('NavBar links to the /discord vanity redirect with the brand icon', async () => {
+    const c = await AstroContainer.create();
+    const html = await c.renderToString(NavBar);
+    expect(html).toContain('href="/discord"');
+    expect(html).toContain('fa-discord');
+  });
   it('Footer carries the Sega disclaimer', async () => {
     const c = await AstroContainer.create();
     const html = await c.renderToString(Footer);
     expect(html).toContain('community-made fan project');
     expect(html).toContain('not affiliated with');
     expect(html).toContain('endorsed by Sega');
+    expect(html).toContain('href="/discord"');
   });
 });
