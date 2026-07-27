@@ -20,4 +20,14 @@ describe('SectionFaq', () => {
     expect(html).toContain('Do I need a ROM?');
     expect(html).toContain('Yes.');
   });
+  it('renders an optional trailing link, and omits it when absent', async () => {
+    const c = await AstroContainer.create();
+    const withLink = await c.renderToString(Faq, {
+      props: { items: [{ q: 'Where?', a: 'Here.', link: { href: '/docs/x', label: 'Read more' } }] },
+    });
+    expect(withLink).toContain('href="/docs/x"');
+    expect(withLink).toContain('Read more');
+    const without = await c.renderToString(Faq, { props: { items: [{ q: 'Where?', a: 'Here.' }] } });
+    expect(without).not.toContain('<a ');
+  });
 });

@@ -22,7 +22,7 @@ const version = selectHeroVersion(releases, SITE_FALLBACK_VERSION);
 const matches = matchAssets(releases[0], loadPlatforms());
 const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date)
   .map((p) => ({ slug: p.id, data: p.data }));
-const faqItems = faq as { q: string; a: string }[];
+const faqItems = faq as { q: string; a: string; link?: { href: string; label: string } }[];
 ---
 <BaseLayout title="OpenGGF — Fan-Made Open-Source Sonic Engine">
   <RandomTitleCard version={version} />

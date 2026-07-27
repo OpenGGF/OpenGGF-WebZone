@@ -1,6 +1,8 @@
 ---
 import ActPlateHeader from './ActPlateHeader.astro';
-interface Props { items: { q: string; a: string }[]; }
+/* `a` renders as plain text, so answers that need a link carry an optional
+   trailing `link` rather than embedding markup in the YAML. */
+interface Props { items: { q: string; a: string; link?: { href: string; label: string } }[]; }
 const { items } = Astro.props;
 ---
 <section id="faq" class="sec" data-reveal>
@@ -8,7 +10,7 @@ const { items } = Astro.props;
   {items.map((it) => (
     <details class="faq">
       <summary>{it.q}</summary>
-      <p>{it.a}</p>
+      <p>{it.a}{it.link && <> <a href={it.link.href}>{it.link.label}</a></>}</p>
     </details>
   ))}
 </section>
@@ -19,4 +21,5 @@ const { items } = Astro.props;
   .faq summary::after { content: ' ＋'; color: var(--ogf-blue); }
   .faq[open] summary::after { content: ' －'; }
   .faq p { font: 400 13px/1.6 var(--font-body); color: #555; margin-top: 8px; }
+  .faq p a { color: var(--ogf-blue); font-weight: 700; }
 </style>
