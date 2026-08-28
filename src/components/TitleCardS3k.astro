@@ -6,15 +6,21 @@
 // unparseable).
 //
 // Slide-in translated from the engine (Sonic3kTitleCardManager START_X/START_Y →
-// TARGET_X/TARGET_Y), same convention as S1 and the S2 hero: no per-element delay,
-// constant 16 px/frame — so `linear` — and travel expressed in vw/vh as a fraction of
-// the game's 320x224 frame. The banner is the one vertical element (IS_VERTICAL[0]).
+// TARGET_X/TARGET_Y), same convention as S1 and the S2 hero: what carries over is each
+// element's ARRIVAL FRAME, not its velocity. See TitleCardS1.astro for why — holding the
+// engine's 16 px/frame across a wide viewport leaves the distant elements parked
+// off-screen for most of the intro. Timing is `linear`; nothing in the engine eases.
+// The banner is the one vertical element (IS_VERTICAL[0]).
 //
-//   engine element   start→target   px   frames  web element
-//   banner (Y)       -112 → 64      176    11     .s3k-banner  (from top,  78.6vh)
-//   elem 1            480 → 160     320    20     .s3k-name    (from right, 100vw)
-//   elem 2            636 → 252     384    24     .s3k-ver     (from right, 120vw)
-//   elem 3            708 → 260     448    28     .s3k-tagline (from right, 140vw)
+//   engine element   start→target   px   frames  travel   web element
+//   banner (Y)       -112 → 64      176    11     78.6vh   .s3k-banner  (from top)
+//   elem 1            480 → 160     320    20      100vw   .s3k-name    (from right)
+//   elem 2            636 → 252     384    24      100vw   .s3k-ver     (from right)
+//   elem 3            708 → 260     448    28      100vw   .s3k-tagline (from right)
+//
+// Travel is the engine distance as a fraction of the 320x224 frame, capped at 100vw/vh —
+// past that an element inside the viewport is already fully hidden, so the engine's
+// 120vw/140vw would only buy dead time. The banner is under the cap and stays exact.
 import { shortVersion } from '../lib/releases';
 import { PROMO_VIDEO_S3K } from '../lib/media';
 interface Props { version: { label: string; isPre: boolean } | null; }
@@ -47,9 +53,9 @@ const ver = shortVersion(version);
 </section>
 
 <style>
-  /* seconds per engine frame — see S1/animate.ts: the game's 60fps frame counts run at
-     roughly half speed so the choreography is legible at this scale. */
-  .s3k { --s3k-spf: 0.032s;
+  /* Seconds per engine frame — see TitleCardS1.astro. Keep in step with S1 and the S2
+     hero in animate.ts. */
+  .s3k { --s3k-spf: 0.020s;
     position: relative; width: 100%; height: clamp(480px, 84vh, 820px);
     overflow: hidden; background: #000; isolation: isolate;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(28px, 6vh, 64px); }
@@ -60,12 +66,12 @@ const ver = shortVersion(version);
   .s3k-video video { width: 100%; height: 100%; object-fit: cover; display: block;
     image-rendering: pixelated; }
   /* Fades from opaque to a ~25% scrim, revealing the video while keeping it dimmed for
-     legibility. Starts at 2.4s = the last element landing (28 frames x --s3k-spf =
-     0.9s) plus the engine's DISPLAY_HOLD_FRAMES (90 frames), kept at real time (1.5s)
-     while motion runs at --s3k-spf. Reduced motion disables the animation, so it stays
-     fully black (no video). */
+     legibility. Starts at 1.4s, matching S1 and the S2 hero — the last element lands at
+     28 frames x --s3k-spf = 0.56s, then a beat. The engine's DISPLAY_HOLD_FRAMES (90)
+     is not used: in-game it covers level art decompressing, which has no analogue here.
+     Reduced motion disables the animation, so it stays fully black (no video). */
   .s3k-cover { position: absolute; inset: 0; z-index: 1; background: #000;
-    animation: s3k-reveal 1.2s ease-in 2.4s forwards; }
+    animation: s3k-reveal 1.2s ease-in 1.4s forwards; }
 
   /* banner + wordmark grouped right next to each other, centred; above the cover */
   .s3k-group { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: clamp(4px, 0.8vw, 12px); }
@@ -74,8 +80,8 @@ const ver = shortVersion(version);
     width: clamp(90px, 11vw, 150px); height: clamp(260px, 46vh, 420px);
     background: var(--ogf-red); border: 4px solid var(--ogf-ink);
     display: flex; align-items: flex-end; justify-content: center; padding-bottom: 7%;
-    /* the vertical element: 176px at 16px/frame = 11 frames, dropping from above.
-       Shortest travel of the four, so the banner is in place first */
+    /* the vertical element: arrives frame 11, dropping from above. Shortest run of the
+       four, so the banner is in place first */
     animation: s3k-banner calc(11 * var(--s3k-spf)) linear both;
   }
   /* label NOT in the title font — a plain heavy sans, like a stamped sub-brand */
@@ -88,7 +94,7 @@ const ver = shortVersion(version);
     line-height: .95; letter-spacing: 2px; padding: 0 .06em;
     /* grey block behind the bottom half of the text (as in the real S3&K card; no shadow) */
     background: linear-gradient(to bottom, transparent 0 52%, #3c3c46 52% 100%);
-    /* elem 1: 320px at 16px/frame = 20 frames, from the right */
+    /* elem 1: arrives frame 20, from the right */
     animation: s3k-name calc(20 * var(--s3k-spf)) linear both;
   }
   /* version block aligned to the wordmark's right edge, in a plain heavy sans (NOT the
@@ -96,7 +102,7 @@ const ver = shortVersion(version);
   .s3k-ver {
     align-self: flex-end; display: inline-flex; align-items: baseline; gap: 8px; margin-top: .18em;
     font-family: var(--font-body);
-    /* elem 2: 384px at 16px/frame = 24 frames, from the right */
+    /* elem 2: arrives frame 24, from the right */
     animation: s3k-ver calc(24 * var(--s3k-spf)) linear both;
   }
   .s3k-ver span { color: #fff; font-weight: 900; text-transform: uppercase;
@@ -108,7 +114,7 @@ const ver = shortVersion(version);
     position: relative; z-index: 2;
     font-family: var(--font-black); font-style: italic; font-size: clamp(17px, 2.6vw, 32px);
     color: #fff; -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill; text-align: center;
-    /* elem 3: 448px at 16px/frame = 28 frames, from the right — lands last */
+    /* elem 3: arrives frame 28, from the right — lands last */
     animation: s3k-tagline calc(28 * var(--s3k-spf)) linear both;
   }
   /* web-only — no counterpart on the game's card, so it follows the last engine
@@ -124,8 +130,8 @@ const ver = shortVersion(version);
      off-screen until they arrive. */
   @keyframes s3k-banner  { from { transform: translateY(-78.6vh); } to { transform: none; } }
   @keyframes s3k-name    { from { transform: translateX(100vw); }   to { transform: none; } }
-  @keyframes s3k-ver     { from { transform: translateX(120vw); }   to { transform: none; } }
-  @keyframes s3k-tagline { from { transform: translateX(140vw); }   to { transform: none; } }
+  @keyframes s3k-ver     { from { transform: translateX(100vw); }   to { transform: none; } }
+  @keyframes s3k-tagline { from { transform: translateX(100vw); }   to { transform: none; } }
   @keyframes s3k-inUp { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
   @keyframes s3k-reveal { from { opacity: 1; } to { opacity: .25; } }
 

@@ -5,17 +5,26 @@
 // below never shift the blob. Version pruned to major.minor (hidden if unparseable).
 //
 // The slide-in is translated from the engine (Sonic1TitleCardManager +
-// Sonic1TitleCardMappings, GHZ CON_DATA), same convention as the S2 hero in animate.ts:
-// every element starts on frame 0 (S1 authors no per-element delay), travels at a
-// constant 16 px/frame — so `linear`, never an ease — and simply arrives late if it
-// started further out. Travel is expressed in vw as a fraction of the game's 320-wide
-// frame, so each element crosses the same proportion of the screen it does in-game.
+// Sonic1TitleCardMappings, GHZ CON_DATA), same convention as the S2 hero in animate.ts.
+// What carries over is each element's ARRIVAL FRAME, not its velocity. In-game every
+// element starts on frame 0 (S1 authors no per-element delay) and moves at a constant
+// 16 px/frame, so the stagger falls out of how far each one starts off-screen. On a
+// 320-wide frame that reads as one motion; on a 2560-wide monitor, holding the velocity
+// instead means the distant elements sit off-screen doing nothing for most of the intro.
+// So we keep the schedule — arrive by frame 12 / 18 / 36 / 44 — and let each element
+// start from just off its own edge, filling its whole duration with visible movement.
+// Timing stays `linear`, never an ease: nothing in the engine accelerates.
 //
-//   engine element  start→target   px   frames  web element
-//   zone name       -128 → 160     288    18     .s1-name    (from left,  90vw)
-//   oval             404 → 212     192    12     .s1-blob    (from right, 60vw)
-//   "ZONE"          -388 → 188     576    36     .s1-tagline (from left, 180vw)
-//   act number       916 → 212     704    44     .s1-ver     (from right, 220vw)
+//   engine element  start→target   px   frames  travel   web element
+//   oval             404 → 212     192    12      60vw    .s1-blob    (from right)
+//   zone name       -128 → 160     288    18      90vw    .s1-name    (from left)
+//   "ZONE"          -388 → 188     576    36     100vw    .s1-tagline (from left)
+//   act number       916 → 212     704    44     100vw    .s1-ver     (from right)
+//
+// Travel is the engine distance as a fraction of the 320-wide frame, capped at 100vw —
+// the point at which any element inside the viewport is already fully hidden, so the
+// engine's 180vw/220vw would only buy dead time. The two short ones are under the cap
+// and stay exactly proportional.
 import { shortVersion } from '../lib/releases';
 import { PROMO_VIDEO_S1 } from '../lib/media';
 interface Props { version: { label: string; isPre: boolean } | null; }
@@ -45,10 +54,11 @@ const ver = shortVersion(version);
 </section>
 
 <style>
-  /* seconds per engine frame. The game runs at 60fps (1/60s); the web card runs the
-     same frame counts at roughly half speed so the choreography is legible at this
-     scale — the same 0.032 SPF the S2 hero uses in animate.ts. */
-  .s1 { --s1-spf: 0.032s;
+  /* Seconds per engine frame — the one dial for the whole intro. The game runs at 60fps
+     (0.0167s); we run its frame counts a shade slower so the order of arrivals reads at
+     this scale, but close enough that the card is assembled in well under a second.
+     Shared with the S2 hero in animate.ts — keep the three in step. */
+  .s1 { --s1-spf: 0.020s;
     position: relative; width: 100%; height: clamp(480px, 84vh, 820px);
     overflow: hidden; background: #000; isolation: isolate; }
 
@@ -58,13 +68,13 @@ const ver = shortVersion(version);
   .s1-video video { width: 100%; height: 100%; object-fit: cover; display: block;
     image-rendering: pixelated; }
   /* Fades from opaque to a ~25% scrim, revealing the video while keeping it dimmed so
-     the title elements stay legible. Starts at 2.41s = the last element landing (act,
-     44 frames x --s1-spf = 1.41s) plus the engine's 60-frame DISPLAY hold. As in
-     animate.ts the hold is kept at real time (1s) while motion runs at --s1-spf, so the
-     pause reads as a pause rather than a stall. Reduced motion disables the animation,
-     so it stays fully black (no video). */
+     the title elements stay legible. Starts at 1.4s: the last element lands at 44
+     frames x --s1-spf = 0.88s, then a short beat. The engine's own 60-frame DISPLAY
+     hold is deliberately NOT used — in-game it covers level art still decompressing,
+     which has no analogue here, so honouring it just buys dead air. All three variants
+     reveal at 1.4s. Reduced motion disables the animation, so it stays fully black. */
   .s1-cover { position: absolute; inset: 0; z-index: 1; background: #000;
-    animation: s1-reveal 1.2s ease-in 2.41s forwards; }
+    animation: s1-reveal 1.2s ease-in 1.4s forwards; }
 
   /* composition centred independently of the tagline/CTAs below; above the cover */
   .s1-stage { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%);
@@ -76,7 +86,7 @@ const ver = shortVersion(version);
     font-size: clamp(40px, 8vw, 96px); letter-spacing: 2px; line-height: 1;
     /* hard black border offset down-right — legibility over the revealed video */
     text-shadow: 2px 2px 0 var(--ogf-ink);
-    /* zone name: 288px at 16px/frame = 18 frames, from the left */
+    /* zone name: arrives frame 18, from the left */
     animation: s1-name calc(18 * var(--s1-spf)) linear both;
   }
   /* lavender organic blob behind the wordmark's right end, vertically centred on it */
@@ -84,16 +94,16 @@ const ver = shortVersion(version);
     position: absolute; z-index: 0; right: -6%; top: 50%;
     width: 38%; aspect-ratio: 1.05; transform: translateY(-50%) rotate(-12deg);
     background: #9a9ae6; border-radius: 62% 38% 56% 44% / 58% 46% 54% 42%;
-    /* oval: 192px at 16px/frame = 12 frames, from the right — the shortest travel, so
-       it settles first, exactly as in-game */
+    /* oval: arrives frame 12, from the right — the shortest run, so it settles first,
+       exactly as in-game */
     animation: s1-oval calc(12 * var(--s1-spf)) linear both;
   }
   /* VER (small orange) + version (big yellow), side by side on the blob — like "ACT 1" */
   .s1-ver {
     position: absolute; z-index: 3; right: 2%; top: 104%;
     display: flex; align-items: baseline; gap: 8px;
-    /* act number: the longest run in the game — 704px at 16px/frame = 44 frames from
-       far off the right, so it stays off-screen a while, then whips in and lands last */
+    /* act number: the longest run in the game — arrives frame 44, from the right, so it
+       crosses under the others and lands last */
     animation: s1-act calc(44 * var(--s1-spf)) linear both;
   }
   .s1-ver span { font-family: var(--font-s1-text); font-weight: 700; color: #ff8a00;
@@ -108,7 +118,7 @@ const ver = shortVersion(version);
     font-family: var(--font-black); font-style: italic; font-size: clamp(18px, 3vw, 34px);
     color: #fff; -webkit-text-stroke: 2px var(--ogf-ink); paint-order: stroke fill;
     /* stands in for "ZONE", which sits under the zone name just as this sits under the
-       wordmark: 576px at 16px/frame = 36 frames, from the left */
+       wordmark: arrives frame 36, from the left */
     animation: s1-zone calc(36 * var(--s1-spf)) linear both;
   }
   .s1-ctas {
@@ -126,8 +136,8 @@ const ver = shortVersion(version);
   /* Travel only — no opacity fade on the four engine elements. In-game they are simply
      off-screen until they arrive, and fading them in reads as a different animation. */
   @keyframes s1-name { from { transform: translateX(-90vw); }  to { transform: none; } }
-  @keyframes s1-zone { from { transform: translateX(-180vw); } to { transform: none; } }
-  @keyframes s1-act  { from { transform: translateX(220vw); }  to { transform: none; } }
+  @keyframes s1-zone { from { transform: translateX(-100vw); } to { transform: none; } }
+  @keyframes s1-act  { from { transform: translateX(100vw); }  to { transform: none; } }
   /* keeps the blob's resting translateY(-50%)/rotate in both keyframes — animating a
      bare translateX here would drop them and make the blob jump as it lands */
   @keyframes s1-oval {
