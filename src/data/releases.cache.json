@@ -1,5 +1,31 @@
 [
   {
+    "tag": "v0.6.20260911",
+    "name": "v0.6.20260911",
+    "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/v0.6.20260911",
+    "prerelease": false,
+    "publishedAt": "2026-09-11T21:14:05Z",
+    "body": "A major accuracy and tooling release focused on more faithful gameplay across Sonic 1, Sonic 2, and Sonic 3 & Knuckles, a substantially reworked audio engine, and stronger save, rewind, and validation systems.\r\n\r\n- **Gameplay accuracy across all three games** improved through extensive ROM-backed corrections to subpixel movement, collision, solid objects, water, cameras, bosses, badniks, sidekicks, and act transitions. Sonic 1 retains broad end-to-end coverage, Sonic 2 remains the most complete module, and Sonic 3 & Knuckles continues to build on the playable Angel Island-to-Launch Base Zone route.\r\n- **Sonic 3 & Knuckles coverage** expanded across later zones, including Marble Garden, Icecap, Mushroom Hill, and Launch Base, with further work on traversal objects, boss scenes, bonus stages, character routes, and multi-sidekick continuity. These areas remain at varying levels of completeness.\r\n- **Sound driver accuracy** received one of the largest updates in 0.6. SMPS music and sound-effect handling, YM2612 FM, PSG, and DAC playback now follow more of the original drivers' request scheduling, channel ownership, fades, and extra-life restoration behavior, backed by recorded driver-state and chip-write comparisons. Full-game audio parity and listening validation remain ongoing.\r\n- **A faster FM core** is now the default for new configurations, with the accurate Java Nuked core still available through `audio.fmCore=accurate`. The fast core passes all 178 supported chip-register scripts, while the shared audio pipeline reduces allocation overhead and keeps live playback and recording on the same PCM path.\r\n- **Save slots and Continue screens** are now integrated more broadly. S3K data select includes ROM-rendered save slots and team selection, with cross-game support for Sonic 1 and Sonic 2 while preserving each game's progress. Atomic save writes protect against interrupted updates, and ROM-backed Continue countdowns and character sequences restore the appropriate per-game restart state.\r\n- **Gameplay-scoped rewind** captures and restores more dynamic objects, child relationships, riders, sidekicks, level events, and audio state, including across in-frame act reloads. Coverage checks catch missing state and recreation paths before they silently break a restore.\r\n- **Rendering and runtime performance** improved across ROM art decoding, pattern-loading queues, animated tiles, foreground/background composition, shaders, capture, and rewind. Screenshot compression and disk writes now run through a bounded background worker.\r\n- **Recording and validation tools** expanded with complete-run trace comparisons, visual and audio regression checks, and a shared live/offline recording pipeline. Trace recording and analysis tools now live in the optional [TraceChaser](https://github.com/OpenGGF/TraceChaser) project; neither it nor the disassemblies are required to build or play OpenGGF.\r\n- **Distribution and configuration** include native Windows, macOS, and Linux downloads plus a universal JAR. Runtime settings use `config.yaml`, with automatic migration from legacy `config.json` files. The experimental editor and its foundations continue to develop; a shipped modding framework remains future work.\r\n\r\n**_Reminder:_** OpenGGF remains **alpha software** focused on research, preservation, and accuracy. Sonic 3 & Knuckles is still incomplete overall, and known gameplay and audio differences remain. You must supply your own ROMs; no game assets are included. The universal JAR requires Java 21.\r\n\r\nSee the [0.6 changelog](https://github.com/OpenGGF/OpenGGF/blob/v0.6.20260911/CHANGELOG.0.6.md) for full details and the [release summary](https://github.com/OpenGGF/OpenGGF/blob/v0.6.20260911/docs/changelog/v0.6-release-summary.md) for coverage and known limitations.\r\n\r\n**Full Changelog**: https://github.com/OpenGGF/OpenGGF/compare/v0.5.20260411...v0.6.20260911\r\n",
+    "assets": [
+      {
+        "name": "OpenGGF-linux.tar.gz",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.6.20260911/OpenGGF-linux.tar.gz"
+      },
+      {
+        "name": "OpenGGF-macos.zip",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.6.20260911/OpenGGF-macos.zip"
+      },
+      {
+        "name": "OpenGGF-universal.jar",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.6.20260911/OpenGGF-universal.jar"
+      },
+      {
+        "name": "OpenGGF-windows.zip",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.6.20260911/OpenGGF-windows.zip"
+      }
+    ]
+  },
+  {
     "tag": "v0.5.20260411",
     "name": "v0.5.20260411",
     "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/v0.5.20260411",
