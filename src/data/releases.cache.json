@@ -1,5 +1,31 @@
 [
   {
+    "tag": "v0.6.20260917",
+    "name": "v0.6.20260917",
+    "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/v0.6.20260917",
+    "prerelease": false,
+    "publishedAt": "2026-09-17T23:11:58Z",
+    "body": "A packaging fix for `0.6.20260911`. No gameplay, audio, or accuracy behavior changed; if Sonic 3 & Knuckles started for you on the previous build, nothing here affects it.\n\n- **Sonic 3 & Knuckles now starts in the native Windows, macOS, and Linux downloads.** The native builds embed only the resources their GraalVM configuration lists, and the S3K load-time manifests were missing from that list. The lookup returned nothing, the S3K module failed while building its load-time profile, and the game crashed at start-up under the default `FAST` load-time simulation. Sonic 1 and Sonic 2 were unaffected, as was the universal JAR, which always carried the manifests.\n- **The window icon** is now present in native builds as well; it had been dropped from the same configuration.\n\nNothing else differs from `0.6.20260911`. If you are running the universal JAR, this release changes nothing for you.\n\n**_Reminder:_** OpenGGF remains **alpha software** focused on research, preservation, and accuracy. Sonic 3 & Knuckles is still incomplete overall, and known gameplay and audio differences remain. You must supply your own ROMs; no game assets are included. The universal JAR requires Java 21.\n\nSee the [0.6 changelog](https://github.com/OpenGGF/OpenGGF/blob/v0.6.20260917/CHANGELOG.0.6.md) for full details and the [release summary](https://github.com/OpenGGF/OpenGGF/blob/v0.6.20260917/docs/changelog/v0.6-release-summary.md) for coverage and known limitations.\n\n**Full Changelog**: https://github.com/OpenGGF/OpenGGF/compare/v0.6.20260911...v0.6.20260917\n",
+    "assets": [
+      {
+        "name": "OpenGGF-linux.tar.gz",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.6.20260917/OpenGGF-linux.tar.gz"
+      },
+      {
+        "name": "OpenGGF-macos.zip",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.6.20260917/OpenGGF-macos.zip"
+      },
+      {
+        "name": "OpenGGF-universal.jar",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.6.20260917/OpenGGF-universal.jar"
+      },
+      {
+        "name": "OpenGGF-windows.zip",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.6.20260917/OpenGGF-windows.zip"
+      }
+    ]
+  },
+  {
     "tag": "v0.6.20260911",
     "name": "v0.6.20260911",
     "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/v0.6.20260911",
