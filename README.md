@@ -68,7 +68,9 @@ Per-card video sources live in [`src/lib/media.ts`](src/lib/media.ts) — drop a
 
 **Docs** under `src/content/docs/` are **generated**, not hand-edited. `npm run sync-docs` reads
 the engine repo's `docs/guide/` and selected root markdown files, rewrites cross-links, and writes
-them here (the directory is wiped and regenerated each run). It expects an engine checkout at
+them here (the directory is wiped and regenerated each run). Images under `docs/guide/` are copied
+beside their pages with the same layout, so relative image links keep working and Astro optimises
+them; a relative image outside the synced guide is pointed at its raw file on GitHub. It expects an engine checkout at
 `../sonic-engine` (override with `--engine-path` or `OPENGGF_ENGINE_PATH`). To change doc *prose*
 links, edit them in the engine repo, not here.
 

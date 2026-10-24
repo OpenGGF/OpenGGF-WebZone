@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, statSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, statSync, rmSync, copyFileSync } from 'node:fs';
 import { join, dirname, resolve, posix } from 'node:path';
 import { orderFor } from './docs-order.mjs';
 
@@ -54,6 +54,11 @@ const titleFor = (txt, rel) => {
 const records = [];
 /** @type {Map<string, string>} repoPath (with .md) → slug (no .md) */
 const repoPathToSlug = new Map();
+// Images under the synced guide dirs are copied beside their pages (same relative layout),
+// so the guide's relative image links keep working and Astro can optimise them.
+const IMAGE_RE = /\.(png|jpe?g|gif|webp|avif|svg)$/i;
+/** @type {Map<string, string>} image repoPath → output path relative to OUT */
+const assetRepoPathToOut = new Map();
 
 function collectDir(absDir, relDir) {
   for (const name of readdirSync(absDir)) {
@@ -61,6 +66,7 @@ function collectDir(absDir, relDir) {
     const abs = join(absDir, name);
     const rel = join(relDir, name).replace(/\\/g, '/');  // keep POSIX
     if (statSync(abs).isDirectory()) collectDir(abs, rel);
+    else if (IMAGE_RE.test(name)) assetRepoPathToOut.set(rel, rel.replace(/^docs\//, ''));
     else if (name.endsWith('.md')) {
       // repoPath = rel (e.g. "docs/guide/playing/controls.md")
       // slug = strip leading "docs/" then strip ".md"
@@ -102,6 +108,32 @@ const LINK_RE = /\]\(((?!https?:|mailto:|\/|#)[^)\s]+?)\.md(#[^)]*)?\)/g;
 
 const DIR_RE = /\]\(((?!https?:|mailto:|\/|#)[^)\s]+\/)\)/g;
 
+// Relative image references: markdown `![alt](path "title")` and HTML `<img src="path">`.
+const RAW_BASE = 'https://raw.githubusercontent.com/OpenGGF/OpenGGF/develop/';
+const MD_IMG_RE = /(!\[[^\]]*\]\()((?!https?:|data:|\/|#)[^)\s]+)((?:\s+"[^"]*")?\))/g;
+const HTML_IMG_RE = /(<img\b[^>]*?\bsrc=")((?!https?:|data:|\/|#)[^"]+)(")/gi;
+
+/**
+ * Keep an image link relative when the image is synced to the same relative place as the
+ * page (guide pages and their images keep the engine's layout); otherwise point at the raw
+ * file on GitHub so it still renders (e.g. a root-level page, or an image outside the guide).
+ */
+function rewriteImages(txt, repoPath, slug) {
+  const srcDir = posix.dirname(repoPath);
+  const outDir = posix.dirname(slug);
+  const fix = (pre, p, post) => {
+    const targetRepo = posix.normalize(posix.join(srcDir, p));
+    const out = assetRepoPathToOut.get(targetRepo);
+    if (out) {
+      const rel = posix.relative(outDir, out);
+      return pre + (rel.startsWith('.') ? rel : './' + rel) + post;
+    }
+    return pre + RAW_BASE + targetRepo + post;
+  };
+  return txt.replace(MD_IMG_RE, (_, a, p, b) => fix(a, p, b))
+            .replace(HTML_IMG_RE, (_, a, p, b) => fix(a, p, b));
+}
+
 function rewriteLinks(txt, repoPath) {
   const srcDir = posix.dirname(repoPath);
   txt = txt.replace(LINK_RE, (_, p, hash) => {
@@ -132,10 +164,17 @@ for (const { absSrc, repoPath, slug } of records) {
   const raw = readFileSync(absSrc, 'utf8');
   const title = titleFor(raw, slug);
   const group = groupFor('/' + slug);
-  const body = rewriteLinks(raw, repoPath);
+  const body = rewriteImages(rewriteLinks(raw, repoPath), repoPath, slug);
   const fm = `---\ntitle: ${JSON.stringify(title)}\ngroup: ${JSON.stringify(group)}\norder: ${orderFor(slug)}\n---\n\n`;
   mkdirSync(dirname(dest), { recursive: true });
   writeFileSync(dest, fm + body);
   count++;
 }
-console.log(`sync-docs: synced ${count} docs from ${enginePath}`);
+let assets = 0;
+for (const [repoPath, out] of assetRepoPathToOut) {
+  const dest = join(OUT, out);
+  mkdirSync(dirname(dest), { recursive: true });
+  copyFileSync(join(enginePath, repoPath), dest);
+  assets++;
+}
+console.log(`sync-docs: synced ${count} docs and ${assets} images from ${enginePath}`);

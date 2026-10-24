@@ -72,4 +72,25 @@ describe('sync-docs', () => {
     expect(txt).toContain('https://github.com/OpenGGF/OpenGGF/tree/develop/');
     expect(txt).not.toContain('](sub/)');
   });
+
+  it('copies guide images beside their pages and keeps relative image links', () => {
+    execFileSync('node', ['scripts/sync-docs.mjs', '--engine-path', FIX, '--out-dir', OUT], { encoding: 'utf8' });
+    expect(existsSync(join(OUT, 'guide/playing/images/shot.png'))).toBe(true);
+    const txt = readFileSync(join(OUT, 'guide/playing/images-page.md'), 'utf8');
+    expect(txt).toContain('![Shot](./images/shot.png "A shot")');
+    expect(txt).toContain('<img src="./images/shot.png" alt="Shot">');
+  });
+
+  it('points images outside the synced guide at the raw GitHub file', () => {
+    execFileSync('node', ['scripts/sync-docs.mjs', '--engine-path', FIX, '--out-dir', OUT], { encoding: 'utf8' });
+    const txt = readFileSync(join(OUT, 'guide/playing/images-page.md'), 'utf8');
+    expect(txt).toContain('](https://raw.githubusercontent.com/OpenGGF/OpenGGF/develop/logo.png)');
+  });
+
+  it('prunes images that are no longer in the source', () => {
+    mkdirSync(join(OUT, 'guide/old'), { recursive: true });
+    writeFileSync(join(OUT, 'guide/old/gone.png'), 'stale');
+    execFileSync('node', ['scripts/sync-docs.mjs', '--engine-path', FIX, '--out-dir', OUT], { encoding: 'utf8' });
+    expect(existsSync(join(OUT, 'guide/old/gone.png'))).toBe(false);
+  });
 });
