@@ -1,5 +1,33 @@
 [
   {
+    "tag": "multi-dev-latest",
+    "name": "Multiplayer master (develop, rolling)",
+    "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-dev-latest",
+    "prerelease": true,
+    "publishedAt": "2026-11-01T11:36:34Z",
+    "body": "Rolling build of the multiplayer master server from `develop` at d27e21ddc406, deployed to multi-dev.openggf.com by the OpenGGF AMP template. Replaced on each deploy; not a player release.",
+    "assets": [
+      {
+        "name": "openggf-racing-server.zip",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/multi-dev-latest/openggf-racing-server.zip"
+      }
+    ]
+  },
+  {
+    "tag": "multi-next-latest",
+    "name": "Multiplayer master (next, rolling)",
+    "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-next-latest",
+    "prerelease": true,
+    "publishedAt": "2026-11-01T11:48:10Z",
+    "body": "Rolling build of the multiplayer master server from `next` at 58e1abb44c71, deployed to multi-next.openggf.com by the OpenGGF AMP template. Replaced on each deploy; not a player release.",
+    "assets": [
+      {
+        "name": "openggf-racing-server.zip",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/multi-next-latest/openggf-racing-server.zip"
+      }
+    ]
+  },
+  {
     "tag": "v0.6.20260917",
     "name": "v0.6.20260917",
     "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/v0.6.20260917",
