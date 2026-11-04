@@ -5,7 +5,7 @@
     "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-dev-latest",
     "prerelease": true,
     "publishedAt": "2026-11-01T11:36:34Z",
-    "body": "Rolling build of the multiplayer master server from `develop` at e6a8b4a34e4c, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
+    "body": "Rolling build of the multiplayer master server from `develop` at 97a6f51a7dbc, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
     "assets": [
       {
         "name": "openggf-racing-server.zip",
