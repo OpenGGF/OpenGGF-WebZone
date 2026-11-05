@@ -22,7 +22,7 @@
 // past that an element inside the viewport is already fully hidden, so the engine's
 // 120vw/140vw would only buy dead time. The banner is under the cap and stays exact.
 import { shortVersion } from '../lib/releases';
-import { PROMO_VIDEO_S3K } from '../lib/media';
+import { PROMO_VIDEO_S3K, PROMO_POSTER_S3K } from '../lib/media';
 interface Props { version: { label: string; isPre: boolean } | null; }
 const { version } = Astro.props;
 const ver = shortVersion(version);
@@ -31,7 +31,7 @@ const ver = shortVersion(version);
   <!-- promo video behind everything; the black cover above it fades ~1s after the card
        finishes animating, revealing the video under the title elements (the rest stays) -->
   <div class="s3k-video" aria-hidden="true">
-    <video class="promo-video" muted loop playsinline preload="auto">
+    <video class="promo-video" muted loop playsinline preload="auto" poster={PROMO_POSTER_S3K}>
       <source src={PROMO_VIDEO_S3K} type="video/mp4" />
     </video>
   </div>

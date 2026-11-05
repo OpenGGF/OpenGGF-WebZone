@@ -26,7 +26,7 @@
 // engine's 180vw/220vw would only buy dead time. The two short ones are under the cap
 // and stay exactly proportional.
 import { shortVersion } from '../lib/releases';
-import { PROMO_VIDEO_S1 } from '../lib/media';
+import { PROMO_VIDEO_S1, PROMO_POSTER_S1 } from '../lib/media';
 interface Props { version: { label: string; isPre: boolean } | null; }
 const { version } = Astro.props;
 const ver = shortVersion(version);
@@ -35,7 +35,7 @@ const ver = shortVersion(version);
   <!-- promo video behind everything; the black cover above it fades ~1s after the
        title card finishes animating, revealing the video under the title elements -->
   <div class="s1-video" aria-hidden="true">
-    <video class="promo-video" muted loop playsinline preload="auto">
+    <video class="promo-video" muted loop playsinline preload="auto" poster={PROMO_POSTER_S1}>
       <source src={PROMO_VIDEO_S1} type="video/mp4" />
     </video>
   </div>

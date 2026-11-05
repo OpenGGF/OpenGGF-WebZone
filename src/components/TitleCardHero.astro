@@ -6,12 +6,12 @@
 //   (no exit). Brand palette is used in place of the ROM's exact hues.
 import OpenggfWordmark from './OpenggfWordmark.astro';
 import { shortVersion } from '../lib/releases';
-import { PROMO_VIDEO_S2 } from '../lib/media';
+import { PROMO_VIDEO_S2, PROMO_POSTER_S2 } from '../lib/media';
 interface Props {
   version: { label: string; isPre: boolean } | null;
   posterSrc?: string;
 }
-const { version, posterSrc = '/media/hero-poster.svg' } = Astro.props;
+const { version, posterSrc = PROMO_POSTER_S2 } = Astro.props;
 const ver = shortVersion(version);
 ---
 <section class="tc" data-hero="s2" aria-label="OpenGGF — Fan-Made Open-Source Sonic Engine">
