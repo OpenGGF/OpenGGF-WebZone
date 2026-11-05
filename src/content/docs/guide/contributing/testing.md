@@ -10,25 +10,146 @@ This page covers the engine's test infrastructure and how to write tests for new
 
 All new or updated tests must use JUnit 5 / Jupiter. Do not add JUnit 4 tests, rules, runners, or `org.junit.*` imports.
 
+Published Sonic TAS tricks are indexed in the
+[representative verdict record](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/architecture/validation/2026-10-26-tas-trick-verdicts).
+Each completed assessment records an independent native expectation, an executed
+production scenario, a relevant control and a supported or unsupported verdict.
+The record explicitly identifies any remaining named mechanism under investigation.
+A passing
+current-limitation regression confirms an engine mismatch; it is not proof that
+the trick works. Broad families retain their original IDs and can contain
+different named tricks with different outcomes. Publication-route and whole-movie
+synchronization remain separate from representative mechanism support. The
+[first regression pass](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/architecture/validation/2026-10-26-tas-trick-regressions)
+preserves the earlier component-evidence assessment.
+
 ## Running Tests
 
 ```bash
-# Run all tests
-mvn test
-
-# Run a single test class
-mvn test -Dtest=TestCollisionLogic
-
-# Run a single test method
-mvn test -Dtest=TestCollisionLogic#testSlopeAngle
-
-# Run with full Maven output (disable silent extension)
-mvn test -Dmse=off
+# Routine broad coverage: all smoke candidates, yielding admission between batches.
+python3 tools/testing/run_categories.py --category all --run
+# Focused regression (reviewed small classes select lean automatically).
+python3 tools/testing/maven_queue.py -Dmse=off -Dtest=TestCollisionLogic test
+# Single method.
+python3 tools/testing/maven_queue.py -Dmse=off '-Dtest=TestCollisionLogic#testCollisionLogic' test
+# Public release preparation ONLY: the former complete ordinary suite.
+python3 tools/testing/maven_queue.py -Dmse=off -Pfull-suite test -B
 ```
 
-Tests are configured for parallel execution across 4 JVM forks locally (`1` fork in CI).
-This significantly speeds up the full test suite but means tests must be independent of
-each other.
+Plain Maven `test` and `package` default to the existing `smoke` exclusions;
+`-Psmoke` is an explicit alias. Full-suite validation is reserved for new public
+releases, never routine development, integration, baseline or post-integration
+checks. Add focused regressions, affected ROM/trace checks and separate guards
+as needed. Category `all` is all smoke categories, not the exhaustive full suite.
+ROM-heavy smoke coverage can still take an hour overall. The category runner
+queues at most 50 candidate classes per ordinary batch, releases shared admission
+between batches and before guards, and retains the worktree lock throughout.
+Queue waits do not consume its execution timeout. Raw unfiltered Maven runs remain
+monolithic; use the runner for broad local coverage and package with `-DskipTests`.
+
+Every category `--run` checks tool prerequisites automatically. Its final
+`VERDICT` states the tested source, executed coverage and allowed/unexplained skip
+counts. Unexplained or required skips mean incomplete validation (exit 1). Passing
+runs clean up automatically; failed or incomplete runs retain bounded diagnostics.
+Inspect their `results.json`, then remove them with
+`python3 tools/testing/run_categories.py --acknowledge <run-id>`.
+
+See [testing utilities](https://github.com/OpenGGF/OpenGGF/blob/develop/tools/testing/README#default-suite-and-release-only-validation).
+
+Tests use one reused 3 GiB JVM by default. `test-concurrent` opts into two forks;
+Jupiter execution remains serial inside each fork. The category runner groups
+reviewed low-heap classes separately and caps Maven and each such fork at 1 GiB.
+Selection stays complete; qualified two-fork batches use shared 5 GiB / 8-core
+admission. Heavy two-fork batches retain normal exclusive admission.
+Guards use a separate normal one-worker JVM.
+
+### Short survival witnesses and manual soaks
+
+Sonic Survivors' 20,000-frame endless-run soak belongs to `exhaustive-audit`.
+Routine smoke retains the independent deadline/pause/rewind, reward lifetime and
+emerald controls, plus a short live boundary witness after ordinary run entry.
+That witness creates a real formation, seeds the crowded near-deadline/expiry
+state, then checks ordinary-wave admission beyond 100 enemies, fresh formation
+admission and actual removal of expired rewards. Its three post-entry production
+frames do not certify five minutes of accumulated history. The long soak remains
+available for an explicitly requested investigation.
+
+### TraceChaser immutable consumer copies
+
+Ordinary `TestTraceChaserV5ConsumerContract` runs the frozen v5 pack through Java
+consumers and checks its declared provenance without an initialized submodule.
+Its temporary local Git fixtures also distinguish immutable-origin preservation
+from a later producer HEAD, and reject byte tampering and missing/extra files.
+
+The opt-in method first requires the initialized checkout to match OpenGGF's
+exact gitlink. It then compares all three declared copies, including complete v5
+file membership and exact bytes, with Git objects at `provenance.json`'s
+`origin_commit`. That origin must already be available locally; the test fails
+clearly if it is absent and never fetches or substitutes HEAD. A passing
+historical-copy check does not establish current producer compatibility.
+
+```bash
+python3 tools/testing/maven_queue.py -Dmse=off \
+  '-Dtest=com.openggf.trace.TestTraceChaserV5ConsumerContract' test -B
+python3 tools/testing/maven_queue.py -Dmse=off -Ptracechaser-integration \
+  '-Dtest=com.openggf.trace.TestTraceChaserV5ConsumerContract#initializedCheckoutPreservesConsumerCopiesFromDeclaredImmutableOrigin' test -B
+```
+
+## CI in GitHub
+
+| Event | What runs |
+|---|---|
+| Push to `develop` or `next` | Basic CI: the `smoke` profile, once the branch has had no push for 30 minutes. Branch policy runs at once in its own workflow and checks every commit since its last successful run. |
+| Non-draft pull request, any base | Routine CI: branch policy, the bounded smoke suite and `-Pguards`. Draft PRs run nothing until marked ready; a newer push cancels the older run. |
+| Push to `master` | The Release workflow below: full validation, native packaging, publication. |
+| Push to a feature or bugfix branch | Nothing. Open a pull request, or run CI by hand. |
+| Manual dispatch | Smoke and guards on the chosen ref. `trace_replay` adds the ROM-fixture develop trace replay on the self-hosted runner. |
+
+The 30-minute quiet period is the `ci-quiet-period` environment's wait timer
+(repository Settings -> Environments). The smoke job waits there without using a
+runner, and a newer push to the same branch cancels the wait and starts another,
+so a burst of pushes produces one smoke run for its last commit. Edit the timer
+there to change the delay. Deleting the environment removes the delay: GitHub
+recreates it on the next run without a timer.
+
+Guards are not part of push CI, so run `-Pguards` locally before pushing
+straight to `develop` or `next`. Pull requests do not build native packages;
+packaging failures first show on the master push that would publish.
+
+## Release builds in GitHub
+
+The Release workflow builds Windows, macOS, Linux, and the universal JAR on
+GitHub-hosted runners. Its blocking `test` job explicitly runs `-Pfull-suite` and
+structural guards on Ubuntu, installing Lua 5.4 first. Private ROMs are absent
+on these runners, so ROM-dependent skips remain visible in the uploaded test
+evidence; a successful cloud build does not establish ROM replay parity.
+
+A push to `master` validates, builds and publishes a release with a new
+version tag; see [publishing a GitHub release](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/release-publishing).
+Manual Release dispatch is for release preparation; it runs full-suite and builds
+without publishing. Routine manual CI uses smoke.
+
+ROM-backed release evidence is collected locally with the existing release
+comparison and skip-classification tools. The optional `validate_roms` manual
+input also enables the unchanged strict checks on a separately configured
+`release-fixtures` runner. It defaults to false and is not a dependency of the
+cloud builds. The no-regression policy in
+[release 6 trace scope](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/status/trace-scope-release-6) still applies to
+ROM-backed sign-off.
+
+Release checks use the fixed reviewed `develop` snapshot
+`45cecf566825aa50612f5e687b2682fc9681aed1` as the 0.6 history boundary, as
+approved by the maintainer on September 11, 2026. They audit every entry of
+the final Git tree once for forbidden assets, oversized or uncompressed
+payloads, scratch artifacts, and unsafe symlinks. Python 3 runs this audit.
+All newer incoming commits retain their normal content checks, including
+new local paths and violations introduced and subsequently removed. New
+release commits also retain their documentation-trailer checks. The original
+resource cutover remains the fallback for histories before this snapshot.
+
+The baseline is an immutable commit, not a moving branch name. Existing
+trailer debt is preserved without rewriting published history. Future
+baseline changes require explicit review; an audit failure is never ignored.
 
 ## Rewind Tests And Benchmark
 
@@ -38,21 +159,21 @@ The rewind system has both ordinary regression tests and an opt-in benchmark. Se
 Run the regular rewind suite:
 
 ```bash
-mvn -Dmse=off "-Dtest=*Rewind*" test
+python3 tools/testing/maven_queue.py -Dmse=off "-Dtest=*Rewind*" test
 ```
 
 Run the compact schema foundation tests when changing automatic rewind capture,
 field policy classification, or value codecs:
 
 ```bash
-mvn -Dmse=off "-Dtest=TestRewindStateBuffer,TestRewindSchemaRegistry,TestCompactFieldCapturer,TestCompactFieldCapturerPolicy,TestRewindRecordCodecs,TestRewindHelperCodecs,TestRewindCollectionCodecs,TestRewindPolicyRegistry,TestRewindPlayerReferenceCodecs,TestRewindObjectReferenceCodecs,TestRewindIdentityTable" test
+python3 tools/testing/maven_queue.py -Dmse=off "-Dtest=TestRewindStateBuffer,TestRewindSchemaRegistry,TestCompactFieldCapturer,TestCompactFieldCapturerPolicy,TestRewindRecordCodecs,TestRewindHelperCodecs,TestRewindCollectionCodecs,TestRewindPolicyRegistry,TestRewindPlayerReferenceCodecs,TestRewindObjectReferenceCodecs,TestRewindIdentityTable" test
 ```
 
 Generate the runtime-owner field inventory when planning object/player rewind
 coverage work:
 
 ```bash
-mvn -Dmse=off -DskipTests test-compile exec:java \
+python3 tools/testing/maven_queue.py -Dmse=off -DskipTests test-compile exec:java \
   "-Dexec.mainClass=com.openggf.tools.rewind.RewindFieldInventoryTool"
 ```
 
@@ -75,27 +196,27 @@ entries when a migration closes them.
 Run the child/spawn graph audit when planning object family coverage:
 
 ```bash
-mvn -Dmse=off -DskipTests test-compile exec:java \
+python3 tools/testing/maven_queue.py -Dmse=off -DskipTests test-compile exec:java \
   "-Dexec.mainClass=com.openggf.tools.rewind.ChildGraphPolicyInventoryTool"
 ```
 
 Run the focused encounter validation foundation:
 
 ```bash
-mvn -Dmse=off "-Dtest=TestRewindEncounterValidation" test
+python3 tools/testing/maven_queue.py -Dmse=off "-Dtest=TestRewindEncounterValidation" test
 ```
 
 Run the focused presentation checks after changing reverse audio, trace rewind,
 or fade behaviour:
 
 ```bash
-mvn -Dmse=off "-Dtest=com.openggf.TestTraceSessionLauncherRewindPresentation,com.openggf.graphics.TestFadeManagerRewindSnapshot,com.openggf.game.rewind.TestLiveRewindManagerAudioCleanup,com.openggf.audio.TestAudioManagerRewindSuppression" test
+python3 tools/testing/maven_queue.py -Dmse=off "-Dtest=com.openggf.TestTraceSessionLauncherRewindPresentation,com.openggf.graphics.TestFadeManagerRewindSnapshot,com.openggf.game.rewind.TestLiveRewindManagerAudioCleanup,com.openggf.audio.TestAudioManagerRewindSuppression" test
 ```
 
 Run the benchmark only when you need timing, footprint, or long-tail determinism data:
 
 ```bash
-mvn -Dmse=off "-Dtest=RewindBenchmark" \
+python3 tools/testing/maven_queue.py -Dmse=off "-Dtest=RewindBenchmark" \
   "-Dopenggf.rewind.benchmark.run=true" test
 ```
 
@@ -107,7 +228,9 @@ to stdout and written to `target/rewind-benchmark-results.json`.
 
 Many tests require ROM files to load level data, object art, or audio. These tests
 **skip gracefully** when ROMs are absent, so CI and contributors without ROMs can still
-run the rest of the suite.
+run the rest of the suite. The local category runner treats these missing-ROM
+skips as incomplete coverage, so a ROM-less run cannot claim a passing verdict
+for the selected ROM-backed checks.
 
 ### `@RequiresRom` Annotation
 
@@ -134,11 +257,11 @@ class TestMyFeature {
 Available game values: `SonicGame.SONIC_1`, `SonicGame.SONIC_2`, `SonicGame.SONIC_3K`.
 
 The annotation system provides several benefits over manual checks:
-- **Automatic environment reset** — `TestEnvironment.resetAll()` runs before each test.
+- **Automatic environment reset** — `TestEnvironment.configureRomFixture(rom)` resets and rebuilds the gameplay context before each test.
 - **ROM caching** — ROMs are loaded once per JVM and shared across all tests via `RomCache`.
 - **Clean skip reporting** — JUnit reports skipped tests with a clear reason rather than
   silently passing.
-- **Game module setup** — `GameModuleRegistry.detectAndSetModule()` is called automatically.
+- **Game module setup** — The ROM-backed game module is configured automatically.
 
 ### `@RequiresGameModule` (No Real ROM)
 
@@ -192,28 +315,31 @@ import static com.openggf.tests.RomTestUtils.ensureRomAvailable;
 @Test
 void testEHZCollision() {
     File romFile = ensureRomAvailable();
-    if (romFile == null) {
-        return;  // Skip: ROM not present
-    }
+    org.junit.jupiter.api.Assumptions.assumeTrue(romFile != null, "ROM not available");
     // ... test logic
 }
 ```
 
 ### ROM Path Configuration
 
-ROM files are found automatically by filename in the working directory. You can also
-specify paths via system properties or environment variables:
+Queued test commands identify verified original `.gen` files by SHA-1 in the worktree
+root, then (from a linked worktree) the main checkout, and pass their absolute paths. The
+wrapper prints the found, caller-supplied and missing properties:
 
 ```bash
-# System properties
-mvn test -Dsonic1.rom.path="path/to/s1.gen"
-mvn test -Dsonic2.rom.path="path/to/s2.gen"
-mvn test -Ds3k.rom.path="s3k.gen"
+python3 tools/testing/maven_queue.py -Dmse=off -Dtest=TestSonic3kLevelLoading test
+```
 
-# Environment variables
-export SONIC_1_ROM_PATH="path/to/s1.gen"
-export SONIC_2_ROM_PATH="path/to/s2.gen"
-export SONIC_3K_ROM_PATH="path/to/s3k.gen"
+To pin a different dump, name the property yourself; a command that names any ROM property
+keeps exactly its own ROM set, and an empty value such as `-Ds3k.rom.path=` proves a skip.
+Environment variables also take precedence over discovery:
+
+```bash
+python3 tools/testing/maven_queue.py -Dmse=off -Dtest=TestS1Ghz1TraceReplay \
+  -Dsonic1.rom.path=/absolute/other-s1.gen test
+export SONIC_1_ROM_PATH="/absolute/s1.gen"
+export SONIC_2_ROM_PATH="/absolute/s2.gen"
+export SONIC_3K_ROM_PATH="/absolute/s3k.gen"
 ```
 
 ## HeadlessTestFixture
@@ -228,7 +354,7 @@ frame-stepping controls.
 @Test
 void testPlayerLandsOnGround() {
     HeadlessTestFixture fixture = HeadlessTestFixture.builder()
-            .withZoneAndAct(ZONE_EHZ, 0)
+            .withZoneAndAct(0, 0)  // EHZ Act 1
             .startPosition((short) 0x100, (short) 0x200)
             .build();
 
@@ -237,7 +363,7 @@ void testPlayerLandsOnGround() {
 
     // Assert the player landed on the ground
     AbstractPlayableSprite player = fixture.sprite();
-    assertTrue(player.isOnGround());
+    assertFalse(player.getAir());
     assertTrue(player.getY() > 0x200);  // Fell from starting position
 }
 ```
@@ -247,13 +373,13 @@ void testPlayerLandsOnGround() {
 ```java
 // Set up fixture with specific start position
 HeadlessTestFixture fixture = HeadlessTestFixture.builder()
-        .withZoneAndAct(ZONE_HTZ, act)
+        .withZoneAndAct(4, act)  // HTZ engine index; act is zero-based
         .startPosition((short) 0x500, (short) 0x300)
         .build();
 
 // Snap camera to player
-fixture.camera().setX(0x500 - 160);
-fixture.camera().setY(0x300 - 112);
+fixture.camera().setX((short) (0x500 - 160));
+fixture.camera().setY((short) (0x300 - 112));
 fixture.camera().updatePosition(true);  // Snap (no smooth scroll)
 
 // Step frames with per-frame inspection
@@ -267,14 +393,32 @@ for (int i = 0; i < 120; i++) {
 
 ### What HeadlessTestFixture Does
 
-The fixture calls the same update sequence as the real game loop:
-1. `Camera.updatePosition()` -- Update camera before level events.
-2. `LevelEventManager.update()` -- Process dynamic boundaries, zone-specific triggers.
-3. `ParallaxManager.update()` -- Calculate scroll offsets.
-4. Object `update()` calls for all active objects.
+The fixture delegates to `HeadlessTestRunner` and the shared `RecordingFrameDriver`.
+`LevelFrameStep` owns frame-level ordering and `SpriteManager.update(...)` owns
+playable/team ordering, so tests and trace captures use the production update path.
+Do not reproduce a partial camera/event/object loop in the test itself.
 
-This means level events, camera boundaries, and object interactions all work in tests
-the same way they do in the real game.
+The snippets assume the matching `@RequiresRom` annotation and zero-based engine
+zone/act indices. `startPosition(...)` uses top-left coordinates by default; add
+`startPositionIsCentre()` when supplying ROM `x_pos` / `y_pos` coordinates and
+compare them with `getCentreX()` / `getCentreY()`.
+
+## Bounded work inside a test
+
+Independent CPU-bound source audits can use
+`com.openggf.tests.SourceScanExecutor.invokeOrdered` with one or two workers.
+Each task owns its compiler/file manager, scanner state and result list. The
+executor preserves input order, propagates worker exceptions and assertions,
+and cancels unfinished siblings before waiting for teardown. Parser workers
+count against the queued job's existing CPU and memory budget; adding threads
+does not qualify a test for a smaller heap.
+
+Keep engine/session state, configuration mutation and graphics contexts on
+their owning thread. Worker preparation must consume captured independent
+inputs rather than resolve global engine services. Jupiter test execution
+remains serial. See the
+[source-audit experiment](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/architecture/research/2026-10-27-local-validation-cost#bounded-parser-concurrency-experiment)
+for the measured benefit, memory cost and focused validation limits.
 
 ## Test Organisation
 
@@ -308,17 +452,17 @@ the original game for specific scenarios.
 @Test
 void testRollingDownSlope() {
     HeadlessTestFixture fixture = HeadlessTestFixture.builder()
-            .withZoneAndAct(ZONE_EHZ, 0)
+            .withZoneAndAct(0, 0)  // EHZ Act 1
             .startPosition((short) 0x800, (short) 0x340)
             .build();
 
     // Set initial speed
-    fixture.sprite().setGroundSpeed(0x200);
+    fixture.sprite().setGSpeed((short) 0x200);
 
     fixture.stepIdleFrames(30);
 
     // Player should have accelerated down the slope
-    int speed = fixture.sprite().getGroundSpeed();
+    int speed = fixture.sprite().getGSpeed();
     assertTrue(speed > 0x200, "Player should accelerate on downhill slope");
 }
 ```
@@ -329,17 +473,17 @@ void testRollingDownSlope() {
 @Test
 void testWallCollisionAtSpeed() {
     HeadlessTestFixture fixture = HeadlessTestFixture.builder()
-            .withZoneAndAct(ZONE_EHZ, 0)
+            .withZoneAndAct(0, 0)  // EHZ Act 1
             .startPosition((short) (wallX - 100), (short) wallY)
             .build();
 
-    fixture.sprite().setGroundSpeed(0xC00);  // 12 pixels/frame
+    fixture.sprite().setGSpeed((short) 0xC00);  // 12 pixels/frame
 
     fixture.stepIdleFrames(30);
 
     // Player should stop at the wall, not pass through
     assertTrue(fixture.sprite().getX() <= wallX);
-    assertEquals(0, fixture.sprite().getGroundSpeed());
+    assertEquals(0, fixture.sprite().getGSpeed());
 }
 ```
 
@@ -357,7 +501,8 @@ Current examples:
 Run them with:
 
 ```bash
-mvn test -Dtest=TestS1Ghz1TraceReplay,TestS1Mz1TraceReplay
+python3 tools/testing/maven_queue.py -Dmse=off \
+  -Dtest=TestS1Ghz1TraceReplay,TestS1Mz1TraceReplay test
 ```
 
 For the full workflow, including recording traces and reading divergence reports, see
@@ -393,8 +538,8 @@ state management.
 
 ## Tips
 
-- **Keep tests independent.** Tests run in parallel across multiple JVM forks. Do not
-  depend on state from another test.
+- **Keep tests independent.** The default reuses one JVM, and an optional profile
+  uses two forks. Do not depend on another test's state or execution order.
 - **Skip gracefully without ROMs.** Use `@RequiresRom` to gate ROM-dependent tests.
   Never let a test fail just because a ROM is absent.
 - **Use constants from the disassembly.** When asserting positions or velocities, use the

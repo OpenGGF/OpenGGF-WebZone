@@ -1,0 +1,255 @@
+---
+title: "Headless testing"
+group: "Contributors"
+order: 99
+---
+
+# Headless testing
+
+For required per-zone/act breadth, rewind spots, execution lanes and the new-level
+delivery checklist, follow the [zone and act testing standard](/docs/guide/contributing/level-test-standard).
+Existing coverage is being audited through the [level backlog](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/status/level-test-coverage).
+
+For local check selection, use the [test category runner](https://github.com/OpenGGF/OpenGGF/blob/develop/tools/testing/README#test-categories).
+It selects ordinary tests from the change against the integration base and runs structural
+guards separately. Focused categories do not replace affected trace fixtures or native tests;
+routine CI uses smoke and public release preparation uses the explicit full suite.
+
+
+`HeadlessTestRunner` (`com.openggf.tests.HeadlessTestRunner`) runs physics and collision
+integration tests without an OpenGL context.
+
+```java
+HeadlessTestRunner runner = new HeadlessTestRunner(sprite);
+runner.stepFrame(up, down, left, right, jump);  // one frame
+runner.stepIdleFrames(5);                       // several idle frames
+```
+
+Tests are JUnit 5 / Jupiter only — no JUnit 4 tests, rules, runners, or `org.junit.*`
+imports.
+
+## Offscreen rendering prerequisites
+
+For real GL rendering in tests, captures or batch tools, use the project
+[headless-rendering skill](https://github.com/OpenGGF/OpenGGF/blob/develop/.agents/skills/headless-rendering/SKILL).
+It distinguishes display-free EGL from logic-only headless mode and hidden windows.
+
+Mandatory Linux background rendering tests create a Mesa surfaceless EGL context
+and render into an owned pbuffer without connecting to X11 or Wayland. Ubuntu needs `libegl1`,
+`libegl-mesa0`, `libgl1` and `libgl1-mesa-dri`; CI installs these explicitly for
+push, pull-request/manual and release test jobs. Context creation failures in
+mandatory rendering tests fail the run rather than silently dropping pixel coverage.
+
+## Preferred setup
+
+Use `@ExtendWith(SingletonResetExtension.class)` or the `@FullReset` annotation for
+automated singleton teardown between tests. Both call `resetState()` on all singletons.
+
+```java
+@ExtendWith(SingletonResetExtension.class)
+class MyTest {
+    @Test void testSomething() { /* singletons auto-reset */ }
+}
+```
+
+### Class-level teardown is automatic
+
+Every reset above runs *before* a test; nothing restores state after the last test of a
+class. `HeadlessStateTeardownExtension` (registered globally through
+`src/test/resources/META-INF/services/org.junit.jupiter.api.extension.Extension` with
+`junit.jupiter.extensions.autodetection.enabled=true` in `junit-platform.properties`)
+therefore calls `TestEnvironment.resetAll()` after every top-level test class, so a
+`HeadlessTestFixture`, `SharedLevel`, gameplay session, or configuration write cannot leak
+into the next class of a reused Surefire fork. It does not run after `@Nested` classes and
+does not replace per-test hygiene: a class whose own tests depend on a clean baseline still
+declares `SingletonResetExtension`, `@RequiresRom`, or an `@AfterEach`.
+`TestHeadlessStateTeardownGuard` (run under `-Pguards`) pins the wiring and
+`TestHeadlessStateTeardownExtension` proves it is active at runtime.
+
+### Test-owned memory
+
+Resetting engine state does not release static source corpora, input-evidence maps
+or inline mock call history. Keep input caches within the fixture that needs them
+and release them in `@AfterEach`/`@AfterAll`. A streaming stress factory must also
+retain bounded input state; production diagnostic counters do not measure its
+factory's memory.
+
+For measured mock retention, create mocks/spies through `OwnedMocks` and close
+that owner after the invocation's assertions and engine teardown. It clears only
+the registered mocks; global inline cleanup can invalidate other live fixtures.
+Use `stubOnly()` only when the test never verifies that mock, and install fixed
+frame-driving stubs once rather than restubbing identical values on each tick.
+
+Rendered route checks that discard pixels can use
+`GameplayCaptureSession.renderFrame()`. It performs the same drawing, overlays,
+effects and GPU completion as `render()` without framebuffer readback. Keep
+`render()` for screenshots and pixel comparisons.
+
+A runtime-ready `GameLoop` owns fade advancement. Capture and death/reload drivers
+must not also call `FadeManager.update()` or `UiRenderPipeline.updateFade()`.
+Match `Engine`'s `ownsGameplayFadeLifecycle()` guard for the pre-runtime UI fallback;
+servicing both owners finishes fades and invokes load callbacks too early.
+
+Cold-route and checkpoint checks for SOZ, LRZ, SSZ, DEZ and the frozen
+FBZ routes can omit scene drawing during traversal between checkpoints. Every
+gameplay tick still executes; queued render-thread work is serviced every tick
+so prepared loads can complete. Snapshot checkpoints, complete forward/replay
+branches and final playable destinations draw normally. The SSZ bridge checks
+also draw their arrival, death/reload and playable checkpoint boundaries.
+
+The two MHZ cold-route classes retain per-tick drawing and omit discarded pixel
+readback. Their restored prefixes differ in palette state even with full drawing;
+independent cold snapshots also contain references scoped to each session. These
+controls cannot isolate a drawing gap, so MHZ drawing remains unchanged.
+
+`TestRouteFrameDrawing` and `TestSozColdRouteFrameDrawing` compare every registered
+world key/field and exact checkpoint pixels after drawing gaps. The previous
+framebuffer is first cleared and checked as uniform to reject stale-image success.
+Their bounded prefixes cover supported characters, teams, 320/800 widths and S1/S2
+donors; they do not certify every full route, viewport/donor combination, load,
+late event or intermediate rendered frame. Existing route assertions and inherited
+coverage gaps remain. Drawing gaps reduce every-frame presentation coverage.
+
+The D01 ending priority-pixel checks also omit unobserved prefix drawing. Every
+simulation pass and original producer/publication boundary remains; assertions
+still draw and read the actual pixels at 320/800 widths. A 320-width reunion
+control compares the full image, serialized native ending state and scroll
+against continuous drawing. Its contrast case separates logical facing from the
+native render flip. This does not certify every intermediate ending image. The comparison deliberately
+exercises both modes even when the every-frame override is requested.
+
+Add `-Dopenggf.tests.drawEveryFrame=true` to the focused Maven command for full
+traversal drawing in the adopted tests. The existing
+`-Dopenggf.soz.drawEveryFrame=true` remains an SOZ-only alias. Fully drawn mode
+omits discarded image readback; keep `render()` for screenshots and pixel
+comparisons. Capture tools and other pixel tests retain their drawing/readback behavior.
+Use full drawing for investigations that require every-frame rendering evidence.
+The two frozen FBZ capture classes retain the separate `-Pfbz-routes` lane;
+ordinary selection still excludes their `fbz-route` tag.
+
+## Manual setup (legacy)
+
+`HeadlessTestFixture.java` (`com.openggf.tests`) implements these steps and is the worked example to read.
+
+1. Reset test state: `TestEnvironment.resetAll()` (use `resetState()`, **not** the
+   deprecated `resetInstance()`).
+2. Prefer `HeadlessGameBoot` for bootstrapping. It installs no-device audio even
+   when synthesis is disabled; a reused JVM must not retain a previous device backend.
+   Logic-only graphics use `GameServices.graphics().initHeadless()`.
+3. Create and register the playable sprite **first** — add the main sprite to
+   `GameServices.sprites()` and set camera focus before `loadZoneAndAct(...)`; the current
+   `LevelManager` load path requires it.
+4. Load the level: `GameServices.level().loadZoneAndAct(zone, act)`.
+5. Fix `GroundSensor`: `GroundSensor.setLevelManager(GameServices.level())` **after** the
+   level load — it is a static field and goes stale between tests.
+6. Update the camera: `GameServices.camera().updatePosition(true)` **after** the level load,
+   since bounds are set during load. Failing to reset `Camera` can also leave `frozen=true`
+   behind from a death sequence in a previous test.
+
+## Test infrastructure
+
+| Class | Purpose |
+|---|---|
+| `SingletonResetExtension` | JUnit 5 extension for automated singleton teardown |
+| `@FullReset` | Annotation triggering a full engine reset |
+| `HeadlessStateTeardownExtension` | Auto-registered; resets the engine baseline after every top-level test class |
+| `StubObjectServices` | Test double for `ObjectServices` |
+| `TestObjectServicesMigrationGuard` | Scanner-based guard preventing singleton access in objects |
+| `TestNoServicesInObjectConstructors` | Ensures objects don't call `services()` during construction |
+| `TestNoDirectMapMutationsInGameplay` | Enforces the level-mutation routing rule |
+
+Tests live under `src/test/java/com/openggf/tests` (plus `com/openggf/game/` for the
+physics suites) and cover ROM loading, decompression, collision, singleton lifecycle, and
+services migration.
+
+## ROM-backed tests
+
+Queued test commands discover verified original ROMs in the worktree root and, from a
+linked worktree, the main checkout, then pass absolute `-D<game>.rom.path=...` properties
+(see [ROM discovery](https://github.com/OpenGGF/OpenGGF/blob/develop/tools/testing/README#build-only-maven-execution-and-queued-tests)).
+Pass a property yourself only to pin a different dump or prove a skip; a command that names
+one keeps exactly its own ROM set. `TestRomLogic` is skipped when its ROM is absent, and
+`TestCollisionLogic` skips via an assumption when no ROM file is present — both are
+accepted conditional skips, not disabled tests.
+
+Set `startup.legalDisclaimer=false` in tests that boot the full `Engine`, or the boot path
+will sit on `GameMode.LEGAL_DISCLAIMER`.
+
+
+## Audio references and test concurrency
+
+Ordinary and smoke runs exclude `audio-reference`, `audio-stress`, and `audio-local-wave` tests.
+Synthetic chip scripts, minimal driver programs, mixer behavior, malformed input
+and bounded comparator cases remain ordinary correctness checks. The expensive
+streaming test retains its original size and 32 MiB child-JVM limit in the stress
+lane:
+
+```bash
+python3 tools/testing/maven_queue.py -Dmse=off -Paudio-stress test -B
+```
+
+Run game-reference comparisons with an external fixture root and the verified local
+ROMs the queue discovers. The root uses `audio/parity/...` and `audio/nuked-opn2/port/...`; raw
+captures are never Maven resources or public build inputs. Maven validation
+removes retired capture copies from existing `target/test-classes` trees and
+refreshes FM expectations from the current synthetic resources. The reference lane
+must fail when its prerequisites are missing. Independent reference expectations
+must not be regenerated from the engine under test to make a comparison pass.
+
+```bash
+python3 tools/testing/maven_queue.py -Dmse=off -Paudio-reference -Dopenggf.audio.fixtures=/absolute/reference-root test -B
+```
+
+The previous optional WAV comparisons use `-Paudio-local-wave` with WAV files
+under `<external fixture root>/audio-reference`. They are local regression
+snapshots, not independent chip/ROM oracles; none is bundled publicly. The WAV
+generator also requires that external root. Missing files fail the explicitly
+selected lane instead of silently skipping comparisons.
+
+Run these profiles separately: Maven combines scalar profile settings by
+precedence, so activating several audio profiles together does not run their union.
+
+These are separate deeper validation commands; an ordinary-suite pass does not
+claim audio-reference or memory-stress coverage. Run both for audio release
+evidence. Existing Git history still contains earlier fixture versions; removing
+files from the current tree does not erase that history or certify unrelated
+trace fixtures as free of game assets.
+
+For machines with room for two 3 GiB heaps plus Maven and native memory, use
+the category runner's `--workers 2` option for the selected smoke coverage.
+The default remains one worker. Tests stay serial inside each JVM because the
+engine's global teardown is unsafe alongside another class. Multiple forks divide
+classes, so one large test class remains a lower bound on elapsed time. Guards
+continue with one JVM. Do not run two Maven processes in the same worktree.
+
+### FBZ compatibility and exhaustive routes
+
+The ordinary FBZ compatibility matrix runs 13 synchronous reload checks, 26
+independent local interaction/authority/checkpoint cases, and one complete native
+Sonic/Tails route. Local checks build fresh production fixtures with the intended
+team, viewport or donor configuration; a failing traversal cannot prevent them
+from running. Smoke excludes the complete representative via `slow-suite`.
+
+Run all eleven complete Act 2 routes explicitly for FBZ route changes and exhaustive
+ROM validation (five teams, four additional widths, two active movement donors):
+
+```bash
+python3 tools/testing/maven_queue.py -Dmse=off -Pfbz-routes test -B
+```
+
+Check that the wrapper's ROM line lists all three properties as found. Verify eleven executed
+route cases and zero skips: like other `@RequiresRom` profiles, missing S3K ROMs
+can produce a successful invocation with skipped tests. `fbz-routes` selects only
+complete routes; run ordinary tests as well for local compatibility coverage.
+The native route appears once in each alternative lane. Complete traversal,
+per-frame team identity, boss completion and exit assertions remain in the
+exhaustive lane; passing short scenarios does not establish route completion.
+Act 1 retains its existing 75 configuration combinations and lifecycle checks.
+
+### Scoped mutator prototype checks
+
+[Mutator Lab](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/modding/guides/mutators) touches the real movement,
+presentation and session owners. Its synthetic scope tests complement native
+stock-identity and production pause/load/fault checks; they do not replace real
+ROM gameplay or GPU/PCM observations. Queue focused tests and the combined
+change-based selection. Confirm the wrapper found the required ROMs and inspect skips.

@@ -1,12 +1,21 @@
 ---
-title: "OpenGGF Roadmap Proposal"
+title: "OpenGGF Roadmap"
 group: "Reference"
 order: 4
 ---
 
-# OpenGGF Roadmap Proposal
+# OpenGGF Roadmap
 
-This document is a proposal for how to prioritize OpenGGF after the `v0.4.20260304` release.
+Current release planning is owned by the [0.8 feature roadmap](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/v0.8-roadmap).
+0.7 shipped as 0.7.20261105, re-scoped: the [0.7 campaign roadmap](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/v0.7-roadmap)
+milestones it did not meet moved to 0.8 as accepted limitations (see the
+[release summary](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/changelog/v0.7-release-summary#known-limitations-and-release-status)).
+Master carries 0.7.20261105, develop 0.8.prerelease and next 0.9.prerelease. Implemented
+additions keep their explicit experimental/support limits; 0.8 graduation does
+not require removing them from 0.7. See the [availability matrix](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/v0.7-roadmap#feature-availability-during-07).
+
+The proposal and retrospectives below record planning after `v0.4.20260304`;
+their dated measurements and former scope statements are historical.
 
 It is intentionally opinionated:
 
@@ -14,15 +23,19 @@ It is intentionally opinionated:
 - Shared engine maturity is more important than one-off hacks.
 - A smaller number of release themes is better than a wide, vague backlog.
 
-## Current Position
+## Historical position after v0.4
 
 OpenGGF has crossed an important threshold:
 
 - Sonic 1 is broadly playable from start to finish.
-- Sonic 2 is the most complete game module and now includes ending/credits coverage.
+- Sonic 2 is the most complete game module (122/122 checklist objects, exact CNZ and WFZ
+  Tornado traces) and includes ending/credits coverage.
 - Sonic 3 & Knuckles has moved from early-game bring-up into near-complete vertical-slice
-  stabilization; AIZ, HCZ, CNZ, MGZ, ICZ, MHZ, and parts of LBZ have substantial coverage, while
-  FBZ and later zones remain the largest content frontier.
+  stabilization; AIZ, HCZ, CNZ, MGZ, ICZ, MHZ, and LBZ have substantial coverage (about 57% of
+  the object checklist, 134 unique ids), while FBZ and the S&K-half zones remain the largest
+  content frontier and sit outside release-6 trace scope.
+- Game Over / Continue screens are implemented in all three games; remaining
+  timing details are tracked in `docs/status/known-bugs.md`.
 - The engine now has stronger multi-game architecture, better tests, and a more credible release story than before `v0.4`.
 
 That changes the planning problem. The project no longer needs a catch-all "prove this can work" roadmap. It needs a focused roadmap that turns broad momentum into a smaller number of high-value outcomes.
@@ -84,7 +97,7 @@ and v0.7 gameplay gap work that was not originally planned for v0.5.
 
 ---
 
-## Proposed Priorities (Updated 2026-06-12)
+## Historical 0.6 priorities (updated 2026-08-28)
 
 ## v0.6 Theme: S3K Playable Slice Parity and Release Readiness
 
@@ -106,7 +119,7 @@ avoid starting wide new zone work unless it directly advances a route slice or r
   focused tests.
 - S3K complete-run trace coverage exists as per-zone trace replay tests, using a single Sonic+Tails
   AIZ -> Doomsday route segmented by zone. Current frontiers are explicit in
-  `docs/TRACE_FRONTIER_LOG.md` rather than hidden as informal blockers.
+  `docs/status/trace-frontier-log.md` rather than hidden as informal blockers.
 - The release line gained substantial hardening: trace policy gates, ROM-asset policy checks,
   editor/config/save recovery paths, native/shader packaging validation, branch-policy hooks, and
   architecture ratchets.
@@ -116,8 +129,24 @@ avoid starting wide new zone work unless it directly advances a route slice or r
   area.
 - Data select/save is functionally in place for all three games through S3K-backed presentation and
   cross-game donation; remaining work is visual and parity polish, not core save plumbing.
-- The editor is a real prototype with config-gated mode switching, tile editing, undo/redo,
-  persistence, and play-test round trips. It is not yet a polished user-facing editor.
+- The editor is a config-gated experimental overlay with tile editing, undo/redo, persistence,
+  and play-test round trips. It has been dormant since 2026-06-12 and is not a 0.6 user-facing
+  feature.
+- The managed test-session coordinator built mid-cycle was removed after it caused unbounded
+  storage growth; builds, tests, guards, and trace evidence run direct Maven in each worktree.
+  The lifecycle research continues as the separate v0.8 Actworks ask.
+- Trace replay moved to a no-regression policy on 2026-08-26 (`docs/status/trace-scope-release-6.md`):
+  release-6 scope is the `-Ptrace-replay` profile ({AIZ, HCZ, MGZ, CNZ, ICZ, LBZ} plus S1/S2
+  fixtures); S&K-half zones including FBZ and all Knuckles routes are gated into
+  `-Ptrace-replay-r7` and are expected red. A known-red trace may not worsen, and every green
+  trace must stay green, but 0.6 no longer waits for the frontier to clear.
+- The SMPS playback authenticity programme of 2026-08-21 was withdrawn on 2026-08-27 (commit
+  `b4c8fbd8a`) because its fixes produced audible regressions the suite could not detect. It was
+  then re-derived piecemeal between 2026-08-28 and 2026-09-04 against emulator-captured
+  per-service driver-state and chip write-stream oracles, each a hard assertion, with every engine
+  fix citing the driver routine it models ([2026-09-04 audio parity handover](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/architecture/plans/audio/2026-09-04-audio-parity-handover),
+  `docs/changelog/v0.6-release-summary.md` Audio). Complete SMPS parity and release listening
+  approval remain open; full-game parity is deferred to 0.7.
 - Performance work has moved from generic cleanup to measured release work, including rewind/audio
   and rendering hot-path reductions with trace-equivalence checks.
 
@@ -133,8 +162,8 @@ avoid starting wide new zone work unless it directly advances a route slice or r
   `ZoneRuntimeRegistry`, `PaletteOwnershipRegistry`, `AnimatedTileChannelGraph`,
   `ZoneLayoutMutationPipeline`, `ScrollEffectComposer`, `SpecialRenderEffectRegistry`, and
   `AdvancedRenderModeController`.
-- Keep the level editor and live rewind moving as prototypes, but do not let polish outrank S3K
-  route blockers, release gates, or trace determinism.
+- Keep live rewind moving as an opt-in feature; the level editor stays dormant for 0.6, and
+  neither outranks S3K route blockers, release gates, or trace determinism.
 
 ### Priority Areas
 
@@ -143,13 +172,14 @@ avoid starting wide new zone work unless it directly advances a route slice or r
 - Keep AIZ -> HCZ as the primary release slice and continue using HCZ as the first continuation
   slice rather than a partial zone bring-up.
 - Stabilize CNZ, MGZ, ICZ, MHZ, and LBZ where current branches/tests already opened the route.
-- Defer broad FBZ/LRZ/SOZ/DEZ expansion unless it is needed for the release route, trace suite, or
-  a low-risk shared-system fix.
+- Defer broad FBZ/LRZ/SOZ/DEZ expansion unless it is needed for the release route or a
+  low-risk shared-system fix. FBZ (zone id 4) is explicitly carved out of the release-6 trace
+  profile despite sitting in the 0-6 id range.
 - Use focused tests and stable-retro visual validation where practical.
 
 #### 2. Trace Frontier Closure
 
-- Use `docs/TRACE_FRONTIER_LOG.md` as the canonical parity ledger for complete-run and level-select
+- Use `docs/status/trace-frontier-log.md` as the canonical parity ledger for complete-run and level-select
   trace state.
 - Prioritize first-divergence owners that block the opened route slices: sidekick CPU handoff,
   object slot/lifetime order, terrain/ring/hurt handoffs, boss/event transitions, and rewind-visible
@@ -163,8 +193,10 @@ avoid starting wide new zone work unless it directly advances a route slice or r
   cutscenes, and high-usage badniks.
 - Defer decorative or isolated objects until the target slice is playable.
 - Use `S3K_OBJECT_CHECKLIST.md` as input to prioritization, not as the prioritization itself.
-- Current visible gaps include AIZ drawbridge, HCZ large fan/block variants, remaining MGZ launcher/
-  pulley/boss work, LBZ boss/late-route work, and the mostly unopened FBZ object set.
+- The gaps listed in the June roadmap (AIZ drawbridge, HCZ large fan/block variants, MGZ
+  launcher/pulley/boss work, LBZ boss/late-route work) have since landed. Remaining visible gaps
+  are the ~43% of S3K checklist rows still unimplemented (mostly
+  S&K-half and decorative objects), and the mostly unopened FBZ object set.
 
 #### 4. Data Select and Save System
 
@@ -175,13 +207,14 @@ avoid starting wide new zone work unless it directly advances a route slice or r
 - Remaining: native selector mapping art, save-slot visual-state polish, and final emerald display
   parity.
 
-#### 5. Level Editor Prototype
+#### 5. Level Editor Prototype (dormant)
 
 - Config-gated editor/playtest loop with tile placement, world-grid navigation, undo/redo,
-  persistence, and gameplay round trips is in place.
-- Remaining: polish editing ergonomics, layer workflows, save UX, and S3K overlay compatibility.
-- Editor fixes are release-relevant when they protect teardown, saves, or mutable-level isolation;
-  broad editor UX should stay behind S3K route and release blockers.
+  persistence, and gameplay round trips exists as an experimental overlay.
+- No editor work has landed since 2026-06-12 and none is planned for 0.6. Remaining: editing
+  ergonomics, layer workflows, save UX, and S3K overlay compatibility.
+- Editor fixes are release-relevant only when they protect teardown, saves, or mutable-level
+  isolation. The modding framework the README describes is likewise planned, not started.
 
 #### 6. Rewind and Determinism
 
@@ -215,37 +248,83 @@ avoid starting wide new zone work unless it directly advances a route slice or r
 - Complete-run trace replay status is documented for every included S3K segment, with no hidden
   known failures in release gating.
 - The data select and save system is functional for all three games, with S3K as the primary presentation.
-- The level editor supports basic tile editing with undo/redo and play-test round-trips, as long as
-  this does not displace the S3K route slice.
+- The level editor is documented as a dormant experimental prototype, not a release feature.
 - Live rewind is bounded, opt-in, and covered enough that it does not corrupt active gameplay,
   audio, level geometry, palette ownership, or object identity when enabled.
 - S3K object coverage is broad enough in the active slices that zones feel playable, not just
   renderable.
 - Release-readiness guard suites pass or have explicit, documented, non-hidden deferrals.
+  Status at `develop` `2e06eb403` (2026-08-28): `-Pguards` 547/0/0 with no deferrals;
+  ordinary suite 14,868 tests with 1 failure and 1 error under repair; `-Ptrace-replay`
+  870 tests with the six known-red frontier failures, held under the no-regression policy.
+- Trace replay meets the no-regression contract: every green trace stays green and no known-red
+  trace worsens on the candidate. Clearing the frontier itself is not a 0.6 exit criterion.
 
-## v0.7 Theme: Completion, Polish, and Parity Closure
+## v0.7 Theme: Complete Stock Campaigns
 
-This release should focus on reducing obvious gaps rather than introducing new strategic directions.
+The [detailed 0.7 roadmap](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/v0.7-roadmap) owns the current
+post-0.6 release sequence and supersedes older scope suggestions here. Finish and
+validate the three stock-game flows first; S3K's late zones, character routes,
+finales, outros and four continuous terminal replay chains are the main remaining
+implementation work. S1/S2 full-game flows and all delivered added features stay
+under regression coverage. Group each route's content, transitions, saves/rewind,
+audio handoffs, ending and chain evidence so lifecycle defects surface early.
 
-### Primary Goals
+Localisation and Unicode host text, S1/S2 REV00 recognition/behavior, and the
+bounded native S3 Competition host are implemented in the inspected candidate.
+Private Time Attack rooms and chat are also implemented; qualification remains
+scoped to the existing evidence. The detailed roadmap records their limits and
+the separate AIZ1/HCZ1 route pilot and partial parity reporting tools.
 
-- Close high-visibility gameplay gaps across all three games.
-- Improve end-to-end reliability of title, data select, save, special-stage, ending, and transition flows.
-- Convert lingering TODO/FIXME areas into tested behavior or explicit deferrals.
+Continue screens, fast/accurate FM selection, AIZ2 background level/art/tilemap
+preparation and native packaging already landed through 0.6.
+Retain them; do not schedule their invention again. Widescreen, modding, racing,
+editor and team work have substantial implementations promoted from next into
+develop, with candidate/experimental boundaries and remaining release validation.
 
-### Priority Areas
+0.7 does not require a public Mod API freeze or broad new optimization work.
+Make narrow shared-policy, loading and audio fixes where campaign evidence
+requires them, and keep performance and audio-parity claims tied to measurements.
+The [delivered inventory](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/v0.7-roadmap#delivered-baseline-and-remaining-work)
+distinguishes inherited work, next additions and outstanding scope.
 
-- Remaining high-value S3K gameplay gaps (additional zones, bosses, special stage polish).
-- Special stage polish where current support exists but parity is incomplete.
-- Final parity passes on transitions, boss sequences, and edge-case object behavior.
-- Native **Knuckles in Sonic 2** support without S3K donation. Treat Sonic & Knuckles
-  lock-on to Sonic 2 as an official patch target rather than a generic cross-game
-  character option: check out the s2disasm Knuckles-in-Sonic-2 branch, document the
-  branch-vs-stock Sonic 2 code/data differences, and implement Knuckles from those
-  differences so physics, objects, monitors/life icons, title/level-select flow, and
-  trace behavior are faithful to the lock-on game. Do not infer this behavior from
-  S3K donation alone.
-- Documentation cleanup around what is complete, partial, or intentionally deferred.
+## v0.8 Theme: Graduate Added Features on the Campaign Baseline
+
+The [detailed 0.8 roadmap](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/v0.8-roadmap) owns these workstreams:
+
+- Finalize typed policies and qualify the delivered bundled Time Attack/multiplayer
+  mod and its menu, lifecycle, overlay and recording hooks. Preserve its current
+  experimental native/JVM availability and validate samples/SDK before publishing the API.
+- [Extend asynchronous ROM loading](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/v0.8-roadmap#milestone-3--extend-asynchronous-rom-loading)
+  at measured remaining art/queue bottlenecks, reusing delivered preparation and
+  ROM-readiness owners; preserve partial uploads, cancellation and rewind.
+- [Live FM switching](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/v0.8-roadmap#milestone-4--live-fm-core-switching)
+  uses the completed campaign audio lifecycle corpus. Crossfade transparency and
+  register-history reconstruction remain hypotheses to validate, not guarantees.
+- Qualify delivered modding, editor, widescreen, team and racing support against
+  completed routes and declared native/JVM/service boundaries.
+- Complete scheduled base-game streamed SFX overrides; the bounded S1 v1 and
+  S3K v2 mod-zone adapters are implemented. Native Knuckles-in-Sonic-2 and
+  [ROM image normalisation](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/architecture/designs/2026-09-13-rom-image-normalisation-design)
+  are also implemented in the candidate. Qualify their documented limits and
+  lock-on input tiers; S3K character donation alone does not prove KiS2 parity.
+- Continue observed SMPS/chip-parity and listening work with explicit scope and
+  evidence. Optional creator/editor expansion remains demand-driven.
+- [Optional modern-era enhancements](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/v0.8-roadmap#optional-workstream--modern-era-enhancements):
+  clean FM output, DAC sample improvements, high-resolution special stages (Blue Sphere first),
+  sub-pixel scrolling, art packs, opt-in bug-fix selection, later-game moves as
+  mutators, latency measurement and save anywhere. Native stays the default;
+  gameplay additions prefer mutator/mod classification.
+
+## v0.8 Tooling Ask: Actworks (historical, outside OpenGGF releases)
+
+Agent worktree and scratch-lifecycle research continues in the public
+[`OpenGGF/Actworks`](https://github.com/OpenGGF/Actworks) project. Slipmat and
+the lifecycle tools live there; [cowtree](https://github.com/raiscan/cowtree)
+remains its own repository. Neither is an OpenGGF 0.8 release workstream or a
+runtime, build, test or contributor-workflow dependency. Any future
+reintroduction must prove bounded storage, explicit lifecycle closure and
+material benefit before adoption.
 
 ## 1.0 Criteria
 
@@ -270,8 +349,9 @@ These are all valid ideas, but they should not outrank the current roadmap theme
 
 ## Short Version
 
-`v0.5.20260411` establishes the S3K AIZ-to-HCZ baseline and shared architecture hardening.
-`v0.6` turns that baseline into release-hardened playable S3K route slices, with complete-run trace
-frontiers as the main parity ledger. Data select/save is functionally in place, the editor and live
-rewind are real prototypes, and the remaining work is to stabilize opened routes without hiding
-known failures. `v0.7` focuses on completion and parity closure.
+0.6 establishes the playable-slice and shared-runtime baseline. 0.7 completes
+and validates the stock campaigns while preserving existing additions. 0.8
+qualifies and publishes those additions against the stable campaign baseline,
+with final Mod API design, bundled racing, measured loading extensions and live
+FM switching explicitly sequenced. The versioned roadmaps own current scope;
+older retrospective measurements above describe their recorded commits only.

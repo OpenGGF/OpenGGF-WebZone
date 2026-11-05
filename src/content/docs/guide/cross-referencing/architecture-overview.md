@@ -13,8 +13,9 @@ be related.
 
 ## Top-Level Package Map
 
-All engine source lives under `src/main/java/com/openggf/`. Here is what each directory
-contains:
+Engine source lives under `src/main/java/com/openggf/`. This is a starting map of
+the main runtime packages; the [engine map](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/architecture/engine-map)
+has more detail on subsystem ownership.
 
 ```
 com.openggf/
@@ -58,8 +59,12 @@ com.openggf/
   debug/                   DEBUG OVERLAYS. Collision visualization, object labels, sensor
                            rays, state readouts.
 
-  tools/                   OFFLINE TOOLS. RomOffsetFinder, ObjectDiscoveryTool. Not part
-                           of the runtime engine.
+  editor/                  LEVEL EDITOR. Project documents, editing commands and HUD.
+
+  stageplay/               SCENE DIRECTION. Documents, evaluation and native-world playback.
+
+  tools/                   COMMAND-LINE TOOLS. ROM discovery, trace/gameplay capture,
+                           Stageplay compilation and other diagnostics.
 ```
 
 ## Inside a Game Module
@@ -97,10 +102,11 @@ sonic2/
 ### Constants Files = ROM Addresses
 
 When you want to know "where does the engine read X from the ROM?", the constants file is
-the first place to look. Every ROM address the engine uses is defined as a named constant:
+the first place to look. Many root addresses are named constants; loaders also follow
+ROM pointer tables and verified instruction operands:
 
 ```
-LEVEL_LAYOUT_DIR_ADDR = 0x045A80
+DEFAULT_LEVEL_LAYOUT_DIR_ADDR = 0x045A80
 ART_LOAD_CUES_ADDR = 0x42660
 ```
 
@@ -112,23 +118,39 @@ which class handles a given object ID, search the registry file.
 
 ### ObjectInstance = Object RAM Slot
 
-In the original game, each active object occupies a 64-byte slot in object RAM, with fields
+In S1/S2, each active object occupies a 64-byte slot in object RAM; S3K uses 74 bytes. Fields are
 accessed by byte offset (`x_pos(a0)`, `routine(a0)`). In the engine, each active object is
 an instance of a class with named fields. The `update()` method replaces the 68000 jumping
 to the object's routine.
 
 ### ResourceLoader = Decompression
 
-The `data/` package contains decompression implementations for every compression type used
-by the games (Kosinski, Nemesis, Enigma, Saxman, KosinskiM). When the engine loads
-compressed data from the ROM, it goes through `ResourceLoader` (in `level/resources/`),
-which selects the correct decompressor based on the compression type.
+The `data/compression/` package contains the decompression implementations, including
+Kosinski, Nemesis, Enigma, Saxman and moduled Kosinski. `ResourceLoader` (in
+`level/resources/`) executes typed level-resource operations; sprite and audio loaders
+also call the relevant readers directly. Follow the particular loader rather than
+assuming every asset passes through one class.
 
 ### SmpsSequencer = Z80 Sound Driver
 
-The Z80 sound driver is not emulated -- it is reimplemented. The `SmpsSequencer` processes
-the same SMPS sequence data that the Z80 driver would, producing the same register writes
-to the YM2612 and SN76489 emulation cores.
+The Z80 sound driver is not emulated -- it is reimplemented. The `SmpsSequencer`
+processes ROM SMPS sequence data and drives the YM2612 and SN76489 emulation
+cores, but universal register-write parity is still a goal rather than a current
+guarantee. In particular, S3K coordinate flags are owned by
+`Sonic3kCoordFlagHandler`. Fixed-point traversal of every resolved S&K-loader
+shipped-ROM music/SFX track entry and both native SFX banks (`33-DF`, 173
+entries each) never reaches its `SND_CMD`, `MUS_PAUSE`, or `COPY_MEM` meta
+commands. Strict full-bank traversal covers all native roots/frontiers,
+including differing `9B`/`AD` payloads and `DC-DF` aliases; ROM type-check bytes
+prove S&K's `DC` CreditsK music special case and S3's `DC-DF` SFX dispatch.
+Their cases recognize and consume the source-defined widths only to retain a
+syntax boundary in diagnostic data. Custom/imported execution is unsupported:
+there is no public custom SMPS format or ingestion route, and the authored-mod
+audio design uses streamed media.
+See the ROM inventory and source contract in
+`docs/architecture/research/audio/2026-08-08-s3k-smps-meta-command-reachability.md`
+and the reviewed capability boundary in
+`docs/architecture/designs/2026-08-09-s3k-custom-smps-meta-command-capability.md`.
 
 ## Finding Things
 

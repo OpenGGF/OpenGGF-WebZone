@@ -12,7 +12,9 @@ source of truth.
 
 ## Branch Names
 
-Use focused branches from `develop`:
+Normal contributions use focused branches from `develop`. For delegated work in an
+existing checkout, use its current branch as the base unless another is specified.
+Create task branches in separate worktrees; never switch the main workspace branch:
 
 - `feature/ai-...` for new features.
 - `bugfix/ai-...` for fixes.
@@ -22,18 +24,15 @@ before opening a PR.
 
 ## Git Hooks
 
-Tracked hooks live in `.githooks/`. Maven installs them during the `validate` phase by pointing
-`core.hooksPath` at `.githooks`:
+Tracked hooks live in `.githooks/`. Maven never mutates Git configuration during `validate`
+or any other phase; install the hooks explicitly once per worktree:
 
 ```bash
-mvn validate
+tools/testing/install-hooks.sh      # PowerShell: tools/testing/install-hooks.ps1
 ```
 
-If you commit before building, install the hooks manually:
-
-```bash
-git config core.hooksPath .githooks
-```
+The script sets `core.hooksPath` to `.githooks` for that worktree. Check the result with
+`git config core.hooksPath`.
 
 Do not bypass the policy with `--no-verify`. The trailer block is the project's explicit
 attestation that related documentation and discrepancy files were considered.
@@ -60,13 +59,13 @@ Each value must start with `updated` or `n/a`.
 
 | Trailer | File or directory | Use `updated` when |
 | --- | --- | --- |
-| `Changelog` | `CHANGELOG.md` | Engine behavior changed in a way users or contributors should know about. |
+| `Changelog` | `CHANGELOG.md` | The root release index or development-line pointer changed. Per-version notes alone use `n/a` with their destination as the reason. |
 | `Guide` | `docs/guide/` | Player or contributor guide content changed. |
-| `Known-Discrepancies` | `docs/KNOWN_DISCREPANCIES.md` | A cross-game or non-S3K intentional divergence was added, changed, or resolved. |
+| `Known-Discrepancies` | `docs/status/known-discrepancies.md` | A cross-game or non-S3K intentional divergence was added, changed, or resolved. |
 | `S3K-Known-Discrepancies` | `docs/S3K_KNOWN_DISCREPANCIES.md` | An S3K-specific intentional divergence was added, changed, or resolved. |
-| `Agent-Docs` | `AGENTS.md` and `CLAUDE.md` | Top-level agent guidance changed. Stage both files together. |
+| `Agent-Docs` | `AGENTS.md` | Top-level agent guidance changed. `AGENTS.md` is the only project instruction file; a staged `CLAUDE.md` is rejected. |
 | `Configuration-Docs` | `CONFIGURATION.md` | A config flag, key binding, startup behavior, or user-facing config default changed. |
-| `Skills` | `.agents/skills/` and `.claude/skills/` | Agent skill guidance changed. Stage both mirrored trees together. |
+| `Skills` | `.agents/skills/` | Agent skill guidance changed. Edit `.agents/skills/`, regenerate the `.claude/skills/` copy with `python3 tools/git/sync_skills.py` and stage both; the staged copy must match exactly. |
 
 If a mapped file is staged, the matching trailer must say `updated`. If the mapped file is not
 staged, the trailer should say `n/a`.
@@ -91,9 +90,78 @@ Changelog: n/a: test-only helper
 A bare `Changelog: n/a` is rejected for `feat`, `fix`, and `perf` commits that touch
 `src/main/`.
 
+## Release Note Destination
+
+`pom.xml` selects the engine release line, and new notes go in the
+`CHANGELOG.<version>.md` it names: `develop` (0.8.prerelease) writes
+`CHANGELOG.0.8.prerelease.md` and `next` (0.9.prerelease) writes
+`CHANGELOG.0.9.prerelease.md`. `CHANGELOG.0.7.md` is the frozen 0.7 release file.
+The root `CHANGELOG.md` holds the release index. For an engine change whose note is in the versioned file:
+
+```text
+Changelog: n/a: release note recorded in CHANGELOG.0.8.prerelease.md
+```
+
+Fold fixes to an unreleased feature into its existing entry. Keep commit hashes,
+frame numbers and detailed validation in the appropriate engineering record.
+The [documentation checklist](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/agent-workflow/documentation-obligation-checklist)
+and [release rollover](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/project/release-rollover) describe the destinations.
+
+## AI-Assisted Commits
+
+End the message with a `Co-authored-by` trailer for each contributing model,
+including its name and version. Put documentation trailers before that final
+block, separated by one blank line; keep multiple co-author lines contiguous.
+For example:
+
+```text
+Co-authored-by: OpenAI Codex GPT-6 <noreply@openai.com>
+```
+
+Use the checked preparation entry point for ordinary AI-assisted commits from an
+existing non-master branch. First stage and review the intended files, then write
+the complete UTF-8 message with LF line endings to a file outside the staged scope. Run from the repository
+root, listing every staged path literally, including deletions and both sides of
+renames:
+
+```bash
+python3 tools/testing/checked_commit.py --message-file /tmp/commit-message.txt \
+  --co-author 'OpenAI Codex GPT-6.1 <noreply@openai.com>' \
+  -- tools/testing/checked_commit.py docs/guide/contributing/documentation-policy.md
+```
+
+Replace the example paths with the complete reviewed staged scope. Repeat
+`--co-author` for each contributor in final-block order. The final block must
+contain only those contiguous `Co-authored-by` lines, preceded by a blank line.
+The seven policy lines belong before that separator. Git's
+`interpret-trailers --parse` can return only the final block, so it is not a
+replacement for policy validation.
+
+The helper snapshots the exact message bytes, compares literal paths with the
+index, checks the final parsed coauthors, and invokes `.githooks/run-policy
+commit-msg`. That existing dispatcher validates the seven policy lines and
+staged content. Any failed prerequisite aborts before `git commit` is invoked.
+It then checks that the message, branch, HEAD, and staged tree did not change and
+runs ordinary `git commit --cleanup=verbatim --file` with the snapshot. Normal
+hooks still run and may reject the commit. The helper does not stage files,
+accept arbitrary Git flags, or support initial, merge, or amend commits.
+
+Install the repository hooks first. Do not run concurrent Git writers in the
+same checkout. Drift checks do not provide atomic isolation against other
+processes, and hooks retain their normal authority to modify the index or
+message during Git's commit lifecycle. Existing policy restrictions on unusual
+filenames still apply. A nonzero result means no successful commit was reported;
+inspect Git status before retrying.
+
+Run the boundary's disposable-repository controls with:
+
+```bash
+python3 -m unittest discover -s tools/testing -p 'test_run_category_checked_commit.py' -v
+```
+
 ## Trace Frontier Log
 
-`docs/TRACE_FRONTIER_LOG.md` does not have its own trailer, but it is still required when trace
+`docs/status/trace-frontier-log.md` does not have its own trailer, but it is still required when trace
 work changes the frontier.
 
 Update it when:
@@ -111,7 +179,7 @@ frame/field. Stage the log update with the trace work it documents.
 Update the appropriate discrepancy file when behavior intentionally diverges from ROM behavior or
 when an existing known divergence is resolved:
 
-- `docs/KNOWN_DISCREPANCIES.md` for cross-game or non-S3K-specific divergences.
+- `docs/status/known-discrepancies.md` for cross-game or non-S3K-specific divergences.
 - `docs/S3K_KNOWN_DISCREPANCIES.md` for S3K-specific divergences.
 
 Do not leave intentional differences only in PR comments or commit messages.
@@ -130,9 +198,11 @@ from source code.
 
 ## Merge Policy
 
-When maintainers merge a non-`master` branch into `develop`, the merge must include a
-`README.md` release/change-log summary for the branch. Merge commits skip the trailer validation
-above, but this README rule still applies.
+Merge commits skip the trailer validation above. The `README.md` release section is a
+handful of version themes, not a change log: a merge into `develop` edits it only when it adds
+or changes a theme, and most merges leave it alone. A fix to work that has not yet shipped folds
+into the existing changelog entry and earns no README text. No hook or CI check requires a
+README change on a merge.
 
 ## Example Trailer Blocks
 

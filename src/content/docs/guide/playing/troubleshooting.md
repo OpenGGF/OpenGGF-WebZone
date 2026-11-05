@@ -12,25 +12,29 @@ order: 5
 different revision (e.g., Sonic 2 REV00 instead of REV01) will cause incorrect ROM address
 lookups, which can result in crashes, garbled graphics, or a black screen.
 
-Check that your ROM files match these revisions and hashes:
+Check that your ROM files match these revisions:
 
-| Game | Required ROM | CRC32 | SHA-1 |
-|------|--------------|-------|-------|
-| Sonic 1 | World REV01 | `AFE05EEE` | `69E102855D4389C3FD1A8F3DC7D193F8EEE5FE5B` |
-| Sonic 2 | World REV01 | `7B905383` | `8BCA5DCEF1AF3E00098666FD892DC1C2A76333F9` |
-| Sonic 3&K | Lock-on combined | `63522553` | `CFBF98C36C776677290A872547AC47C53D2761D6` |
+| Game | Required Revision |
+|------|-------------------|
+| Sonic 1 | World, REV01 |
+| Sonic 2 | World, REV01 |
+| Sonic 3&K | World, lock-on combined |
 
-**Missing ROM file.** If the ROM file is not found in the working directory, the engine
-will show an error. Ensure the files are in the same directory as the JAR (or the project
-root if running from source). ROM filenames can be configured in `config.yaml` -- see
-[Configuration](/docs/guide/playing/configuration).
+**Missing ROM file.** Current development builds keep missing games on the hub
+and offer **Locate ROM** or **Add your games → Scan a folder**. Files may remain
+in their original locations. The default scan reads the working directory;
+`roms.directory` changes it. A non-default explicit path must exist, so correct
+or clear a stale override in **Settings → Files** or `config.yaml`. See
+[Configuration](/docs/guide/playing/configuration#how-do-i-use-different-rom-filenames).
 
-**Java version too old.** The engine requires Java 21 or later. Run `java -version` to
-check. If you have multiple Java installations, ensure the correct one is on your PATH.
+**Java version too old.** JAR builds require Java 25 or later; native release
+executables do not need a separate Java installation. Run `java -version` to
+check the runtime used for a JAR. On macOS, launch it with
+`java -XstartOnFirstThread -jar <your-jar-file>`.
 
-**OpenGL version too low.** The engine requires OpenGL 4.1 core profile. This is supported
-by most GPUs from the last decade (Intel HD 4000+, NVIDIA GeForce 400+, AMD Radeon HD 5000+).
-Check your GPU driver is up to date. On Linux, ensure you have the correct Mesa or
+**OpenGL version too low.** The engine requires an OpenGL 4.1 core context.
+Support depends on the GPU and operating-system driver, including remote or
+virtual display drivers. Check that your driver provides that context. On Linux, ensure you have the correct Mesa or
 proprietary driver installed.
 
 ## No sound
@@ -48,14 +52,20 @@ cannot handle. Set it to `false` (the default).
 
 ## Game runs too fast or too slow
 
-**FPS setting.** The engine targets 60 FPS for NTSC (the default). If you have set `display.fps`
-to a different value, the game will run faster or slower. Reset to `60`.
+**FPS setting.** `display.fps` limits window rendering. Lower or higher settings
+leave gameplay and audio at the region cadence; VSync may limit actual window FPS.
+
+**Display pacing.** With `display.pacing: "AUTO"` (the default) on a 59.94 Hz display,
+the game follows the display and runs 0.1% slow so motion stays even. Set
+`display.pacing: "EXACT"` to keep nominal 60 Hz or 50 Hz speed; a picture may then
+repeat or be skipped every few seconds.
 
 **Region setting.** PAL mode (`audio.region: "PAL"`) runs at 50 Hz, which makes the game
-approximately 17% slower than NTSC. This is accurate to the original hardware behavior,
-not a bug.
+at a lower update rate than the default NTSC setting. Simulation and audio stay at 50 Hz
+even if `display.fps` is different. Region support is not a claim of complete
+PAL hardware parity.
 
-**System performance.** If the engine cannot maintain 60 FPS, the game will appear to run
+**System performance.** If simulation alone cannot sustain the region rate, the game will run
 slowly. Check that your GPU driver supports OpenGL 4.1 and that no other application is
 consuming GPU resources.
 
@@ -77,7 +87,9 @@ These log messages appear when the engine encounters an object in a level's plac
 that it does not have an implementation for. This is normal for zones or games that are
 still being developed. The unimplemented object will simply not appear in the level.
 
-Check the object checklists to see if the object is planned:
+Check the object checklists to see whether the type is registered. A registered
+implementation can still have behavior or route gaps:
+
 - [Sonic 2 Object Checklist](https://github.com/OpenGGF/OpenGGF/blob/develop/OBJECT_CHECKLIST)
 - [Sonic 1 Object Checklist](https://github.com/OpenGGF/OpenGGF/blob/develop/S1_OBJECT_CHECKLIST)
 - [Sonic 3&K Object Checklist](https://github.com/OpenGGF/OpenGGF/blob/develop/S3K_OBJECT_CHECKLIST)
@@ -90,10 +102,12 @@ with 50+ rings. In Sonic 1, they are entered through giant rings at the end of a
 **Visual differences:** Special stage rendering is functional but may not be pixel-perfect
 compared to the original. This is a known area for improvement.
 
-## S3K zones beyond AIZ don't work properly
+## An S3K route or late-game sequence fails
 
-S3K support is currently focused on playable route slices from Angel Island through
-Hydrocity, with CNZ/MGZ/ICZ work in progress. Other zones may load (tiles and layout
-visible) but will likely be missing objects, events, scroll handlers, and other
-zone-specific features. This is the expected state of the project, not a bug. See
-[Game Status](/docs/guide/playing/game-status) for details.
+The 0.7 development branch includes late zones and native ending flows. A failure
+beyond Angel Island is not automatically an unimplemented zone. Check
+[Game Status](/docs/guide/playing/game-status) and the [S3K bug list](https://github.com/OpenGGF/OpenGGF/blob/develop/docs/status/s3k-known-bugs)
+for the affected route. When reporting a problem, include the build/commit, ROM
+identity, zone/act, character and sidekick, donor, aspect ratio, entry path
+(new game, checkpoint or side-stage return), and steps or a recording to reproduce
+it. Published 0.6 builds have a different feature set.
