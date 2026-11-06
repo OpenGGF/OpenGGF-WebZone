@@ -1,5 +1,27 @@
 [
   {
+    "tag": "v0.7.20261105",
+    "name": "v0.7.20261105",
+    "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/v0.7.20261105",
+    "prerelease": false,
+    "publishedAt": "2026-11-06T13:39:00Z",
+    "body": "## What's Changed\n* fix(titlescreen): restore S2 sparkle timing and blank gaps by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/192\n* fix(audio): silence S1 channels on music loads by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/189\n* Slay the Robotnik: a Sonic deck-building roguelike example mod, with mod scenes by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/211\n* feat(mods): add Putt Putt Paradise — Sonic 2 Mini Golf by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/212\n* Flappy Tails: polished S3K scene game and nine-part tutorial by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/216\n* Extract Time Attack and multiplayer racing into a bundled mod (v0.8 Milestone 2) by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/217\n* fix: read frame-counter low bytes instead of offset arithmetic (S3K, S2) by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/218\n* Add Mutator Lab: 11 configurable mutators for Sonic 1, 2 and 3&K by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/215\n* build: migrate OpenGGF to Java 25 by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/221\n* Starpost Valley: a Stardew-style year in Green Hill, with scene-to-act round trips by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/220\n* Tighten runtime ownership and architecture debt contracts by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/222\n* feat(tools): add promo-direction skill and promo_kit compositor by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/224\n* Make repeated Time Attack runs reliable within a round window by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/227\n* Editor: authoring parity features and visual polish by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/228\n\n\n**Full Changelog**: https://github.com/OpenGGF/OpenGGF/compare/v0.6.20260911...v0.7.20261105",
+    "assets": [
+      {
+        "name": "OpenGGF-linux.tar.gz",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.7.20261105/OpenGGF-linux.tar.gz"
+      },
+      {
+        "name": "OpenGGF-universal.jar",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.7.20261105/OpenGGF-universal.jar"
+      },
+      {
+        "name": "OpenGGF-windows.zip",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.7.20261105/OpenGGF-windows.zip"
+      }
+    ]
+  },
+  {
     "tag": "multi-next-latest",
     "name": "Multiplayer master (next, rolling)",
     "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-next-latest",
