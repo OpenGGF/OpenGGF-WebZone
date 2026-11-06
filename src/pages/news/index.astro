@@ -1,17 +1,38 @@
 ---
 // src/pages/news/index.astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ActPlateHeader from '../../components/ActPlateHeader.astro';
 import { getCollection } from 'astro:content';
+import { formatNewsDate } from '../../lib/news-date';
 const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date);
 ---
 <BaseLayout title="News — OpenGGF">
-  <section style="max-width:800px;margin:0 auto;padding:48px 20px">
-    <h1 style="font-family:var(--font-display)">News</h1>
-    {posts.map((p) => (
-      <article style="margin:18px 0">
-        <a href={`/news/${p.id}`} style="font:900 18px var(--font-body);color:var(--ogf-ink);text-decoration:none">{p.data.title}</a>
-        <p style="color:#888;font:600 12px var(--font-body)">{p.data.date.toISOString().slice(0,10)}</p>
-      </article>
-    ))}
+  <section class="wrap">
+    <ActPlateHeader label="News" />
+    <div class="list">
+      {posts.map((p) => (
+        <a class="card" href={`/news/${p.id}`}>
+          <time datetime={p.data.date.toISOString().slice(0, 10)}>{formatNewsDate(p.data.date)}</time>
+          <h2>{p.data.title}</h2>
+          <p>{p.data.summary}</p>
+          <span class="more">Read post →</span>
+        </a>
+      ))}
+    </div>
+    <a class="rss" href="/rss.xml">RSS feed</a>
   </section>
 </BaseLayout>
+<style>
+  .wrap { max-width: 780px; margin: 0 auto; padding: clamp(28px, 6vh, 56px) 20px; }
+  .list { display: grid; gap: 14px; }
+  .card { display: block; background: #fff; border: 3px solid var(--ogf-ink); border-radius: 8px;
+    padding: 20px 24px; text-decoration: none; color: var(--ogf-ink); }
+  .card:hover { border-color: var(--ogf-blue); }
+  .card time { font: 700 12px var(--font-body); color: var(--ogf-blue);
+    text-transform: uppercase; letter-spacing: .6px; }
+  .card h2 { font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 1.2;
+    margin: 6px 0 8px; }
+  .card p { font: 400 15px/1.6 var(--font-body); color: #3a3a42; }
+  .more { display: inline-block; margin-top: 10px; font: 800 13px var(--font-body); color: var(--ogf-blue); }
+  .rss { display: inline-block; margin-top: 16px; font: 800 13px var(--font-body); color: var(--ogf-blue); }
+</style>

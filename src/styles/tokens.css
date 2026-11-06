@@ -25,7 +25,10 @@
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { font-family: var(--font-body); color: var(--ogf-ink); }
-body { background: var(--ogf-paper); }
+/* Full-height column so the footer sits at the bottom of short pages. */
+body { background: var(--ogf-paper); min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column; }
+body > main { flex: 1 0 auto; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
