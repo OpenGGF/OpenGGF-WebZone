@@ -35,7 +35,9 @@ const { Content } = await render(post);
   </div>
 </BaseLayout>
 <style>
-  .wrap { max-width: 780px; margin: 0 auto; padding: clamp(28px, 6vh, 56px) 20px; }
+  /* The card leaves a 640px column: text and screenshots share it, and 640 is
+     exactly twice the games' 320px screen, so 2x captures show pixel for pixel. */
+  .wrap { max-width: 790px; margin: 0 auto; padding: clamp(28px, 6vh, 56px) 20px; }
   .back { display: inline-block; margin-bottom: 14px; font: 800 13px var(--font-body);
     color: var(--ogf-blue); text-decoration: none; }
   .back:hover { text-decoration: underline; }
@@ -48,7 +50,9 @@ const { Content } = await render(post);
     line-height: 1.12; margin: 14px 0 10px; }
   .head time { display: block; font: 700 12px var(--font-body); color: var(--ogf-blue);
     text-transform: uppercase; letter-spacing: .6px; }
-  .lede { margin-top: 16px; font: 500 17px/1.6 var(--font-body); color: #3a3a42; max-width: 62ch; }
+  .lede { margin-top: 16px; font: 500 17px/1.6 var(--font-body); color: #3a3a42; }
+  .body :global(> *) { max-width: none; }
+  .body :global(img) { display: block; image-rendering: pixelated; }
 
   /* Posts read as articles, so a step up from the docs' 15px body text. */
   .body :global(p),
