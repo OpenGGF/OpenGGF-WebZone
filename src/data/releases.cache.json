@@ -1,11 +1,25 @@
 [
   {
+    "tag": "multi-dev-latest",
+    "name": "Multiplayer master (develop, rolling)",
+    "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-dev-latest",
+    "prerelease": true,
+    "publishedAt": "2026-11-01T11:36:34Z",
+    "body": "Rolling build of the multiplayer master server from `develop` at 60aa1d658627, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
+    "assets": [
+      {
+        "name": "openggf-racing-server.zip",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/multi-dev-latest/openggf-racing-server.zip"
+      }
+    ]
+  },
+  {
     "tag": "v0.7.20261105",
     "name": "v0.7.20261105",
     "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/v0.7.20261105",
     "prerelease": false,
     "publishedAt": "2026-11-06T13:39:00Z",
-    "body": "## What's Changed\n* fix(titlescreen): restore S2 sparkle timing and blank gaps by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/192\n* fix(audio): silence S1 channels on music loads by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/189\n* Slay the Robotnik: a Sonic deck-building roguelike example mod, with mod scenes by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/211\n* feat(mods): add Putt Putt Paradise — Sonic 2 Mini Golf by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/212\n* Flappy Tails: polished S3K scene game and nine-part tutorial by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/216\n* Extract Time Attack and multiplayer racing into a bundled mod (v0.8 Milestone 2) by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/217\n* fix: read frame-counter low bytes instead of offset arithmetic (S3K, S2) by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/218\n* Add Mutator Lab: 11 configurable mutators for Sonic 1, 2 and 3&K by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/215\n* build: migrate OpenGGF to Java 25 by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/221\n* Starpost Valley: a Stardew-style year in Green Hill, with scene-to-act round trips by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/220\n* Tighten runtime ownership and architecture debt contracts by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/222\n* feat(tools): add promo-direction skill and promo_kit compositor by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/224\n* Make repeated Time Attack runs reliable within a round window by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/227\n* Editor: authoring parity features and visual polish by @raiscan in https://github.com/OpenGGF/OpenGGF/pull/228\n\n\n**Full Changelog**: https://github.com/OpenGGF/OpenGGF/compare/v0.6.20260911...v0.7.20261105",
+    "body": "OpenGGF 0.7 plays Sonic the Hedgehog, Sonic 2 and Sonic 3 & Knuckles on one Java engine, running from your own dumps of the games. It contains no game files.\n\n## Highlights\n\n- **Sonic 3 & Knuckles, in beta, to the endings.** Every zone of the locked-on game, from Marble Garden to The Doomsday Zone, now has a playable implementation. Sonic, Tails and Knuckles each reach their own native ending and credits.\n- **Sonic 1 and Sonic 2** play from start to finish, endings and credits included, and now also recognise their original REV00 cartridges.\n- **Knuckles in Sonic 2** with his own physics, gliding, climbing and object layouts (needs your Sonic 3 & Knuckles and Sonic 2 dumps).\n- **A new title hub and menus:** a cartridge shelf with each game's animated logo, Game Setup and Settings, and 20 language choices (machine-drafted translations).\n- **Widescreen** at 352 and 400 pixels across levels, menus, results, endings and special stages; 528 is best-effort and 800 exploratory. Gameplay runs at 60 Hz (50 Hz PAL) whatever your monitor's refresh rate.\n- **Rewind budget**, 10 seconds by default, refilled at checkpoints, acts or zones, or unlimited.\n- **OpenGGF Stageplay** (experimental): direct short films and cutscenes with the games' own characters and physics.\n- **Level editor** (experimental): create, save and reopen named level projects in all three games.\n- **Time Attack** as a bundled mod with ghosts, retries and online racing, under Extras > Time Attack.\n- **Mod framework preview.** The Mod API is an unpublished candidate and publishes in 0.8.\n\n## Shipped re-scoped\n\n0.7 was planned as the release where all three games were complete and qualified. It isn't. Complete, certified Sonic 3 & Knuckles runs for each character, the four full-game trace chains and whole-game qualification move to 0.8. The [release summary](https://github.com/OpenGGF/OpenGGF/blob/master/docs/changelog/v0.7-release-summary.md#known-limitations-and-release-status) lists every accepted limitation and the validation results.\n\n## Downloads\n\nNative packages for Windows and Linux need no Java install; the universal JAR needs Java 25. You need dumps of games you own.\n\n**macOS:** this release has no native macOS package yet. The 0.7 code-mod image needs more memory to build than GitHub's free macOS runner has. On a Mac, run the universal JAR with Java 25: `java -XstartOnFirstThread -jar OpenGGF-universal.jar`. The macOS package will follow.\n\n- [Release summary](https://github.com/OpenGGF/OpenGGF/blob/master/docs/changelog/v0.7-release-summary.md)\n- [Full 0.7 changelog](https://github.com/OpenGGF/OpenGGF/blob/master/CHANGELOG.0.7.md)\n- [openggf.com](https://openggf.com)\n\n*OpenGGF is a fan project with no connection to Sega. Sonic the Hedgehog and all related characters, names and trademarks belong to Sega Corporation.*\n",
     "assets": [
       {
         "name": "OpenGGF-linux.tar.gz",
@@ -27,25 +41,11 @@
     "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-next-latest",
     "prerelease": true,
     "publishedAt": "2026-11-01T11:48:10Z",
-    "body": "Rolling build of the multiplayer master server from `next` at 0d8ffdcd6480, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
+    "body": "Rolling build of the multiplayer master server from `next` at 38c69faeb505, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
     "assets": [
       {
         "name": "openggf-racing-server.zip",
         "url": "https://github.com/OpenGGF/OpenGGF/releases/download/multi-next-latest/openggf-racing-server.zip"
-      }
-    ]
-  },
-  {
-    "tag": "multi-dev-latest",
-    "name": "Multiplayer master (develop, rolling)",
-    "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-dev-latest",
-    "prerelease": true,
-    "publishedAt": "2026-11-01T11:36:34Z",
-    "body": "Rolling build of the multiplayer master server from `develop` at 0d8ffdcd6480, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
-    "assets": [
-      {
-        "name": "openggf-racing-server.zip",
-        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/multi-dev-latest/openggf-racing-server.zip"
       }
     ]
   },
