@@ -6,11 +6,12 @@ import { glob } from 'astro/loaders';
 // "2026-06-18-hello"; docs/guide/playing/controls.md -> id "guide/playing/controls").
 const news = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/news' }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     date: z.date(),
     summary: z.string(),
-    image: z.string().optional(),
+    // Public/remote URLs stay URLs; relative files go through Astro's asset pipeline.
+    image: z.union([z.string().regex(/^(\/(?!\/)|https:\/\/)/), image()]).optional(),
   }),
 });
 
