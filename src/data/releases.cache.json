@@ -5,11 +5,25 @@
     "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-dev-latest",
     "prerelease": true,
     "publishedAt": "2026-11-01T11:36:34Z",
-    "body": "Rolling build of the multiplayer master server from `develop` at cbdd339fdc41, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
+    "body": "Rolling build of the multiplayer master server from `develop` at 824399c2255f, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
     "assets": [
       {
         "name": "openggf-racing-server.zip",
         "url": "https://github.com/OpenGGF/OpenGGF/releases/download/multi-dev-latest/openggf-racing-server.zip"
+      }
+    ]
+  },
+  {
+    "tag": "multi-next-latest",
+    "name": "Multiplayer master (next, rolling)",
+    "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-next-latest",
+    "prerelease": true,
+    "publishedAt": "2026-11-01T11:48:10Z",
+    "body": "Rolling build of the multiplayer master server from `next` at a9b7cbb177ae, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
+    "assets": [
+      {
+        "name": "openggf-racing-server.zip",
+        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/multi-next-latest/openggf-racing-server.zip"
       }
     ]
   },
@@ -32,20 +46,6 @@
       {
         "name": "OpenGGF-windows.zip",
         "url": "https://github.com/OpenGGF/OpenGGF/releases/download/v0.7.20261105/OpenGGF-windows.zip"
-      }
-    ]
-  },
-  {
-    "tag": "multi-next-latest",
-    "name": "Multiplayer master (next, rolling)",
-    "url": "https://github.com/OpenGGF/OpenGGF/releases/tag/multi-next-latest",
-    "prerelease": true,
-    "publishedAt": "2026-11-01T11:48:10Z",
-    "body": "Rolling build of the multiplayer master server from `next` at 38c69faeb505, deployed to the multiplayer testbed by CI. Replaced on each deploy; not a player release.",
-    "assets": [
-      {
-        "name": "openggf-racing-server.zip",
-        "url": "https://github.com/OpenGGF/OpenGGF/releases/download/multi-next-latest/openggf-racing-server.zip"
       }
     ]
   },
