@@ -1,11 +1,12 @@
 ---
 // src/pages/news/[...slug].astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
+import { getPublishedNews } from '../../lib/news';
 import { formatNewsDate } from '../../lib/news-date';
 import '../../styles/prose.css';
 export async function getStaticPaths() {
-  const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date);
+  const posts = (await getPublishedNews());
   return posts.map((p, i) => ({
     params: { slug: p.id },
     props: { post: p, newer: posts[i - 1], older: posts[i + 1] },
@@ -14,7 +15,8 @@ export async function getStaticPaths() {
 const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 ---
-<BaseLayout title={`${post.data.title} — OpenGGF`} description={post.data.summary}>
+<BaseLayout title={`${post.data.title} — OpenGGF`} description={post.data.summary}
+  image={typeof post.data.image === 'string' ? post.data.image : post.data.image?.src} type="article">
   <div class="wrap">
     <a class="back" href="/news">← All news</a>
     <article class="post">

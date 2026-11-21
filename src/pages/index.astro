@@ -9,7 +9,7 @@ import SectionNews from '../components/SectionNews.astro';
 import SectionFaq from '../components/SectionFaq.astro';
 import { getReleaseData, selectHeroVersion, type Release } from '../lib/releases';
 import { loadPlatforms, matchAssets } from '../lib/platforms';
-import { getCollection } from 'astro:content';
+import { getPublishedNews } from '../lib/news';
 import cache from '../data/releases.cache.json';
 import faq from '../data/faq.yaml';
 
@@ -20,7 +20,7 @@ const { releases, source } = await getReleaseData({ token: import.meta.env.GITHU
 const hasData = source !== 'none';
 const version = selectHeroVersion(releases, SITE_FALLBACK_VERSION);
 const matches = matchAssets(releases[0], loadPlatforms());
-const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date)
+const posts = (await getPublishedNews())
   .map((p) => ({ slug: p.id, data: p.data }));
 const faqItems = faq as { q: string; a: string; link?: { href: string; label: string } }[];
 ---

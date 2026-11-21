@@ -2,9 +2,9 @@
 // src/pages/news/index.astro
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ActPlateHeader from '../../components/ActPlateHeader.astro';
-import { getCollection } from 'astro:content';
+import { getPublishedNews } from '../../lib/news';
 import { formatNewsDate } from '../../lib/news-date';
-const posts = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date);
+const posts = (await getPublishedNews());
 ---
 <BaseLayout title="News — OpenGGF">
   <section class="wrap">
