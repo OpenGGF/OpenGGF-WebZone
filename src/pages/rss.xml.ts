@@ -1,9 +1,9 @@
 // src/pages/rss.xml.ts
 import rss from '@astrojs/rss';
-import { getCollection } from 'astro:content';
+import { getPublishedNews } from '../lib/news';
 import type { APIContext } from 'astro';
 export async function GET(context: APIContext) {
-  const posts = await getCollection('news');
+  const posts = await getPublishedNews();
   return rss({
     title: 'OpenGGF News', description: 'Updates from the OpenGGF project',
     site: context.site,

@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ActPlateHeader from '../components/ActPlateHeader.astro';
+---
+<BaseLayout title="Page not found — OpenGGF" description="This page could not be found. Head home or catch up on OpenGGF news.">
+  <section class="wrap" data-pagefind-ignore>
+    <ActPlateHeader label="404" accent="Page not found" />
+    <div class="card">
+      <h1>There's no page here</h1>
+      <p>The link may have changed, or the page may not be published yet.</p>
+      <a href="/">Back to home →</a>
+      <a href="/news/">Read the news →</a>
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .wrap { max-width: 780px; margin: 0 auto; padding: clamp(28px, 6vh, 56px) 20px; }
+  .card { background: #fff; border: 3px solid var(--ogf-ink); border-radius: 8px; padding: 24px; }
+  h1 { font: 400 clamp(26px, 4.4vw, 38px)/1.12 var(--font-display); }
+  p { font: 400 16px/1.6 var(--font-body); margin: 16px 0; }
+  a { display: inline-block; margin: 0 20px 8px 0; color: var(--ogf-blue); font: 800 14px var(--font-body); }
+</style>

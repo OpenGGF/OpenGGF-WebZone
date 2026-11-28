@@ -62,3 +62,27 @@ gh workflow run refresh-on-release.yml --repo OpenGGF/OpenGGF-WebZone
 The website workflow also runs daily as a backstop; scheduled execution may be
 delayed. Verify its run, the resulting cache commit's Cloudflare Pages check,
 and the version and download links on `https://openggf.com`.
+
+## Day-of news publishing
+
+Advent posts are pushed on their publish day, never committed early (including
+in public PRs). Put each post in `src/content/news/<slug>.md` and its images in
+`public/news-assets/<slug>/`; use `image: "/news-assets/<slug>/hero.png"` in front
+matter and the same root-relative convention in Markdown. Relative images under
+`src/content/news/` also remain supported through Astro's image pipeline.
+
+The shared `getPublishedNews()` build-time filter includes only dates at or
+before the build cutoff, across home, news, article routes and RSS. Date-only
+values such as `2026-12-01` mean midnight UTC, not a scheduled afternoon release;
+the day-of push controls publication. The filter is a backstop, not a publishing
+scheduler, and a new build is needed to make a held post visible. It does not
+hide committed source or files copied from `public/`.
+
+`src/pages/404.astro` emits `dist/404.html`, disabling Cloudflare Pages' default
+SPA fallback so missing post URLs return HTTP 404 instead of the home page with
+200. After deployment, check both a real post and an unknown URL before sharing.
+Run `npm test` and `npm run build` before pushing; pushing to `master` deploys.
+
+The refresh workflow currently uses Node 20, while the Cloudflare setup above
+specifies `NODE_VERSION=24`. These are separate environments; this change does
+not alter Cloudflare settings.
